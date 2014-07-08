@@ -10,11 +10,14 @@
      wynik w postaci listy pokoi z zakwaterowanymi studentami.</description>
 	<properties>
 		<project.build.sourceEncoding>Cp1250</project.build.sourceEncoding>
-		
+
 		<spring.version>4.0.5.RELEASE</spring.version>
 		<java.version>1.7</java.version>
 		<hibernate.version>4.3.0.Final</hibernate.version>
 		<javax.persistence.version>1.0.2</javax.persistence.version>
+		<spring-data-jpa.version>1.6.0.RELEASE</spring-data-jpa.version>
+
+		<junit.version>4.11</junit.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -32,6 +35,20 @@
 			<artifactId>persistence-api</artifactId>
 			<version>${javax.persistence.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring-data-jpa.version}</version>
+		</dependency>
+
+
+		<!-- tests -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-	
+
 </project>
