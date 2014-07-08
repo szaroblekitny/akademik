@@ -18,7 +18,7 @@ public class StudentDaoImpl implements StudentDao {
 
 	@Override
 	public void deleteAllInBatch() {
-		entityManager.remove(Student.class);
+		deleteAll();
 	}
 
 	@Override
@@ -83,32 +83,31 @@ public class StudentDaoImpl implements StudentDao {
 
 	@Override
 	public void delete(Long id) {
-		// TODO Auto-generated method stub
-
+		Student student = findOne(id);
+		delete(student);
 	}
 
 	@Override
 	public void delete(Student entity) {
-		// TODO Auto-generated method stub
-
+		entityManager.remove(entity);
 	}
 
 	@Override
 	public void delete(Iterable<? extends Student> entities) {
-		// TODO Auto-generated method stub
+		for (Student student: entities) {
+			delete(student);
+		}
 
 	}
 
 	@Override
 	public void deleteAll() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean exists(Long id) {
-		// TODO Auto-generated method stub
-		return false;
+		return entityManager.contains(findOne(id));
 	}
 
 	@Override
