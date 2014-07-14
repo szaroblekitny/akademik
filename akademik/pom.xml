@@ -16,6 +16,7 @@
 		<hibernate.version>4.3.0.Final</hibernate.version>
 		<javax.persistence.version>1.0.2</javax.persistence.version>
 		<spring-data-jpa.version>1.6.0.RELEASE</spring-data-jpa.version>
+		<log4j.version>1.2.17</log4j.version>
 
 		<junit.version>4.11</junit.version>
 	</properties>
@@ -40,6 +41,11 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring-data-jpa.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
 
 
 		<!-- tests -->
@@ -49,6 +55,21 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<!-- Exclude Commons Logging in favor of log4j -->
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>
