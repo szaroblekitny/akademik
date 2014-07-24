@@ -13,7 +13,7 @@
 
 		<spring.version>4.0.5.RELEASE</spring.version>
 		<java.version>1.7</java.version>
-		<hibernate.version>4.3.0.Final</hibernate.version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
 		<javax.persistence.version>1.0.2</javax.persistence.version>
 		<spring-data-jpa.version>1.6.0.RELEASE</spring-data-jpa.version>
 		<log4j.version>1.2.17</log4j.version>
@@ -32,6 +32,11 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
