@@ -8,16 +8,16 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.wojtekz.akademik.dao.StudentDao;
-import org.wojtekz.akademik.dao.StudentDaoImpl;
+// import org.wojtekz.akademik.dao.StudentDao;
+// import org.wojtekz.akademik.dao.StudentDaoImpl;
 
 @Configuration
 @ComponentScan(basePackages="org.wojtekz.akademik.dao")
 public class AkademikConfiguration {
-	@Bean
+	/*@Bean
 	StudentDao studentDao() {
 		return new StudentDaoImpl();
-	}
+	}*/
 	
 	@Bean
 	LocalEntityManagerFactoryBean entityManagerFactory() {
@@ -27,6 +27,7 @@ public class AkademikConfiguration {
 		
 		localEntityManagerFactoryBean.setJpaDialect(jpaDialect);
 		localEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+		localEntityManagerFactoryBean.setPersistenceUnitName("unitPU");
 		return localEntityManagerFactoryBean; 
 	}
 	
