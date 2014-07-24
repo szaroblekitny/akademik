@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,6 +16,8 @@ import org.wojtekz.akademik.entity.Student;
 public class StudentDaoImpl implements StudentDao {
 	@PersistenceContext
 	private EntityManager entityManager;
+	
+	private static Logger logg = Logger.getLogger(StudentDaoImpl.class.getName());
 
 	public void deleteAllInBatch() {
 		deleteAll();		
@@ -26,7 +29,14 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	public List<Student> findAll() {
-		List<Student> listaWyn = entityManager.createQuery("from student", Student.class).getResultList();
+		logg.debug("----->>> findAll method fired");
+		// List<Student> listaWyn = entityManager.createQuery(Student.class).getResultList();
+		List<Student> listaWyn = entityManager.createQuery("from Student", Student.class).getResultList();
+		if (logg.isDebugEnabled()) {
+			for (Student st : listaWyn) {
+				logg.debug("----->>> student: " + st.toString());
+			}
+		}
 		return listaWyn;
 	}
 
