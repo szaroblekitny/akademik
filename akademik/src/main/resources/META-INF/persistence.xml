@@ -21,11 +21,12 @@
 			<property name="use_sql_comments" value="true" />
 			<property name="hibernate.archive.autodetection" value="class, hbm" />
 			<property name="hibernate.connection.zeroDateTimeBehavior" value="convertToNull" />
-			<property name="hibernate.cache.region.factory_class"
-				value="org.hibernate.cache.ehcache.EhCacheRegionFactory" />
-			<property name="hibernate.cache.use_query_cache" value="true" />
-			<property name="hibernate.cache.use_second_level_cache"
-				value="true" />
+			<!-- <property name="hibernate.cache.region.factory_class"
+				value="org.hibernate.cache.ehcache.EhCacheRegionFactory" /> -->
+			<!-- <property name="hibernate.cache.use_query_cache" value="true" /> -->
+			<!-- wyłączam second level cash dla prostoty -->
+			<!-- <property name="hibernate.cache.use_second_level_cache"
+				value="false" /> -->
 		</properties>
 	</persistence-unit>
 </persistence>
