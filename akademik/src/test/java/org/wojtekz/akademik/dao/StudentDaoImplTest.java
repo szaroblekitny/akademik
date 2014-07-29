@@ -1,5 +1,7 @@
 package org.wojtekz.akademik.dao;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,6 +41,23 @@ public class StudentDaoImplTest {
 	public void findAllTest() {
 		logg.debug("----->>> findAllTest method fired");
 		Assert.assertNotNull(studentDao.findAll());
+	}
+	
+	/**
+	 * Metoda kasuje wszystkie rekordy, zapisuje naszego studenta do bazy
+	 * i wyszukuje wszystkich studentów,
+	 * co ma daæ niepusty zbiór studentów
+	 */
+	@Test
+	public void zapiszIOdczytay() {
+		List<Student> listaStudentow;
+		logg.debug("----->>> zapiszIOdczytay method fired");
+		studentDao.deleteAll();
+		// public <S extends Student> S save(S entity) {
+		studentDao.save(student);
+		listaStudentow = studentDao.findAll();
+		Assert.assertEquals(1, listaStudentow.size());
+		
 	}
 
 }
