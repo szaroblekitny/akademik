@@ -109,11 +109,14 @@ public class StudentDaoImpl implements StudentDao {
 		return null;
 	}
 
+	/**
+	 * Zapisuje studenta do bazy. Zwaraca tego samego studenta.
+	 * 
+	 * @return student wziêty z parametru wejœciowego
+	 */
 	public <S extends Student> S save(S entity) {
-		// TODO Auto-generated method stub
-		return null;
+		entityManager.persist(entity);
+		return entity;
 	}
-
-	
 
 }
