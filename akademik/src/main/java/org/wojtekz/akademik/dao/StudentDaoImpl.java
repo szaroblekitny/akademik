@@ -4,25 +4,32 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.Root;
 
 import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.entity.Student;
 
 @Repository("studentDao")
+@Transactional(readOnly = true)
 public class StudentDaoImpl implements StudentDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
 	private static Logger logg = Logger.getLogger(StudentDaoImpl.class.getName());
 
+	@Transactional
 	public void deleteAllInBatch() {
 		deleteAll();		
 	}
 
+	@Transactional
 	public void deleteInBatch(Iterable<Student> entities) {
 		// TODO Auto-generated method stub
 		
@@ -50,6 +57,7 @@ public class StudentDaoImpl implements StudentDao {
 		return null;
 	}
 
+	@Transactional
 	public void flush() {
 		entityManager.flush();		
 	}
@@ -59,11 +67,13 @@ public class StudentDaoImpl implements StudentDao {
 		return null;
 	}
 
+	@Transactional
 	public <S extends Student> List<S> save(Iterable<S> entities) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Transactional
 	public <S extends Student> S saveAndFlush(S entity) {
 		// TODO Auto-generated method stub
 		return null;
@@ -79,15 +89,18 @@ public class StudentDaoImpl implements StudentDao {
 		return 0;
 	}
 
+	@Transactional
 	public void delete(Long id) {
 		Student student = findOne(id);
 		delete(student);
 	}
 
+	@Transactional
 	public void delete(Student entity) {
 		entityManager.remove(entity);
 	}
 
+	@Transactional
 	public void delete(Iterable<? extends Student> entities) {
 		for (Student student: entities) {
 			delete(student);
@@ -95,12 +108,26 @@ public class StudentDaoImpl implements StudentDao {
 		
 	}
 
+	@Transactional
 	public void deleteAll() {
-		// TODO Auto-generated method stub
+		logg.debug("----->>> deleteAll students");
 		
+		CriteriaBuilder critBuilder = entityManager.getCriteriaBuilder();
+		CriteriaDelete<Student> deleteQuery = critBuilder.createCriteriaDelete(Student.class);
+		
+		Root<Student> root = deleteQuery.from(Student.class);
+		
+		deleteQuery.where(critBuilder.isTrue(root.isNotNull()));
+		
+		logg.debug("----->>> deleteAll students after where condition");
+		
+		entityManager.createQuery(deleteQuery).executeUpdate();
+		
+		logg.debug("----->>> deleteAll students after execute query");
 	}
 
 	public boolean exists(Long id) {
+		logg.debug("----->>> exists(Long id) student");
 		return entityManager.contains(findOne(id));
 	}
 
@@ -114,6 +141,7 @@ public class StudentDaoImpl implements StudentDao {
 	 * 
 	 * @return student wziêty z parametru wejœciowego
 	 */
+	@Transactional
 	public <S extends Student> S save(S entity) {
 		entityManager.persist(entity);
 		return entity;
