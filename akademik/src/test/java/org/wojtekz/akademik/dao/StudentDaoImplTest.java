@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Student;
 
@@ -17,6 +19,8 @@ import org.wojtekz.akademik.entity.Student;
 //ApplicationContext will be loaded from AppConfig and TestConfig
 //@ContextConfiguration(classes = {AppConfig.class, TestConfig.class})
 @ContextConfiguration(classes = {AkademikConfiguration.class})
+@EnableTransactionManagement
+@Transactional
 public class StudentDaoImplTest {
 	private static Logger logg = Logger.getLogger(StudentDaoImplTest.class.getName());
 	private Student student;
@@ -53,9 +57,12 @@ public class StudentDaoImplTest {
 		List<Student> listaStudentow;
 		logg.debug("----->>> zapiszIOdczytay method fired");
 		studentDao.deleteAll();
+		logg.debug("----->>> zapiszIOdczytay po deleteAll");
 		// public <S extends Student> S save(S entity) {
 		studentDao.save(student);
+		logg.debug("----->>> zapiszIOdczytay po save student");
 		listaStudentow = studentDao.findAll();
+		logg.debug("----->>> zapiszIOdczytay po findAll");
 		Assert.assertEquals(1, listaStudentow.size());
 		
 	}
