@@ -1,15 +1,9 @@
 package org.wojtekz.akademik.conf;
 
-import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Bean;
+// import org.apache.log4j.Logger;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.orm.jpa.JpaDialect;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 // import org.wojtekz.akademik.dao.StudentDao;
 // import org.wojtekz.akademik.dao.StudentDaoImpl;
 
@@ -17,14 +11,14 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @ComponentScan(basePackages="org.wojtekz.akademik.dao")
 @ImportResource("classpath:config_dao.xml")
 public class AkademikConfiguration {
-	private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
+	// private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
 	
 	/*@Bean
 	StudentDao studentDao() {
 		return new StudentDaoImpl();
 	}*/
 
-	@Bean
+	/*@Bean
 	LocalEntityManagerFactoryBean entityManagerFactory() {
 		logg.debug("----->>> entityManagerFactory instance ----");
 		JpaDialect jpaDialect = new HibernateJpaDialect();
@@ -35,6 +29,6 @@ public class AkademikConfiguration {
 		localEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
 		localEntityManagerFactoryBean.setPersistenceUnitName("unitPU");
 		return localEntityManagerFactoryBean; 
-	}
+	}*/
 	
 }
