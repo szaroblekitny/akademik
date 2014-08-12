@@ -1,10 +1,8 @@
 package org.wojtekz.akademik.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,26 +14,31 @@ import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//ApplicationContext will be loaded from AppConfig and TestConfig
-//@ContextConfiguration(classes = {AppConfig.class, TestConfig.class})
+/*@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
+		DirtiesContextTestExecutionListener.class,
+		TransactionalTestExecutionListener.class})*/
 @ContextConfiguration(classes = {AkademikConfiguration.class})
 @EnableTransactionManagement
 @Transactional
-public class PokojDaoImplTest {
-	private static Logger logg = Logger.getLogger(PokojDaoImplTest.class.getName());
+public class PokojRepositoryTest {
+	private static Logger logg = Logger.getLogger(PokojRepositoryTest.class.getName());
 	
 	Pokoj pokoj;
 	
-	@PersistenceContext
-	private EntityManager em;
-	
 	@Autowired
-	PokojDao pokojDao = new PokojDaoImpl(Pokoj.class, em);
+	PokojRepository pokojRep;
+	
+	@Before
+	public void before() {
+		logg.debug("----->>> Pokoj before method fired");
+		pokoj = new Pokoj();
+		pokoj.setId(1);
+	}
 
 	@Test
 	public void findAllTest() {
-		logg.debug("----->>> findAllTest method fired");
-		Assert.assertNotNull(pokojDao.findAll());
+		logg.debug("----->>> Pokoj findAllTest method fired");
+		Assert.assertNotNull(pokojRep.findAll());
 	}
 
 }
