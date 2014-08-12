@@ -4,8 +4,6 @@ package org.wojtekz.akademik.conf;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-// import org.wojtekz.akademik.dao.StudentDao;
-// import org.wojtekz.akademik.dao.StudentDaoImpl;
 
 @Configuration
 @ComponentScan(basePackages="org.wojtekz.akademik.dao")
@@ -13,10 +11,6 @@ import org.springframework.context.annotation.ImportResource;
 public class AkademikConfiguration {
 	// private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
 	
-	/*@Bean
-	StudentDao studentDao() {
-		return new StudentDaoImpl();
-	}*/
 
 	/*@Bean
 	LocalEntityManagerFactoryBean entityManagerFactory() {
