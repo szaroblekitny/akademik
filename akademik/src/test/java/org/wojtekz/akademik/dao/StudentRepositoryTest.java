@@ -10,8 +10,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
+// import org.springframework.transaction.annotation.EnableTransactionManagement;
+// import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Student;
 
@@ -19,14 +19,14 @@ import org.wojtekz.akademik.entity.Student;
 //ApplicationContext will be loaded from AppConfig and TestConfig
 //@ContextConfiguration(classes = {AppConfig.class, TestConfig.class})
 @ContextConfiguration(classes = {AkademikConfiguration.class})
-@EnableTransactionManagement
-@Transactional
-public class StudentDaoImplTest {
-	private static Logger logg = Logger.getLogger(StudentDaoImplTest.class.getName());
+// @EnableTransactionManagement
+// @Transactional
+public class StudentRepositoryTest {
+	private static Logger logg = Logger.getLogger(StudentRepositoryTest.class.getName());
 	private Student student;
 	
 	@Autowired
-	private StudentDao studentDao = new StudentDaoImpl();
+	private StudentRepository studentRep;
 	
 	@Before
 	public void before() {
@@ -44,7 +44,7 @@ public class StudentDaoImplTest {
 	@Test
 	public void findAllTest() {
 		logg.debug("----->>> findAllTest method fired");
-		Assert.assertNotNull(studentDao.findAll());
+		Assert.assertNotNull(studentRep.findAll());
 	}
 	
 	/**
@@ -56,12 +56,12 @@ public class StudentDaoImplTest {
 	public void zapiszIOdczytay() {
 		List<Student> listaStudentow;
 		logg.debug("----->>> zapiszIOdczytay method fired");
-		studentDao.deleteAll();
+		studentRep.deleteAll();
 		logg.debug("----->>> zapiszIOdczytay po deleteAll");
 		// public <S extends Student> S save(S entity) {
-		studentDao.save(student);
+		studentRep.save(student);
 		logg.debug("----->>> zapiszIOdczytay po save student");
-		listaStudentow = studentDao.findAll();
+		listaStudentow = studentRep.findAll();
 		logg.debug("----->>> zapiszIOdczytay po findAll");
 		Assert.assertEquals(1, listaStudentow.size());
 		
