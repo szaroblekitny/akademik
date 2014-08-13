@@ -1,28 +1,22 @@
 package org.wojtekz.akademik.conf;
 
-// import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.wojtekz.akademik.core.PokojService;
+import org.wojtekz.akademik.core.PokojServiceImpl;
 
 @Configuration
-@ComponentScan(basePackages="org.wojtekz.akademik.dao")
+@ComponentScan(basePackages={"org.wojtekz.akademik.dao", "org.wojtekz.akademik.core"})
 @ImportResource("classpath:config_dao.xml")
 public class AkademikConfiguration {
-	// private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
+	private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
 	
-
-	/*@Bean
-	LocalEntityManagerFactoryBean entityManagerFactory() {
-		logg.debug("----->>> entityManagerFactory instance ----");
-		JpaDialect jpaDialect = new HibernateJpaDialect();
-		JpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-		LocalEntityManagerFactoryBean localEntityManagerFactoryBean = new LocalEntityManagerFactoryBean();
-		
-		localEntityManagerFactoryBean.setJpaDialect(jpaDialect);
-		localEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-		localEntityManagerFactoryBean.setPersistenceUnitName("unitPU");
-		return localEntityManagerFactoryBean; 
-	}*/
-	
+	@Bean
+	PokojService pokojService() {
+		logg.debug("----->>> pokojService bean");
+		return new PokojServiceImpl();
+	}
 }
