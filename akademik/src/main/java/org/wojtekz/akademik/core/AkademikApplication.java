@@ -1,4 +1,4 @@
-package org.wojtekz.akademik;
+package org.wojtekz.akademik.core;
 
 public class AkademikApplication {
 
