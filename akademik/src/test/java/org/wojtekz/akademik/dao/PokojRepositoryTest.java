@@ -14,9 +14,6 @@ import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-/*@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
-		DirtiesContextTestExecutionListener.class,
-		TransactionalTestExecutionListener.class})*/
 @ContextConfiguration(classes = {AkademikConfiguration.class})
 @EnableTransactionManagement
 @Transactional
