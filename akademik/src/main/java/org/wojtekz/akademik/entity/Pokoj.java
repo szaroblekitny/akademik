@@ -6,7 +6,7 @@ import javax.persistence.Id;
 @Entity
 public class Pokoj {
 	@Id
-	private int id;
+	private long id;
 	private String numerPokoju;
 	private int liczbaMiejsc;
 	
@@ -15,10 +15,10 @@ public class Pokoj {
 	}
 	
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getNumerPokoju() {
