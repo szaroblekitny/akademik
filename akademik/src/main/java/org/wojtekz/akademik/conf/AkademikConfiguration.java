@@ -34,8 +34,8 @@ public class AkademikConfiguration {
 	Plikowanie plikowanie() {
 		logg.debug("----->>> plikowanie bean configuration");
 		Plikowanie plikowanie = new Plikowanie();
-		plikowanie.setMarshaller(xStreamMarshaller());
-		plikowanie.setUnmarshaller(xStreamMarshaller());
+		// plikowanie.setMarshaller(xStreamMarshaller());
+		// plikowanie.setUnmarshaller(xStreamMarshaller());
 		return plikowanie;
 	}
 	

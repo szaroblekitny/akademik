@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
@@ -23,10 +24,13 @@ public class PlikowanieTest {
     
     @Autowired
     Plikowanie plikowanie;
-    	
+    
+    @Autowired
+    XStreamMarshaller xStreamMarshaller;
+    
     @Before
     public void before() {
-    	logg.debug("----->>> Plikowanie before method fired");
+    	logg.debug("----->>> Plikowanie test before method fired");
     	
     	student = new Student();
     	student.setId(1);
@@ -39,6 +43,8 @@ public class PlikowanieTest {
 	public void testMarszalowania() {
 		Student stt;
 		logg.debug("----->>> testMarszalowania");
+		plikowanie.setMarshaller(xStreamMarshaller);
+		plikowanie.setUnmarshaller(xStreamMarshaller);
 		try {
 			plikowanie.saveStudenta(student);
 			stt = plikowanie.loadStudenta();
@@ -47,8 +53,6 @@ public class PlikowanieTest {
 		} catch (IOException ee) {
 			logg.error("testMarszalowania: ", ee);
 		}
-		
-		
 		
 	}
 
