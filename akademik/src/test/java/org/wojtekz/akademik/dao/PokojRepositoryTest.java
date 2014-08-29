@@ -1,5 +1,7 @@
 package org.wojtekz.akademik.dao;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,6 +38,20 @@ public class PokojRepositoryTest {
 	public void findAllTest() {
 		logg.debug("----->>> Pokoj findAllTest method fired");
 		Assert.assertNotNull(pokojRep.findAll());
+	}
+	
+	@Test
+	public void zapiszIOdczyt() {
+		List<Pokoj> listaPokoi;
+		logg.debug("----->>> zapiszIOdczyt pokoj method fired");
+		pokojRep.deleteAll();
+		logg.debug("----->>> zapiszIOdczyt po deleteAll");
+		pokojRep.save(pokoj);
+		logg.debug("----->>> zapiszIOdczyt po save pokoj");
+		listaPokoi = pokojRep.findAll();
+		logg.debug("----->>> zapiszIOdczyt po findAll");
+		Assert.assertEquals(1, listaPokoi.size());
+		
 	}
 
 }
