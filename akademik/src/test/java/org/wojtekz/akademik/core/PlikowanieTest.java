@@ -1,6 +1,13 @@
 package org.wojtekz.akademik.core;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -21,6 +28,10 @@ public class PlikowanieTest {
 	private static Logger logg = Logger.getLogger(PlikowanieTest.class.getName());
 	
     private Student student;
+    private Student drugiStudent;
+    private List<Student> listaStudentow = new ArrayList<>();
+    private Path path = FileSystems.getDefault().getPath("studenci_test.xml");
+    private BufferedWriter buffWriter;
     
     @Autowired
     Plikowanie plikowanie;
@@ -37,6 +48,16 @@ public class PlikowanieTest {
     	student.setImie("Ignacy");
     	student.setNazwisko("Patafian");
     	student.setPlec(Plec.Mezczyzna);
+    	
+    	drugiStudent = new Student();
+    	drugiStudent.setId(2);
+    	drugiStudent.setImie("Jan");
+    	drugiStudent.setNazwisko("Kowalski");
+    	drugiStudent.setPlec(Plec.Mezczyzna);
+    	
+    	listaStudentow.add(student);
+    	listaStudentow.add(drugiStudent);
+    	
     }
     
 	@Test
@@ -54,6 +75,21 @@ public class PlikowanieTest {
 			logg.error("testMarszalowania: ", ee);
 		}
 		
+	}
+	
+	@Test
+	public void testWriteList() {
+		logg.debug("----->>> testWriteList");
+		plikowanie.setMarshaller(xStreamMarshaller);
+		plikowanie.setUnmarshaller(xStreamMarshaller);
+		try {
+			buffWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
+			Plikowanie.saveObjectList(buffWriter, listaStudentow);
+			Assert.assertTrue(true);
+		} catch (Exception ee) {
+			logg.error("testWriteList: ", ee);
+			Assert.assertFalse("----->>> Mamy b³¹d zapisu", false);
+		}
 	}
 
 }
