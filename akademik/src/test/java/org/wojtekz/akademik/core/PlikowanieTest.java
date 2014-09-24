@@ -1,5 +1,6 @@
 package org.wojtekz.akademik.core;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Plec;
+import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -61,24 +63,25 @@ public class PlikowanieTest {
     }
     
 	@Test
-	public void testMarszalowania() {
-		Student stt;
+	public void testMarszStudentow() {
+		List<Student> stt = new ArrayList<>();
 		logg.debug("----->>> testMarszalowania");
 		plikowanie.setMarshaller(xStreamMarshaller);
 		plikowanie.setUnmarshaller(xStreamMarshaller);
 		try {
-			plikowanie.saveStudenta(student);
-			stt = plikowanie.loadStudenta();
+			plikowanie.saveStudentow(listaStudentow);
+			stt = plikowanie.loadStudentow();
 			Assert.assertNotNull(stt);
-			Assert.assertEquals("Patafian", stt.getNazwisko());
+			Assert.assertEquals("Patafian", stt.get(0).getNazwisko());
 		} catch (IOException ee) {
-			logg.error("testMarszalowania: ", ee);
+			logg.error("----- ERROR >> testMarszalowania: ", ee);
+			Assert.assertFalse("----->>> Mamy b³¹d marszalowania", true);
 		}
 		
 	}
 	
 	@Test
-	public void testWriteList() {
+	public void testWriteListyStudentow() {
 		logg.debug("----->>> testWriteList");
 		plikowanie.setMarshaller(xStreamMarshaller);
 		plikowanie.setUnmarshaller(xStreamMarshaller);
@@ -87,9 +90,46 @@ public class PlikowanieTest {
 			Plikowanie.saveObjectList(buffWriter, listaStudentow);
 			Assert.assertTrue(true);
 		} catch (Exception ee) {
-			logg.error("testWriteList: ", ee);
-			Assert.assertFalse("----->>> Mamy b³¹d zapisu", false);
+			logg.error("----- ERROR >> testWriteList: ", ee);
+			Assert.assertFalse("----->>> Mamy b³¹d zapisu", true);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testMarszaluListy() {
+		Pokoj pok1 = new Pokoj();
+		pok1.setId(1);
+		pok1.setLiczbaMiejsc(3);
+		pok1.setNumerPokoju("101");
+		Pokoj pok2 = new Pokoj();
+		pok2.setId(2);
+		pok2.setLiczbaMiejsc(3);
+		pok2.setNumerPokoju("102");
+		
+		List<Pokoj> pokoje = new ArrayList<Pokoj>();
+		pokoje.add(pok1);
+		pokoje.add(pok2);
+		
+		List<Pokoj> listaPokoi = new ArrayList<Pokoj>();
+		
+		Path plik = FileSystems.getDefault().getPath("pokoje_test.xml");
+		try {
+			BufferedWriter buWri = Files.newBufferedWriter(plik, StandardCharsets.UTF_8);
+			BufferedReader buReader = Files.newBufferedReader(plik, StandardCharsets.UTF_8);
+			Plikowanie.saveObjectList(buWri, pokoje);
+			listaPokoi = (List<Pokoj>)Plikowanie.loadObjectList(buReader);
+		} catch (Exception ex) {
+			logg.error("----- ERROR >> testWriteList: ", ex);
+			Assert.assertFalse("----->>> Mamy b³¹d zapisu", true);
+		}
+		
+		logg.debug("----->>> Odczytana lista pokoi:");
+		for (Pokoj pp: listaPokoi) {
+			logg.debug("----->>> " + pp.toString());
+		}
+		
+		Assert.assertEquals("102", listaPokoi.get(1).getNumerPokoju());
 	}
 
 }
