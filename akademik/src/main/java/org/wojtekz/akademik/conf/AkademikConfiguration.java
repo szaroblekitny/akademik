@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.oxm.xstream.XStreamMarshaller;
+import org.wojtekz.akademik.core.AkademikApplication;
 import org.wojtekz.akademik.core.Plikowanie;
 import org.wojtekz.akademik.core.PokojService;
 import org.wojtekz.akademik.core.PokojServiceImpl;
@@ -34,8 +35,8 @@ public class AkademikConfiguration {
 	Plikowanie plikowanie() {
 		logg.debug("----->>> plikowanie bean configuration");
 		Plikowanie plikowanie = new Plikowanie();
-		// plikowanie.setMarshaller(xStreamMarshaller());
-		// plikowanie.setUnmarshaller(xStreamMarshaller());
+		plikowanie.setMarshaller(xStreamMarshaller());
+		plikowanie.setUnmarshaller(xStreamMarshaller());
 		return plikowanie;
 	}
 	
@@ -45,5 +46,11 @@ public class AkademikConfiguration {
 		// XStreamMarshaller xsm = new XStreamMarshaller();
 		// xsm.
 		return new XStreamMarshaller();
+	}
+	
+	@Bean
+	AkademikApplication akademikApplication() {
+		logg.debug("----->>> akademikApplication bean configuration");
+		return new AkademikApplication();
 	}
 }
