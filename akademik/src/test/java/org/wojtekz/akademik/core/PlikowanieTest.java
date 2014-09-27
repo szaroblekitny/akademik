@@ -87,7 +87,7 @@ public class PlikowanieTest {
 		plikowanie.setUnmarshaller(xStreamMarshaller);
 		try {
 			buffWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
-			Plikowanie.saveObjectList(buffWriter, listaStudentow);
+			plikowanie.saveObjectList(buffWriter, listaStudentow);
 			Assert.assertTrue(true);
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> testWriteList: ", ee);
@@ -117,8 +117,8 @@ public class PlikowanieTest {
 		try {
 			BufferedWriter buWri = Files.newBufferedWriter(plik, StandardCharsets.UTF_8);
 			BufferedReader buReader = Files.newBufferedReader(plik, StandardCharsets.UTF_8);
-			Plikowanie.saveObjectList(buWri, pokoje);
-			listaPokoi = (List<Pokoj>)Plikowanie.loadObjectList(buReader);
+			plikowanie.saveObjectList(buWri, pokoje);
+			listaPokoi = (List<Pokoj>)plikowanie.loadObjectList(buReader);
 		} catch (Exception ex) {
 			logg.error("----- ERROR >> testWriteList: ", ex);
 			Assert.assertFalse("----->>> Mamy b³¹d zapisu", true);

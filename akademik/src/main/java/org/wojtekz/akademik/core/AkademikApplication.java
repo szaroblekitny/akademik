@@ -3,7 +3,6 @@ package org.wojtekz.akademik.core;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,7 +18,10 @@ public class AkademikApplication {
 	private static Logger logg = Logger.getLogger(AkademikApplication.class.getName());
 	
 	@Autowired
-	static PokojService pokojService;
+	PokojService pokojService;
+	
+	@Autowired
+	Plikowanie plikowanie;
 
 	public static void main(String[] args) {
 		logg.info("----->>> Begin of AkademikApplication");
@@ -27,14 +29,14 @@ public class AkademikApplication {
 		
 		logg.debug("----->>> Mamy kontekst AkademikApplication");
 		
-		// PokojService pokojSrv = (PokojService) applicationContext.getBean("pokojService");
+		PokojService pokojSrv = (PokojService) applicationContext.getBean("pokojService");
 		
 		Pokoj pokoj = new Pokoj();
 		pokoj.setId(1);
 		pokoj.setLiczbaMiejsc(3);
 		pokoj.setNumerPokoju("1");
 		
-		pokojService.save(pokoj);
+		pokojSrv.save(pokoj);
 		
 		logg.info("----->>> Mamy pokój w akademiku " + pokoj.toString());
 		
@@ -45,33 +47,33 @@ public class AkademikApplication {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void pobierzPokoje(BufferedReader reader) throws XmlMappingException, IOException {
+	public void pobierzPokoje(BufferedReader reader) throws XmlMappingException, IOException {
 		logg.info("----->>> pobierzPokoje begins");
-		List<Pokoj> pokoje = new ArrayList<>();
-		pokoje = (List<Pokoj>) Plikowanie.loadObjectList(reader);
+		List<Pokoj> pokoje;
+		pokoje = (List<Pokoj>) plikowanie.loadObjectList(reader);
 		for (Pokoj pok : pokoje) {
 			pokojService.save(pok);
 		}
 		logg.info("----->>> pokoje zapisane");
 	}
 	
-	public static void pobierzStudentow(BufferedReader reader) {
+	public void pobierzStudentow(BufferedReader reader) {
 		// TODO wczytywanie listy studentow
 	}
 	
-	public static void zakwateruj() {
+	public void zakwateruj() {
 		// TODO dorobiæ kwaterunek
 	}
 	
-	public static void podajStanAkademika(BufferedWriter writer) {
+	public void podajStanAkademika(BufferedWriter writer) {
 		// TODO wypisanie listy pokoi z zakwaterowanymi studentami
 	}
 	
-	public static void zapiszPokojeDoBufora(BufferedWriter writer) {
+	public void zapiszPokojeDoBufora(BufferedWriter writer) {
 		// TODO zrzucenie pokoi z bazy do bufora (plikowego)
 	}
 
-	public static void zapiszStudentowDoBufora(BufferedWriter writer) {
+	public void zapiszStudentowDoBufora(BufferedWriter writer) {
 		// TODO zrzucenie studentow z bazy do bufora (plikowego)
 	}
 }
