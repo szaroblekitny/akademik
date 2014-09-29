@@ -9,6 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.dao.PokojRepository;
 import org.wojtekz.akademik.entity.Pokoj;
 
+/**
+ * Implementacja serwisu pokoi.
+ * 
+ * @author Wojtek
+ *
+ */
 @Transactional(readOnly = true)
 public class PokojServiceImpl implements PokojService {
 	private static Logger logg = Logger.getLogger(PokojServiceImpl.class.getName());
