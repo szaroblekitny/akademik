@@ -105,7 +105,7 @@ public class Plikowanie {
 	/**
 	 * TODO - usun¹æ po testach.
 	 * 
-	 * @return
+	 * @return lista studentów
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
