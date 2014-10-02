@@ -52,9 +52,9 @@ public class AkademikApplicationTest {
 	AkademikApplication akademik;
 	
 	@Before
-	public void przedTest() {
+	public void przedTest() throws Exception {
 		logg.debug("----->>> przedTest starts");
-		// Tworzymy plik
+		
 		Pokoj pok1 = new Pokoj();
 		pok1.setId(1);
 		pok1.setLiczbaMiejsc(2);
@@ -104,20 +104,15 @@ public class AkademikApplicationTest {
 		
 		pathPokoi = FileSystems.getDefault().getPath("pokoje_test_appl.xml");
 		pathStudentow = FileSystems.getDefault().getPath("studenci_test_appl.xml");
-		try {
-			BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
-			logg.debug("----->>> " + pokoje.toString());
-			plikowanie.saveObjectList(bufWriter, pokoje);
-			bufWriter.close();
+		BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
+		logg.debug("----->>> " + pokoje.toString());
+		plikowanie.saveObjectList(bufWriter, pokoje);
+		bufWriter.close();
 			
-			bufWriter = Files.newBufferedWriter(pathStudentow, charset);
-			logg.debug("----->>> " + studenci.toString());
-			plikowanie.saveObjectList(bufWriter, studenci);
-			bufWriter.close();
-		} catch (IOException ee) {
-			logg.error("----- ERROR >> B³¹d tworzenia plików");
-			Assert.fail("Exception: " + ee.getMessage());
-		}
+		bufWriter = Files.newBufferedWriter(pathStudentow, charset);
+		logg.debug("----->>> " + studenci.toString());
+		plikowanie.saveObjectList(bufWriter, studenci);
+		bufWriter.close();
 		
 		logg.debug("----->>> przedTest mamy pliki z danymi");
 		
