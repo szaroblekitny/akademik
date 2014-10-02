@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.wojtekz.akademik.core.AkademikApplication;
+import org.wojtekz.akademik.core.KwaterunekService;
+import org.wojtekz.akademik.core.KwaterunekServiceImpl;
 import org.wojtekz.akademik.core.Plikowanie;
 import org.wojtekz.akademik.core.PokojService;
 import org.wojtekz.akademik.core.PokojServiceImpl;
@@ -29,6 +31,12 @@ public class AkademikConfiguration {
 	StudentService studentService() {
 		logg.debug("----->>> studentService bean configuration");
 		return new StudentServiceImpl();
+	}
+	
+	@Bean
+	KwaterunekService kwaterunekService() {
+		logg.debug("----->>> kwaterunekService bean configuration");
+		return new KwaterunekServiceImpl();
 	}
 	
 	@Bean
