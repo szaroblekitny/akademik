@@ -1,0 +1,60 @@
+package org.wojtekz.akademik.core;
+
+// import static org.junit.Assert.*;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.entity.Kwaterunek;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AkademikConfiguration.class})
+public class KwaterunekServiceImplTest {
+	private static Logger logg = Logger.getLogger(KwaterunekServiceImplTest.class.getName());
+	private DaneTestowe danne = new DaneTestowe();
+	private Kwaterunek kwt1 = new Kwaterunek();
+	
+	@Autowired
+	KwaterunekService kwatService;
+	
+	@Before
+	public void setUp() throws Exception {
+		logg.debug("----->>> setupik");
+		danne.wrzucTrocheDanychDoBazy();
+		logg.debug("----->>> setupik dane wrzucone");
+		kwt1.setId(1);
+		kwt1.setPokoj(1);
+		kwt1.setStudent(2);
+		
+		kwatService.save(kwt1);
+		logg.debug("----->>> setupik koniec setupiku");
+	}
+
+	@Test
+	public void testFindByIdStudenta() {
+		logg.debug("----->>> testFindByIdStudenta");
+		List<Kwaterunek> kk = kwatService.findByIdStudenta(2);
+		Assert.assertEquals(1, kk.get(0).getId());
+	}
+
+	/*@Test
+	public void testFindByIdPokoju() {
+		logg.debug("----->>> testFindByIdPokoju");
+		// Assert.fail("Not yet implemented");
+	}
+
+	@Test
+	public void testFindStudenciWPokoju() {
+		logg.debug("----->>> testFindStudenciWPokoju");
+		// Assert.fail("Not yet implemented");
+	}*/
+
+}
