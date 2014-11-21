@@ -32,7 +32,9 @@ public class StudentServiceImpl implements StudentService {
 
 	@Override
 	public Student findById(long idStudenta) {
-		logg.debug("----->>> findById Student");
+		if (logg.isDebugEnabled()) {
+			logg.debug("----->>> findById " + idStudenta);
+		}
 		return studentRep.findOne(idStudenta);
 	}
 
