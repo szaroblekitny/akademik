@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.dao.KwaterunekRepository;
-import org.wojtekz.akademik.dao.StudentRepository;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Student;
 
@@ -25,7 +24,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	KwaterunekRepository kwaterunekRep;
 	
 	@Autowired
-	StudentRepository studentRep;
+	StudentService studentServ;
 
 	@Override
 	@Transactional
@@ -70,8 +69,15 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 		List<Student> studenci = new ArrayList<Student>(); 
 		zakwaterowani = kwaterunekRep.findByIdPokoju(idPokoju);
 		
+		logg.debug("----->>> Szukam zakwaterowanych");
 		for (Kwaterunek kw: zakwaterowani) {
-			studenci.add(studentRep.findOne(kw.getStudent()));
+			Student studZakw = studentServ.findById(kw.getStudent());
+			
+			if (logg.isDebugEnabled()) {
+				logg.debug("----->>> " + kw.toString());
+				logg.debug("----->>> " + studZakw.toString());
+			}
+			studenci.add(studZakw);
 		}
 		return studenci;
 	}
