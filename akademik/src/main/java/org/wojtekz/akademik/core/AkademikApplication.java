@@ -36,8 +36,11 @@ public class AkademikApplication {
 	StudentService studentService;
 	
 	@Autowired
+	KwaterunekService kwaterunekService;
+	
+	@Autowired
 	Plikowanie plikowanie;
-
+	
 	/**
 	 * Wywo³anie naszej aplikacji. Podajemy plik z pokojami, plik ze studentami i plik wyjœciowy,
 	 * a resztê ma zrobiæ program, czyli zakwaterowaæ studentów i wypisaæ wynik.
@@ -49,13 +52,18 @@ public class AkademikApplication {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AkademikConfiguration.class);
 		
 		AkademikApplication akademik = applicationContext.getBean(AkademikApplication.class);
+		PokojService pokojService = applicationContext.getBean(PokojService.class);
+		StudentService studentService = applicationContext.getBean(StudentService.class);
+		KwaterunekService kwaterunekService = applicationContext.getBean(KwaterunekService.class);
 		
 		logg.debug("----->>> Mamy kontekst AkademikApplication");
 		
 		// ot i ca³a logika naszej aplikacji:
 		try {
 			
-			// TODO dorobiæ wstêpne czyszczenie tabel
+			pokojService.deleteAll();
+			studentService.deleteAll();
+			kwaterunekService.deleteAll();
 			
 			BufferedReader pokojeReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[0]), charset);
 			BufferedReader studenciReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[1]), charset);
