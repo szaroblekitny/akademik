@@ -57,7 +57,7 @@ public class DaneTestowe {
 
 		pokoj3 = new Pokoj();
 		pokoj3.setId(3);
-		pokoj3.setLiczbaMiejsc(2);
+		pokoj3.setLiczbaMiejsc(4);
 		pokoj3.setNumerPokoju("103");
 
 		pokoje = new ArrayList<Pokoj>();

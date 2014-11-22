@@ -2,7 +2,7 @@
  * Klasy pomocnicze.
  * 
  * <ul>
- * <li>Dane tetowe</li>
+ * <li>Dane testowe</li>
  * </ul>
  * 
  * @author Wojtek
