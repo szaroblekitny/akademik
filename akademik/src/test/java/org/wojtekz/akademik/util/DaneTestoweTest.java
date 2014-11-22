@@ -1,0 +1,73 @@
+package org.wojtekz.akademik.util;
+
+
+import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.core.PokojService;
+import org.wojtekz.akademik.core.StudentService;
+import org.wojtekz.akademik.entity.Pokoj;
+import org.wojtekz.akademik.entity.Student;
+
+/**
+ * Test danych testowych. Konieczny ze wzgledu na koniecznoœæ rozpoznawania
+ * typu listy przekazywanej do zapisywania w bazie.
+ * 
+ * @author Wojtek
+ *
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {AkademikConfiguration.class})
+public class DaneTestoweTest {
+	private static Logger logg = Logger.getLogger(DaneTestoweTest.class.getName());
+	
+	@Autowired
+	DaneTestowe daneDane;
+	
+	@Autowired
+	StudentService studServ;
+	
+	@Autowired
+	PokojService pokService;
+
+	
+	@After
+	public void setDown() throws Exception {
+		studServ.deleteAll();
+		pokService.deleteAll();
+	}
+
+	@Test
+	public void testWrzucTrocheDanychDoBazyListOfT() {
+		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfT");
+		daneDane.wrzucTrocheDanychDoBazy(daneDane.getMieszkancy());
+		logg.debug("----->>> Dane wrzucone, ale czy na pewno?");
+		Student stt = studServ.findById(3);
+		Assert.assertEquals("Malinowski", stt.getNazwisko());
+	}
+
+	@Test
+	public void testWrzucTrocheDanychDoBazyListOfPokojListOfStudent() {
+		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfPokojListOfStudent start");
+		daneDane.wrzucTrocheDanychDoBazy(daneDane.getPokoje(), daneDane.getMieszkancy());
+		Pokoj pok = pokService.findByNumber("102");
+		Assert.assertEquals(3, pok.getLiczbaMiejsc());
+	}
+
+	
+	@Test
+	public void testWrzucTrocheDanychDoBazy() {
+		logg.debug("----->>> testWrzucTrocheDanychDoBazy start");
+		daneDane.wrzucTrocheDanychDoBazy();
+		long ilePokoi = pokService.ilePokoi();
+		Assert.assertEquals("Liczba pokoi niezgodna", 3, ilePokoi);
+		long ileStudentow = studServ.iluStudentow();
+		Assert.assertEquals("Liczba studnetow niezgodna", 6, ileStudentow);
+	}
+}
