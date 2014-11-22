@@ -14,6 +14,7 @@ import org.wojtekz.akademik.core.PokojService;
 import org.wojtekz.akademik.core.PokojServiceImpl;
 import org.wojtekz.akademik.core.StudentService;
 import org.wojtekz.akademik.core.StudentServiceImpl;
+import org.wojtekz.akademik.util.DaneTestowe;
 
 @Configuration
 @ComponentScan(basePackages={"org.wojtekz.akademik.core"})
@@ -60,5 +61,11 @@ public class AkademikConfiguration {
 	AkademikApplication akademikApplication() {
 		logg.debug("----->>> akademikApplication bean configuration");
 		return new AkademikApplication();
+	}
+	
+	@Bean
+	DaneTestowe daneTestowe() {
+		logg.debug("----->>> daneTestowe bean configuration");
+		return new DaneTestowe();
 	}
 }
