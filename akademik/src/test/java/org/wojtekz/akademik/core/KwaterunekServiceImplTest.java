@@ -16,22 +16,27 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.util.DaneTestowe;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AkademikConfiguration.class})
 public class KwaterunekServiceImplTest {
 	private static Logger logg = Logger.getLogger(KwaterunekServiceImplTest.class.getName());
-	private DaneTestowe danne = new DaneTestowe();
+	
 	private Kwaterunek kwt1 = new Kwaterunek();
+	private Kwaterunek kwt2 = new Kwaterunek();
 	
 	@Autowired
-	KwaterunekService kwatService;
+	private KwaterunekService kwatService;
 	
 	@Autowired
-	PokojService pokService;
+	private PokojService pokService;
 	
 	@Autowired
-	StudentService studService;
+	private StudentService studService;
+	
+	@Autowired
+	private DaneTestowe danne;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -42,7 +47,12 @@ public class KwaterunekServiceImplTest {
 		kwt1.setPokoj(1);
 		kwt1.setStudent(2);
 		
+		kwt2.setId(2);
+		kwt2.setPokoj(3);
+		kwt2.setStudent(15);
+		
 		kwatService.save(kwt1);
+		kwatService.save(kwt2);
 		logg.debug("----->>> setupik koniec setupiku");
 	}
 	
@@ -60,11 +70,13 @@ public class KwaterunekServiceImplTest {
 		Assert.assertEquals(1, kk.get(0).getId());
 	}
 
-	/*@Test
+	@Test
 	public void testFindByIdPokoju() {
 		logg.debug("----->>> testFindByIdPokoju");
-		Assert.fail("Not yet implemented");
-	}*/
+		// List<Kwaterunek> findByIdPokoju(long idPokoju)
+		List<Kwaterunek> lKwa = kwatService.findByIdPokoju(3);
+		Assert.assertEquals(15, lKwa.get(0).getStudent());
+	}
 
 	@Test
 	public void testFindStudenciWPokoju() {
