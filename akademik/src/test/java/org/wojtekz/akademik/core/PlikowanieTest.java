@@ -2,7 +2,6 @@ package org.wojtekz.akademik.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -62,23 +61,6 @@ public class PlikowanieTest {
     	
     }
     
-	@Test
-	public void testMarszStudentow() {
-		List<Student> stt = new ArrayList<>();
-		logg.debug("----->>> testMarszalowania");
-		plikowanie.setMarshaller(xStreamMarshaller);
-		plikowanie.setUnmarshaller(xStreamMarshaller);
-		try {
-			plikowanie.saveStudentow(listaStudentow);
-			stt = plikowanie.loadStudentow();
-			Assert.assertNotNull(stt);
-			Assert.assertEquals("Patafian", stt.get(0).getNazwisko());
-		} catch (IOException ee) {
-			logg.error("----- ERROR >> testMarszalowania: ", ee);
-			Assert.assertFalse("----->>> Mamy b³¹d marszalowania", true);
-		}
-		
-	}
 	
 	@Test
 	public void testWriteListyStudentow() {
