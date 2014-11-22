@@ -16,6 +16,14 @@ import org.wojtekz.akademik.core.StudentService;
 import org.wojtekz.akademik.core.StudentServiceImpl;
 import org.wojtekz.akademik.util.DaneTestowe;
 
+/**
+ * Klasa konfiguracyjna aplikacji. Zawiera definicje beanów springa w formie klasy,
+ * co oznacza, ¿e nie jest konieczny plik konfiguracyjny xml. W plikach s¹ konfiguracje
+ * persystencji, dostêpu do danych i logowania log4j.
+ * 
+ * @author Wojtek Zarêba
+ *
+ */
 @Configuration
 @ComponentScan(basePackages={"org.wojtekz.akademik.core"})
 @ImportResource("classpath:config_dao.xml")
