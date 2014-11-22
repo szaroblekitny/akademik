@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.wojtekz.akademik.entity.Pokoj;
 
 /**
- * Interfejs rozszerzaj¹cy JpaRepository. Zawiera dodatkowe metody
+ * Interfejs rozszerzaj¹cy JpaRepository dla klasy Pokoj. Zawiera dodatkowe metody
  * dla obs³ugi Pokoi w bazie danych.
  * 
  * @author Wojtek Zarêba

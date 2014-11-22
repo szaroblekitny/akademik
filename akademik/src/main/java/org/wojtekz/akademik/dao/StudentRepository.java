@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.wojtekz.akademik.entity.Student;
 
 /**
- * Interfejs rozszerzaj¹cy JpaRepository. Zawiera dodatkowe metody
+ * Interfejs rozszerzaj¹cy JpaRepository dla klasy Student. Zawiera dodatkowe metody
  * dla obs³ugi Studentów w bazie danych.
  * 
  * @author Wojtek Zarêba

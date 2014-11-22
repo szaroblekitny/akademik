@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.wojtekz.akademik.entity.Kwaterunek;
 
 /**
- * Interfejs rozszerzaj¹cy JpaRepository. Zawiera dodatkowe metody
+ * Interfejs rozszerzaj¹cy JpaRepository dla klasy Kwaterunek. Zawiera dodatkowe metody
  * dla obs³ugi Kwaterunku w bazie danych.
  * 
  * @author Wojtek Zarêba
