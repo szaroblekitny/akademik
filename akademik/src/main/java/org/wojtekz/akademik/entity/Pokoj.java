@@ -3,6 +3,18 @@ package org.wojtekz.akademik.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/**
+ * Entity dla pokoju - odzwierciedla pokój jako rekord w bazie danych.
+ * Zawiera trzy pola:
+ * <ul>
+ * <li>long id
+ * <li>String numerPokoju
+ * <li>int liczbaMiejsc
+ * </ul>
+ * 
+ * @author Wojtek Zarêba
+ *
+ */
 @Entity
 public class Pokoj {
 	@Id
@@ -10,7 +22,9 @@ public class Pokoj {
 	private String numerPokoju;
 	private int liczbaMiejsc;
 	
-	// -- constructor
+	/**
+	 * Pusty konstruktor klasy Pokoj.
+	 */
 	public Pokoj() {
 	}
 	

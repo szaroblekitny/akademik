@@ -3,6 +3,19 @@ package org.wojtekz.akademik.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/**
+ * Odzwierciedla studenta jako rekord w bazie danych.
+ * Zawiera pola:
+ * <ul>
+ * <li>long id
+ * <li>String imie
+ * <li>String nazwisko
+ * <li>Plec plec
+ * </ul>
+ * 
+ * @author Wojtek Zarêba
+ *
+ */
 @Entity
 public class Student {
 	@Id
@@ -11,7 +24,9 @@ public class Student {
 	private String nazwisko;
 	private Plec plec;
 	
-	// costructor
+	/**
+	 * Pusty konstruktor.
+	 */
 	public Student() {
 	}
 
