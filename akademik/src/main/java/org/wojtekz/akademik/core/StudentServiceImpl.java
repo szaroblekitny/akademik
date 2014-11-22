@@ -8,6 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.dao.StudentRepository;
 import org.wojtekz.akademik.entity.Student;
 
+/**
+ * Implementacja interfejsu StudentService.
+ * 
+ * @author Wojtek Zarêba
+ *
+ */
 @Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 	private static Logger logg = Logger.getLogger(StudentServiceImpl.class.getName());
