@@ -64,7 +64,6 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 		if (logg.isDebugEnabled()) {
 			logg.debug("----->>> findStudenciWPokoju " + idPokoju);
 		}
-		// TODO dorobiæ TEST!
 		List<Kwaterunek> zakwaterowani;
 		List<Student> studenci = new ArrayList<Student>(); 
 		zakwaterowani = kwaterunekRep.findByIdPokoju(idPokoju);
