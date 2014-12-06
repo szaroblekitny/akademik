@@ -16,6 +16,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.oxm.XmlMappingException;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
@@ -126,12 +127,70 @@ public class AkademikApplication {
 		logg.info("----->>> pokoje zapisane");
 	}
 	
+	
 	/**
 	 * Tworzy wpsiy w tabeli poœredniej Kwaterunek, która zapisuje ³¹czniki studentów
 	 * z pokojami.
+	 * <p>Najprostszy algorytm: dla ka¿dego studenta wybiera pokój, dla którego zajêtoœæ
+	 * jest mniejsza od pojemnoœæ, tworzy wpis w tabeli kwaterunku i zwiêksza zajêtoœæ
+	 * pokoju o jeden. Wymaga: znacznika stopnia zajêtoœci pokoju i czyszczenia tych
+	 * znaczników przed rozpoczêciem kwaterunku.</p>
+	 * 
+	 * <p>Alorytm oparty na bazie danych: dla ka¿dego studenta sprawdza, czy student nie
+	 * ma wpisu w kwaterunek. Jeœli nie, dla ka¿dego pokoju spradza liczbê wpisów
+	 * dla tego pokoju. Jeœli liczba jest mniejsza od pojemnoœci, dodaje wpis
+	 * ³¹cz¹cy pokój ze studentem. Na oko trochê kosztowniejszy od poprzedniego, ale
+	 * nie wymaga ¿adnych dodatokowych pól, a przed kwaterunkiem wystaczy tylko
+	 * wyczyszczenie tablicy kwaterunek.</p>
+	 * 
+	 * Na razie bez uwzglêdniania p³ci.
 	 */
 	public void zakwateruj() {
-		// TODO dorobiæ kwaterunek
+		logg.info("----->>> zakwateruj begins");
+		// czyœcimy kwaterunek
+		kwaterunekService.deleteAll();
+		
+		// listy studentów i pokoi
+		List<Student> studenci = studentService.listAll();
+		List<Pokoj> pokoje = pokojService.listAll();
+		if (logg.isDebugEnabled()) {
+			logg.debug("----->>> mamy pokoi " + pokoje.size());
+		}
+		
+		long kolKwaterunek = 1;
+		int iluZakwater;
+		
+		// dla ka¿dego studenta
+		for (Student student : studenci) {
+			iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
+			if (logg.isDebugEnabled()) {
+				logg.debug("----->>> dla studenta " + student.getId() + " ilu ju¿ jest: " + iluZakwater);
+			}
+			
+			if (iluZakwater == 0) {
+				logg.debug("----->>> po pokojach");
+				pokojeLab:
+				for (Pokoj pokoj : pokoje) {
+					int zajeteMiejsca = kwaterunekService.findByIdPokoju(pokoj.getId()).size();
+					
+					if (logg.isDebugEnabled()) {
+						logg.debug("----->>> dla pokoju " + pokoj.getId() + " miejsc: " + pokoj.getLiczbaMiejsc() + " zajêtych: " + zajeteMiejsca);
+					}
+					
+					if (pokoj.getLiczbaMiejsc() > zajeteMiejsca) {
+						if (logg.isDebugEnabled()) {
+							logg.debug("----->>> Nowy kwaterunek " + kolKwaterunek + "" + student.getId() + "" + pokoj.getId());
+						}
+						Kwaterunek nowyKwaterunek = new Kwaterunek(kolKwaterunek, student.getId(), pokoj.getId());
+						kolKwaterunek++;
+						kwaterunekService.save(nowyKwaterunek);
+						// wyskakujemy z pokoi
+						break pokojeLab;
+					}
+				}
+			}
+			
+		}  // dla ka¿dego studenta
 	}
 	
 	/**
@@ -139,9 +198,21 @@ public class AkademikApplication {
 	 * zakwaterowanych studentów.
 	 * 
 	 * @param writer BufferedWriter
+	 * @throws IOException 
 	 */
-	public void podajStanAkademika(BufferedWriter writer) {
-		// TODO wypisanie listy pokoi z zakwaterowanymi studentami
+	public void podajStanAkademika(BufferedWriter writer) throws IOException {
+		List<Pokoj> spisPokoi = pokojService.listAll();
+		for(Pokoj pokoj : spisPokoi) {
+			writer.write(pokoj.toString());
+			writer.newLine();
+			List<Student> mieszkancy = kwaterunekService.findStudenciWPokoju(pokoj.getId());
+			for (Student mieszka : mieszkancy) {
+				writer.write(mieszka.toString());
+				writer.newLine();
+			}
+			writer.newLine();
+		}
+		writer.write("===================");
 	}
 	
 	/**
