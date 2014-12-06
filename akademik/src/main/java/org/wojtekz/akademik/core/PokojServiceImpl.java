@@ -34,7 +34,7 @@ public class PokojServiceImpl implements PokojService {
 		logg.debug("----->>> listAll Pokoj");
 		
 		List<Pokoj> listaPokoi = new ArrayList<>();
-		pokojRep.findAll();
+		listaPokoi = pokojRep.findAll();
 		return listaPokoi;
 	}
 
