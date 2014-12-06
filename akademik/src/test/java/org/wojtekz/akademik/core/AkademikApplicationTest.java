@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
@@ -39,11 +40,17 @@ public class AkademikApplicationTest {
 	private static Path pathStudentow;
 	private static Charset charset = StandardCharsets.UTF_8;
 	
+	private List<Pokoj> pokoje = new ArrayList<Pokoj>();
+	private List<Student> studenci = new ArrayList<Student>();
+	
 	@Autowired
 	PokojService pokService;
 	
 	@Autowired
 	StudentService studService;
+	
+	@Autowired
+	KwaterunekService kwaterunekService;
 	
 	@Autowired
 	Plikowanie plikowanie;
@@ -55,6 +62,18 @@ public class AkademikApplicationTest {
 	public void przedTest() throws Exception {
 		logg.debug("----->>> przedTest starts");
 		
+		if (!pokoje.isEmpty()) {
+			for(Pokoj pok : pokoje) {
+				pokoje.remove(pok);
+			}
+		}
+		
+		if (!studenci.isEmpty()) {
+			for(Student stud : studenci) {
+				studenci.remove(stud);
+			}
+		}
+		
 		Pokoj pok1 = new Pokoj();
 		pok1.setId(1);
 		pok1.setLiczbaMiejsc(2);
@@ -64,7 +83,6 @@ public class AkademikApplicationTest {
 		pok2.setLiczbaMiejsc(3);
 		pok2.setNumerPokoju("102");
 		
-		List<Pokoj> pokoje = new ArrayList<Pokoj>();
 		pokoje.add(pok1);
 		pokoje.add(pok2);
 		
@@ -93,7 +111,6 @@ public class AkademikApplicationTest {
 		nowak.setNazwisko("Nowak");
 		nowak.setPlec(Plec.Mezczyzna);
 		
-		List<Student> studenci = new ArrayList<Student>();
 		studenci.add(kowalska);
 		studenci.add(kowalski);
 		studenci.add(nowak);
@@ -114,11 +131,7 @@ public class AkademikApplicationTest {
 		plikowanie.saveObjectList(bufWriter, studenci);
 		bufWriter.close();
 		
-		logg.debug("----->>> przedTest mamy pliki z danymi");
-		
-		// kasujemy dla czystoœci
-		pokService.deleteAll();
-		studService.deleteAll();
+		usunDane();
 		logg.debug("----->>> przedTest koniec");
 		
 	}
@@ -164,6 +177,68 @@ public class AkademikApplicationTest {
 		}
 		
 		logg.debug("----->>> testPobierzStudentow finish");
+	}
+	
+	
+	@Test
+	public void testKwaterunku() {
+		logg.debug("----->>> testKwaterunku starts");
+		zapelnijDanymi();
+		Assert.assertEquals(2, pokService.ilePokoi());
+		Assert.assertEquals(4, studService.iluStudentow());
+		
+		akademik.zakwateruj();
+		List<Kwaterunek> powiazania = kwaterunekService.listAll();
+		Assert.assertEquals(4, powiazania.size());
+		
+		usunDane();
+	}
+	
+	
+	@Test
+	public void testStanuAkademika() {
+		logg.debug("----->>> testStanuAkademika starts");
+		zapelnijDanymi();
+		akademik.zakwateruj();
+		
+		try {
+			BufferedWriter outputWriter = Files.newBufferedWriter(FileSystems.getDefault()
+					.getPath("stan_akademika.txt"), charset);
+			akademik.podajStanAkademika(outputWriter);
+			outputWriter.close();
+			List<String> wszyskieLinie = Files.readAllLines(FileSystems.getDefault()
+					.getPath("stan_akademika.txt"), charset);
+			int ileLinii = wszyskieLinie.size();
+			Assert.assertEquals("===================", wszyskieLinie.get(ileLinii - 1));
+		} catch (IOException ee) {
+			logg.error("----->>> testStanuAkademika B³¹d bufora ", ee);
+			Assert.fail("Exception: " + ee.getMessage());
+		}
+		
+	}
+	
+	
+	/**
+	 * wstawia pokoje i studentów do bazy
+	 */
+	private void zapelnijDanymi() {
+		logg.debug("----->>> zapelnijDanymi starts");
+		for (Pokoj pokoj : pokoje) {
+			pokService.save(pokoj);
+		}
+		for (Student student : studenci) {
+			studService.save(student);
+		}
+	}
+	
+	/**
+	 * usuwa dane z bazy
+	 */
+	private void usunDane() {
+		logg.debug("----->>> usunDane starts");
+		pokService.deleteAll();
+		studService.deleteAll();
+		kwaterunekService.deleteAll();
 	}
 
 }
