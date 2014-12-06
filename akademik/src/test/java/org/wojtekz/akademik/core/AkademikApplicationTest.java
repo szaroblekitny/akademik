@@ -25,6 +25,7 @@ import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
  * G³ówny test g³ównej klasy naszego Akademika.
@@ -57,6 +58,9 @@ public class AkademikApplicationTest {
 	
 	@Autowired
 	AkademikApplication akademik;
+	
+	@Autowired
+	DaneTestowe daneTestowe;
 	
 	@Before
 	public void przedTest() throws Exception {
@@ -198,7 +202,8 @@ public class AkademikApplicationTest {
 	@Test
 	public void testStanuAkademika() {
 		logg.debug("----->>> testStanuAkademika starts");
-		zapelnijDanymi();
+		
+		daneTestowe.wrzucTrocheDanychDoBazy();
 		akademik.zakwateruj();
 		
 		try {
@@ -213,6 +218,8 @@ public class AkademikApplicationTest {
 		} catch (IOException ee) {
 			logg.error("----->>> testStanuAkademika B³¹d bufora ", ee);
 			Assert.fail("Exception: " + ee.getMessage());
+		} finally {
+			usunDane();
 		}
 		
 	}
