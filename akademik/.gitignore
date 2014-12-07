@@ -2,7 +2,8 @@
 /doc
 /studenci.xml
 /studenci_test.xml
-/.gitignore
 /pokoje_test.xml
 /pokoje_test_appl.xml
 /studenci_test_appl.xml
+/stan_akademika.txt
+.gitignore
