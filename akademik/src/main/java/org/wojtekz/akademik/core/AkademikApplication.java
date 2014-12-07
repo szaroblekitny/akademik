@@ -215,23 +215,5 @@ public class AkademikApplication {
 		writer.write("===================");
 	}
 	
-	/**
-	 * Metoda pomocnicza s³u¿¹ca do zapisania pokojów z bazy danych do pliku.
-	 * Zapewne zostanie przeniesiona do innej klasy.
-	 * 
-	 * @param writer BufferedWriter
-	 */
-	public void zapiszPokojeDoBufora(BufferedWriter writer) {
-		// TODO zrzucenie pokoi z bazy do bufora (plikowego)
-	}
-
-	/**
-	 * Metoda pomocnicza s³u¿¹ca do zapisania studentów z bazy danych do pliku.
-	 * Zapewne zostanie przeniesiona do innej klasy.
-	 * 
-	 * @param writer BufferedWriter
-	 */
-	public void zapiszStudentowDoBufora(BufferedWriter writer) {
-		// TODO zrzucenie studentow z bazy do bufora (plikowego)
-	}
+	
 }

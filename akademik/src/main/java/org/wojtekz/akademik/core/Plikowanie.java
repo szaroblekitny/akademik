@@ -14,6 +14,8 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.xstream.XStreamMarshaller;
+import org.wojtekz.akademik.entity.Pokoj;
+import org.wojtekz.akademik.entity.Student;
 
 /**
  * Klasa do obs³ugi operacji plikowych.
@@ -29,6 +31,12 @@ public class Plikowanie {
 	
 	@Autowired
     XStreamMarshaller xStreamMarshaller;
+	
+	@Autowired
+	PokojService pokojService;
+	
+	@Autowired
+	StudentService studentService;
 	
 	/**
 	 * Konstruktor ustawia marszalera na XStreamMarshaller.
@@ -89,6 +97,31 @@ public class Plikowanie {
 		List<?> obj;
 		obj =  (List<?>) Plikowanie.unmarshaller.unmarshal(new StreamSource(reader));
 		return obj;
+	}
+	
+	
+	/**
+	 * Metoda pomocnicza s³u¿¹ca do zapisania pokojów z bazy danych do pliku.
+	 * 
+	 * @param writer BufferedWriter
+	 * @throws IOException 
+	 * @throws XmlMappingException 
+	 */
+	public void zapiszPokojeDoBufora(BufferedWriter writer) throws XmlMappingException, IOException {
+		List<Pokoj> listaPokoi = pokojService.listAll();
+		saveObjectList(writer, listaPokoi);
+	}
+
+	/**
+	 * Metoda pomocnicza s³u¿¹ca do zapisania studentów z bazy danych do pliku.
+	 * 
+	 * @param writer BufferedWriter
+	 * @throws IOException 
+	 * @throws XmlMappingException 
+	 */
+	public void zapiszStudentowDoBufora(BufferedWriter writer) throws XmlMappingException, IOException {
+		List<Student> listaStudentow = studentService.listAll();
+		saveObjectList(writer, listaStudentow);
 	}
 
 }
