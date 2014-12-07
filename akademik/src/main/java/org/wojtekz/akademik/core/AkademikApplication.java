@@ -23,7 +23,7 @@ import org.wojtekz.akademik.entity.Student;
 /**
  * To jest g³ówna klasa naszej aplikacji pod tytu³em Manager akademika. Zobacz opis aplikacji.
  * 
- * @author Wojtek
+ * @author Wojtek Zarêba
  *
  */
 public class AkademikApplication {
