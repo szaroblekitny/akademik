@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,6 +20,8 @@ import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+
+import com.thoughtworks.xstream.io.StreamException;
 
 /**
  * To jest g³ówna klasa naszej aplikacji pod tytu³em Manager akademika. Zobacz opis aplikacji.
@@ -50,6 +53,12 @@ public class AkademikApplication {
 	 */
 	public static void main(String[] args) {
 		logg.info("----->>> Pocz¹tek aplikacji AkademikApplication");
+		
+		if (args.length != 3) {
+			System.out.println("Wywo³anie z argumentami: nazwa_pliku_pokojami nazwa_pliku_ze_studentami nazwa_pliku_wynikowego");
+			return;
+		}
+		
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AkademikConfiguration.class);
 		
 		AkademikApplication akademik = applicationContext.getBean(AkademikApplication.class);
@@ -79,14 +88,21 @@ public class AkademikApplication {
 			studenciReader.close();
 			outputWriter.close();
 			
+		} catch (NoSuchFileException nsfe) {
+			logg.error("----- ERROR >> Nie ma takiego pliku: ", nsfe);
+			System.err.println("Nie ma takiego pliku: " + nsfe.getMessage());
+		} catch (StreamException se) {
+			logg.error("----- ERROR >> B³¹d parsowania pliku: ", se);
+			System.err.println("Oczekujê pliku xml o pokojach lub studentach, " + se.getMessage());
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> Ca³kowicie b³êdny b³¹d: ", ee);
 			ee.printStackTrace();
-		}
+		} finally {
+			logg.debug("----->>> Zamykamy kontekst AkademikApplication");
+			((AbstractApplicationContext) applicationContext).close();
+			logg.info("----->>> Ca³kowity koniec AkademikApplication");
 		
-		logg.debug("----->>> Zamykamy kontekst AkademikApplication");
-		((AbstractApplicationContext) applicationContext).close();
-		logg.info("----->>> Ca³kowity koniec AkademikApplication");
+		}
 	}
 	
 	// ------------------------------------------------------------------------------------------
