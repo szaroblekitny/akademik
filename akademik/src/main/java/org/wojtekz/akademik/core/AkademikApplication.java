@@ -160,6 +160,9 @@ public class AkademikApplication {
 	 * wyczyszczenie tablicy kwaterunek.</p>
 	 * 
 	 * Na razie bez uwzglêdniania p³ci.
+	 * 
+	 * @return true, jeœli wszyscy studenci zostali zakwaterowani
+	 * 
 	 */
 	public boolean zakwateruj() {
 		logg.debug("----->>> zakwateruj begins");
@@ -226,7 +229,7 @@ public class AkademikApplication {
 	 * zakwaterowanych studentów.
 	 * 
 	 * @param writer BufferedWriter
-	 * @param udaloSie 
+	 * @param udaloSie true, jeœli wszyscy studenci zostali zakwaterowani
 	 * @throws IOException 
 	 */
 	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {
