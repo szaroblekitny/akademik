@@ -152,11 +152,11 @@ public class AkademikApplication {
 	 * pokoju o jeden. Wymaga: znacznika stopnia zajêtoœci pokoju i czyszczenia tych
 	 * znaczników przed rozpoczêciem kwaterunku.</p>
 	 * 
-	 * <p>Alorytm oparty na bazie danych: dla ka¿dego studenta sprawdza, czy student nie
-	 * ma wpisu w kwaterunek. Jeœli nie, dla ka¿dego pokoju spradza liczbê wpisów
+	 * <p>Algorytm oparty na bazie danych: dla ka¿dego studenta sprawdza, czy student nie
+	 * ma wpisu w tabeli kwaterunek. Jeœli nie, dla ka¿dego pokoju sprawdza liczbê wpisów
 	 * dla tego pokoju. Jeœli liczba jest mniejsza od pojemnoœci, dodaje wpis
 	 * ³¹cz¹cy pokój ze studentem. Na oko trochê kosztowniejszy od poprzedniego, ale
-	 * nie wymaga ¿adnych dodatokowych pól, a przed kwaterunkiem wystaczy tylko
+	 * nie wymaga ¿adnych dodatkowych pól, a przed kwaterunkiem wystarczy tylko
 	 * wyczyszczenie tablicy kwaterunek.</p>
 	 * 
 	 * Na razie bez uwzglêdniania p³ci.
