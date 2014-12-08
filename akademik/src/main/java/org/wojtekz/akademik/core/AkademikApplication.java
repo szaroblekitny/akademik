@@ -81,8 +81,8 @@ public class AkademikApplication {
 			
 			akademik.pobierzPokoje(pokojeReader);
 			akademik.pobierzStudentow(studenciReader);
-			akademik.zakwateruj();
-			akademik.podajStanAkademika(outputWriter);
+			boolean udaloSie = akademik.zakwateruj();
+			akademik.podajStanAkademika(outputWriter, udaloSie);
 			
 			pokojeReader.close();
 			studenciReader.close();
@@ -116,13 +116,13 @@ public class AkademikApplication {
 	 */
 	@SuppressWarnings("unchecked")
 	public void pobierzPokoje(BufferedReader reader) throws XmlMappingException, IOException {
-		logg.info("----->>> pobierzPokoje begins");
+		logg.debug("----->>> pobierzPokoje begins");
 		List<Pokoj> pokoje;
 		pokoje = (List<Pokoj>) plikowanie.loadObjectList(reader);
 		for (Pokoj pok : pokoje) {
 			pokojService.save(pok);
 		}
-		logg.info("----->>> pokoje zapisane");
+		logg.info("----->>> pokoje zapisane do bazy danych");
 	}
 	
 	/**
@@ -134,13 +134,13 @@ public class AkademikApplication {
 	 */
 	@SuppressWarnings("unchecked")
 	public void pobierzStudentow(BufferedReader reader) throws XmlMappingException, IOException {
-		logg.info("----->>> pobierzStudentow begins");
+		logg.debug("----->>> pobierzStudentow begins");
 		List<Student> studenci;
 		studenci = (List<Student>) plikowanie.loadObjectList(reader);
 		for (Student student: studenci) {
 			studentService.save(student);
 		}
-		logg.info("----->>> pokoje zapisane");
+		logg.info("----->>> studenci zapisani do bazy danych");
 	}
 	
 	
@@ -161,8 +161,8 @@ public class AkademikApplication {
 	 * 
 	 * Na razie bez uwzglêdniania p³ci.
 	 */
-	public void zakwateruj() {
-		logg.info("----->>> zakwateruj begins");
+	public boolean zakwateruj() {
+		logg.debug("----->>> zakwateruj begins");
 		// czyœcimy kwaterunek
 		kwaterunekService.deleteAll();
 		
@@ -204,9 +204,21 @@ public class AkademikApplication {
 						break pokojeLab;
 					}
 				}
+				
+				// na koniec sprawdzamy, czy student zosta³ zakwaterowany,
+				// jeœli nie, mamy przepe³nienie
+				iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
+				if (iluZakwater == 0) {
+					logg.warn("----->>> Nie mo¿na zakwaterowaæ studenta " + student.toString());
+					logg.warn("----->>> Przepe³nienie!");
+					return false;
+				}
+				
 			}
 			
 		}  // dla ka¿dego studenta
+		
+		return true;
 	}
 	
 	/**
@@ -214,9 +226,10 @@ public class AkademikApplication {
 	 * zakwaterowanych studentów.
 	 * 
 	 * @param writer BufferedWriter
+	 * @param udaloSie 
 	 * @throws IOException 
 	 */
-	public void podajStanAkademika(BufferedWriter writer) throws IOException {
+	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {
 		List<Pokoj> spisPokoi = pokojService.listAll();
 		for(Pokoj pokoj : spisPokoi) {
 			writer.write(pokoj.toString());
@@ -226,6 +239,11 @@ public class AkademikApplication {
 				writer.write(mieszka.toString());
 				writer.newLine();
 			}
+			writer.newLine();
+		}
+		
+		if (!udaloSie) {
+			writer.write("Nie wszyscy studenci zostali zakwaterowani");
 			writer.newLine();
 		}
 		writer.write("===================");
