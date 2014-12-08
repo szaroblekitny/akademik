@@ -209,7 +209,7 @@ public class AkademikApplicationTest {
 		try {
 			BufferedWriter outputWriter = Files.newBufferedWriter(FileSystems.getDefault()
 					.getPath("stan_akademika.txt"), charset);
-			akademik.podajStanAkademika(outputWriter);
+			akademik.podajStanAkademika(outputWriter, true);
 			outputWriter.close();
 			List<String> wszyskieLinie = Files.readAllLines(FileSystems.getDefault()
 					.getPath("stan_akademika.txt"), charset);
