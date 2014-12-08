@@ -14,7 +14,7 @@
 
 		<spring.version>4.1.0.RELEASE</spring.version>
 		<java.version>1.7</java.version>
-		<maven-compiler.version>3.1</maven-compiler.version>
+		<maven-compiler.version>3.2</maven-compiler.version>
 		<hibernate.version>4.3.6.Final</hibernate.version>
 		<javax.persistence.version>1.0.2</javax.persistence.version>
 		<spring-data-jpa.version>1.6.0.RELEASE</spring-data-jpa.version>
@@ -61,12 +61,6 @@
 			<version>${hsqldb.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>${javax.persistence.version}</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
@@ -142,6 +136,34 @@
 				</configuration>
 			</plugin>
 			
+			<!-- tworzymy manifest, żeby uruchomić plik jar z linii poleceń -->
+			<plugin>
+    			<groupId>org.apache.maven.plugins</groupId>
+    			<artifactId>maven-shade-plugin</artifactId>
+    			<version>2.3</version>
+    			<executions>
+      				<execution>
+        				<phase>package</phase>
+        				<goals>
+          					<goal>shade</goal>
+        				</goals>
+        				<configuration>
+          					<transformers>
+            					<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+              						<mainClass>org.wojtekz.akademik.core.AkademikApplication</mainClass>
+            					</transformer>
+            					<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            		<resource>META-INF/spring.handlers</resource>
+                        		</transformer>
+                        		<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            		<resource>META-INF/spring.schemas</resource>
+                        		</transformer>
+          					</transformers>
+        				</configuration>
+      				</execution>
+    			</executions>
+  			</plugin>
+  			
 		</plugins>
 	</build>
 
