@@ -59,6 +59,17 @@ public class AkademikApplication {
 			return;
 		}
 		
+		BufferedReader pokojeReader;
+		BufferedReader studenciReader;
+		try {
+			pokojeReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[0]), charset);
+			studenciReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[1]), charset);
+		} catch (IOException ie) {
+			logg.error("Problemy plikowe", ie);
+			System.out.println("Pliki wejœciowe s¹ niew³aœciwe");
+			return;
+		}
+		
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AkademikConfiguration.class);
 		
 		AkademikApplication akademik = applicationContext.getBean(AkademikApplication.class);
@@ -75,8 +86,7 @@ public class AkademikApplication {
 			studentService.deleteAll();
 			kwaterunekService.deleteAll();
 			
-			BufferedReader pokojeReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[0]), charset);
-			BufferedReader studenciReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[1]), charset);
+			
 			BufferedWriter outputWriter = Files.newBufferedWriter(FileSystems.getDefault().getPath(args[2]), charset);
 			
 			akademik.pobierzPokoje(pokojeReader);
