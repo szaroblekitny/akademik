@@ -1,11 +1,10 @@
-package org.wojtekz.akademik.core;
+package org.wojtekz.akademik.dao;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.wojtekz.akademik.dao.StudentRepository;
 import org.wojtekz.akademik.entity.Student;
 
 /**

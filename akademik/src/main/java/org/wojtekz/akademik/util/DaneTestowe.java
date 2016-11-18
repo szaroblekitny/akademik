@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.wojtekz.akademik.core.PokojService;
-import org.wojtekz.akademik.core.StudentService;
+import org.wojtekz.akademik.dao.PokojService;
+import org.wojtekz.akademik.dao.StudentService;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;

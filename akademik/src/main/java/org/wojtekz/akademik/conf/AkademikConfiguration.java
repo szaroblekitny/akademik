@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.wojtekz.akademik.core.AkademikApplication;
-import org.wojtekz.akademik.core.KwaterunekService;
-import org.wojtekz.akademik.core.KwaterunekServiceImpl;
 import org.wojtekz.akademik.core.Plikowanie;
-import org.wojtekz.akademik.core.PokojService;
-import org.wojtekz.akademik.core.PokojServiceImpl;
-import org.wojtekz.akademik.core.StudentService;
-import org.wojtekz.akademik.core.StudentServiceImpl;
+import org.wojtekz.akademik.dao.KwaterunekService;
+import org.wojtekz.akademik.dao.KwaterunekServiceImpl;
+import org.wojtekz.akademik.dao.PokojService;
+import org.wojtekz.akademik.dao.PokojServiceImpl;
+import org.wojtekz.akademik.dao.StudentService;
+import org.wojtekz.akademik.dao.StudentServiceImpl;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
