@@ -55,7 +55,7 @@ public class AkademikApplication {
 		logg.info("----->>> Pocz¹tek aplikacji AkademikApplication");
 		
 		if (args.length != 3) {
-			System.out.println("Wywo³anie z argumentami: nazwa_pliku_pokojami nazwa_pliku_ze_studentami nazwa_pliku_wynikowego");
+			System.out.println("Wywo³anie z argumentami: nazwa_pliku_z_pokojami nazwa_pliku_ze_studentami nazwa_pliku_wynikowego");
 			return;
 		}
 		
