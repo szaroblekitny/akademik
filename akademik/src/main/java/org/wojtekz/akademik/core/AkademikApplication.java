@@ -124,8 +124,8 @@ public class AkademikApplication {
 	 * Pobiera listê pokoi z pliku XML i zapisuje w bazie danych.
 	 * 
 	 * @param reader BufferedReader
-	 * @throws XmlMappingException
-	 * @throws IOException
+	 * @throws XmlMappingException b³¹d mapowania pól w pliku na pola klasy Pokoje
+	 * @throws IOException b³¹d plikowy
 	 */
 	@SuppressWarnings("unchecked")
 	public void pobierzPokoje(BufferedReader reader) throws XmlMappingException, IOException {
@@ -141,9 +141,9 @@ public class AkademikApplication {
 	/**
 	 * Pobiera listê studentów z pliku XML i zapisuje w bazie danych.
 	 * 
-	 * @param reader
-	 * @throws XmlMappingException
-	 * @throws IOException
+	 * @param reader BufferedReader
+	 * @throws XmlMappingException b³¹d mapowania pól w pliku na pola klasy Studenci
+	 * @throws IOException b³¹d plikowy
 	 */
 	@SuppressWarnings("unchecked")
 	public void pobierzStudentow(BufferedReader reader) throws XmlMappingException, IOException {
@@ -243,7 +243,7 @@ public class AkademikApplication {
 	 * 
 	 * @param writer BufferedWriter
 	 * @param udaloSie true, jeœli wszyscy studenci zostali zakwaterowani
-	 * @throws IOException 
+	 * @throws IOException b³¹d zapisu do pliku
 	 */
 	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {
 		List<Pokoj> spisPokoi = pokojService.listAll();
