@@ -4,7 +4,7 @@
 	<groupId>org.wojtekz</groupId>
 	<artifactId>akademik</artifactId>
 	<version>0.4-SNAPSHOT</version>
-	<!-- <packaging>war</packaging> -->
+	<packaging>war</packaging>
 	
 	<name>Manager akademika</name>
 	<description>Manager akademika. W akademiku mamy pokoje i kwaterujemy do nich studentów. 
@@ -25,11 +25,26 @@
 		<hsqldb.version>2.2.4</hsqldb.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<xstream.version>1.4.7</xstream.version>
+		<cdi-api.version>1.1</cdi-api.version>
+		<postgresql.version>9.4.1212</postgresql.version>
+		<querydsl.version>4.1.4</querydsl.version>
 
 		<junit.version>4.12</junit.version>
 	</properties>
 	
 	<dependencies>
+		<dependency>
+    		<groupId>javax.enterprise</groupId>
+    		<artifactId>cdi-api</artifactId>
+    		<version>${cdi-api.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>javax.faces</groupId>
+		    <artifactId>jsf-api</artifactId>
+		    <version>2.1</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -48,11 +63,10 @@
 		</dependency>
 		
 		<dependency>
-    		<groupId>javax.inject</groupId>
-    		<artifactId>javax.inject</artifactId>
-    		<version>1</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
-		
 		
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -83,6 +97,25 @@
 			</exclusions>
 		</dependency>
 		
+		<dependency>
+    		<groupId>org.postgresql</groupId>
+    		<artifactId>postgresql</artifactId>
+    		<version>${postgresql.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.querydsl</groupId>
+		    <artifactId>querydsl-core</artifactId>
+		    <version>${querydsl.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.querydsl</groupId>
+		    <artifactId>querydsl-jpa</artifactId>
+		    <version>${querydsl.version}</version>
+		</dependency>
+		
+				
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
