@@ -54,7 +54,7 @@ public class AkademikApplication {
 	 * 
 	 * @param args argumenty: nazwa pliku z pokojami, nazwa pliku ze strudentami i nazwa pliku wyjœciowego
 	 */
-	public static void main(String[] args) {
+	public static void glowna(String[] args) {
 		logg.info("----->>> Pocz¹tek aplikacji AkademikApplication");
 		
 		if (args.length != 3) {
