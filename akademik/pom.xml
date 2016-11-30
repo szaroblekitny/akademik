@@ -179,6 +179,7 @@
 			</plugin>
 			
 			<!-- tworzymy manifest, żeby uruchomić plik jar z linii poleceń -->
+			<!-- dla aplikacji web nie robimy kompletu			
 			<plugin>
     			<groupId>org.apache.maven.plugins</groupId>
     			<artifactId>maven-shade-plugin</artifactId>
@@ -204,7 +205,7 @@
         				</configuration>
       				</execution>
     			</executions>
-  			</plugin>
+  			</plugin> -->
   			
 		</plugins>
 	</build>
