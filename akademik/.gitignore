@@ -11,3 +11,5 @@
 /pokoje.xml
 .sonar/**
 .settings/**
+/*.log
+/*.1
