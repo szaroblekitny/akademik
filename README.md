@@ -1,11 +1,11 @@
 akademik
 ========
 
-Very simple application for learning Spring purpose (polish).
+A very simple application for learning Spring purpose (in Polish).
 
-I learn to use Spring and other Java technolgies on this application.
-This is simply a student hostel manager which manages students and rooms.
+I learn to use Spring, JSF and other Java technolgies on this application.
+The akademik is simply a student hostel (in Polish - akademik) manager which manages students and rooms.
 
-Texts are in polish ;-)
+Texts are in Polish ;-)
 
 The project is under Simple Public License 2.0
