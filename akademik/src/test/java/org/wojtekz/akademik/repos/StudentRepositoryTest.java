@@ -1,4 +1,4 @@
-package org.wojtekz.akademik.dao;
+package org.wojtekz.akademik.repos;
 
 import java.util.List;
 

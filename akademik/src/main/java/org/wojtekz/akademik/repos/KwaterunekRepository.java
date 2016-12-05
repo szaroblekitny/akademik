@@ -1,10 +1,9 @@
-package org.wojtekz.akademik.dao;
+package org.wojtekz.akademik.repos;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import org.wojtekz.akademik.entity.Kwaterunek;
 
 /**
@@ -14,7 +13,6 @@ import org.wojtekz.akademik.entity.Kwaterunek;
  * @author Wojtek Zarêba
  *
  */
-@Repository
 public interface KwaterunekRepository extends JpaRepository<Kwaterunek, Long> {
 	
 	/**

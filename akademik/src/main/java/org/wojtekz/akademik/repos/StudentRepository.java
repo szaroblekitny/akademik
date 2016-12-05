@@ -1,8 +1,7 @@
-package org.wojtekz.akademik.dao;
+package org.wojtekz.akademik.repos;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import org.wojtekz.akademik.entity.Student;
 
 /**
@@ -12,7 +11,6 @@ import org.wojtekz.akademik.entity.Student;
  * @author Wojtek Zarêba
  *
  */
-@Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 	
 	/**
