@@ -33,11 +33,11 @@ public class Kwaterunek {
 	 * @param student identyfikator studenta
 	 * @param pokoj identyfikator pokoju
 	 */
-	public Kwaterunek(long id, long student, long pokoj) {
+	/*public Kwaterunek(long id, long student, long pokoj) {
 		this.id = id;
 		this.student = student;
 		this.pokoj = pokoj;
-	}
+	}*/
 
 
 	public long getId() {

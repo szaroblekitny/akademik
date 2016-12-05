@@ -213,7 +213,12 @@ public class AkademikApplication {
 						if (logg.isDebugEnabled()) {
 							logg.debug("----->>> Nowy kwaterunek " + kolKwaterunek + "" + student.getId() + "" + pokoj.getId());
 						}
-						Kwaterunek nowyKwaterunek = new Kwaterunek(kolKwaterunek, student.getId(), pokoj.getId());
+						// Kwaterunek nowyKwaterunek = new Kwaterunek(kolKwaterunek, student.getId(), pokoj.getId());
+						Kwaterunek nowyKwaterunek = new Kwaterunek();
+						nowyKwaterunek.setId(kolKwaterunek);
+						nowyKwaterunek.setStudent(student.getId());
+						nowyKwaterunek.setPokoj(pokoj.getId());
+						
 						kolKwaterunek++;
 						kwaterunekService.save(nowyKwaterunek);
 						// wyskakujemy z pokoi
