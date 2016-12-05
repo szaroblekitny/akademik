@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repos.KwaterunekRepository;
 
 /**
  * Implementacja obs³ugi tabelki kwaterunek.

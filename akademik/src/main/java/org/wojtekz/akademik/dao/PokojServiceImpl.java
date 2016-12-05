@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.entity.Pokoj;
+import org.wojtekz.akademik.repos.PokojRepository;
 
 /**
  * Implementacja serwisu pokoi.
