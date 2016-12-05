@@ -13,7 +13,7 @@
         >
         
     <context:property-placeholder location="classpath:data-access.properties"/>
-    <jpa:repositories base-package="org.wojtekz.akademik.dao" />
+    <jpa:repositories base-package="org.wojtekz.akademik.repos" />
     
     <bean id="hibernateJpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
 	<bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
@@ -31,17 +31,12 @@
 	</bean> 
 	    
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/> 
-    <context:component-scan base-package="org.wojtekz.akademik.dao"/>
         
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${jdbc.driverClassName}" />
 		<property name="url" value="${jdbc.url}" />
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
-	</bean>
-	
-	<!-- Beany aplikacji -->
-	<bean id="pokojRepository" class="org.wojtekz.akademik.dao.PokojRepository"/>
-	<bean id="kwaterunekRepository" class="org.wojtekz.akademik.dao.KwaterunekRepository"/>
+	</bean> -->
 	
 </beans>
