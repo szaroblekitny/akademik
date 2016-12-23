@@ -7,4 +7,4 @@
  * @author Wojtek
  *
  */
-package org.wojtekz.akademik.dao;
+package org.wojtekz.akademik.services;

@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
-import org.wojtekz.akademik.dao.KwaterunekService;
-import org.wojtekz.akademik.dao.PokojService;
-import org.wojtekz.akademik.dao.StudentService;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.services.KwaterunekService;
+import org.wojtekz.akademik.services.PokojService;
+import org.wojtekz.akademik.services.StudentService;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -17,12 +17,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.oxm.XmlMappingException;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
-import org.wojtekz.akademik.dao.KwaterunekService;
-import org.wojtekz.akademik.dao.PokojService;
-import org.wojtekz.akademik.dao.StudentService;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.services.KwaterunekService;
+import org.wojtekz.akademik.services.PokojService;
+import org.wojtekz.akademik.services.StudentService;
 
 import com.thoughtworks.xstream.io.StreamException;
 
