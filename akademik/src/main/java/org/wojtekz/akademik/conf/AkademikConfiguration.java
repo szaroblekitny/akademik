@@ -1,19 +1,28 @@
 package org.wojtekz.akademik.conf;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.log4j.Logger;
+import org.postgresql.jdbc3.Jdbc3SimpleDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.oxm.xstream.XStreamMarshaller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.wojtekz.akademik.core.AkademikApplication;
 import org.wojtekz.akademik.core.Plikowanie;
-import org.wojtekz.akademik.dao.KwaterunekService;
-import org.wojtekz.akademik.dao.KwaterunekServiceImpl;
-import org.wojtekz.akademik.dao.PokojService;
-import org.wojtekz.akademik.dao.PokojServiceImpl;
-import org.wojtekz.akademik.dao.StudentService;
-import org.wojtekz.akademik.dao.StudentServiceImpl;
+import org.wojtekz.akademik.services.KwaterunekService;
+import org.wojtekz.akademik.services.KwaterunekServiceImpl;
+import org.wojtekz.akademik.services.PokojService;
+import org.wojtekz.akademik.services.PokojServiceImpl;
+import org.wojtekz.akademik.services.StudentService;
+import org.wojtekz.akademik.services.StudentServiceImpl;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
@@ -26,9 +35,52 @@ import org.wojtekz.akademik.util.DaneTestowe;
  */
 @Configuration
 @ComponentScan(basePackages={"org.wojtekz.akademik.core"})
-@ImportResource("classpath:config_dao.xml")
+@EnableTransactionManagement
 public class AkademikConfiguration {
 	private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
+	
+	@Bean
+	Jdbc3SimpleDataSource postgresDataSource() {
+		logg.debug("----->>> Jdbc3SimpleDataSource bean configuration");
+		Jdbc3SimpleDataSource source = new Jdbc3SimpleDataSource();
+		
+		// na razie tak zostawmy TODO
+		source.setUrl("jdbc:postgresql://localhost/akademik");
+		source.setUser("postgres");
+		source.setPassword("qwert678");
+
+		return source;
+	}
+	
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		logg.debug("----->>> LocalContainerEntityManagerFactoryBean bean configuration");
+		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+		em.setDataSource(postgresDataSource());
+		em.setPackagesToScan("org.wojtekz.akademik.entity");
+
+		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		em.setJpaVendorAdapter(vendorAdapter);
+		// em.setJpaProperties(hibernateProperties());
+		em.setPersistenceUnitName("unitPU");
+
+		return em;
+	}
+	
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+		logg.debug("----->>> PlatformTransactionManager bean configuration");
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(emf);
+
+		return transactionManager;
+	}
+
+	@Bean
+	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+		logg.debug("----->>> PersistenceExceptionTranslationPostProcessor bean configuration");
+		return new PersistenceExceptionTranslationPostProcessor();
+	}
 	
 	@Bean
 	PokojService pokojService() {
