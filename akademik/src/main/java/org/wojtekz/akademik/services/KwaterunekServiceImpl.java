@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Student;
@@ -16,6 +17,7 @@ import org.wojtekz.akademik.repos.KwaterunekRepository;
  * @author Wojtek
  *
  */
+@Repository
 @Transactional(readOnly = true)
 public class KwaterunekServiceImpl implements KwaterunekService {
 	private static Logger logg = Logger.getLogger(KwaterunekServiceImpl.class.getName());

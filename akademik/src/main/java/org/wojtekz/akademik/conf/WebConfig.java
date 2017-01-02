@@ -8,6 +8,10 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 public class WebConfig extends AbstractContextLoaderInitializer {
 	private static Logger logg = Logger.getLogger(WebConfig.class.getName());
 	
+	public WebConfig() {
+		logg.debug("-----------> konstruktor WebConfig");
+	}
+	
 	@Override
 	protected WebApplicationContext createRootApplicationContext() {
 		logg.debug("-----------> Kontekst webowy");

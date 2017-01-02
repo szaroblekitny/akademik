@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repos.StudentRepository;
@@ -14,6 +15,7 @@ import org.wojtekz.akademik.repos.StudentRepository;
  * @author Wojtek Zarêba
  *
  */
+@Repository
 @Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 	private static Logger logg = Logger.getLogger(StudentServiceImpl.class.getName());
