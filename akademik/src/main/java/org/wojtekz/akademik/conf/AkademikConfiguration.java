@@ -36,7 +36,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  *
  */
 @Configuration
-@ComponentScan(basePackages={"org.wojtekz.akademik.core"})
+@ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.namedbean"})
 @EnableTransactionManagement
 @EnableJpaRepositories("org.wojtekz.akademik.repos")
 public class AkademikConfiguration {

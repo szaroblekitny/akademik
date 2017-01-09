@@ -1,17 +1,16 @@
 package org.wojtekz.akademik.namedbean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.services.StudentService;
-
-import java.io.Serializable;
 
 /**
  * Obs³uga studentów od strony aplikacji JSF.
@@ -19,7 +18,7 @@ import java.io.Serializable;
  * @author wojtek
  *
  */
-@ManagedBean
+@Component
 @SessionScoped
 public class StudentBean implements Serializable {
 	private static final long serialVersionUID = 297092190215801549L;
@@ -40,6 +39,8 @@ public class StudentBean implements Serializable {
 		List<Student> listaStudentow = new ArrayList<>();
 		if (studentServ != null) {
 			listaStudentow = studentServ.listAll();
+		} else {
+			logg.debug("-----------> nulowa lista studentów, coœ nie bangla");
 		}
 		
 		for (Student ss : listaStudentow) {
