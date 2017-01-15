@@ -47,11 +47,6 @@ public class AkademikConfiguration {
 		logg.debug("----->>> Jdbc3SimpleDataSource bean configuration");
 		Jdbc3SimpleDataSource source = new Jdbc3SimpleDataSource();
 		
-		// na razie tak zostawmy TODO
-		source.setUrl("jdbc:postgresql://localhost/akademik");
-		source.setUser("postgres");
-		source.setPassword("qwert678");
-
 		return source;
 	}
 	
@@ -65,8 +60,7 @@ public class AkademikConfiguration {
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setJpaDialect(new HibernateJpaDialect());
-		// em.setJpaProperties(hibernateProperties());
-		// em.setPersistenceUnitName("unitPU");
+		em.setPersistenceUnitName("postgresPU");
 
 		return em;
 	}
