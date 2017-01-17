@@ -5,14 +5,11 @@
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
 
-	<persistence-unit name="postgresPU" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+	<persistence-unit name="postgresPU" transaction-type="JTA">
+		<jta-data-source>jdbc/Akademik</jta-data-source>
+		<!-- <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider> -->
 		<properties>
-			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost/akademik" />
-			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
-			<property name="hibernate.connection.username" value="postgres" />
-			<property name="hibernate.connection.password" value="qwert678" />
 			<property name="hibernate.generate_statistics" value="true" />
 			<property name="hibernate.default_batch_fetch_size" value="2" />
 			<property name="hibernate.show_sql" value="true" />
