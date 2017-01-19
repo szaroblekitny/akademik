@@ -17,6 +17,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.jta.JtaTransactionManager;
 import org.wojtekz.akademik.core.AkademikApplication;
 import org.wojtekz.akademik.core.Plikowanie;
 import org.wojtekz.akademik.services.KwaterunekService;
@@ -42,7 +43,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class AkademikConfiguration {
 	private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
 	
-	@Bean
+	/*@Bean
 	Jdbc3SimpleDataSource postgresDataSource() {
 		logg.debug("----->>> Jdbc3SimpleDataSource bean configuration");
 		Jdbc3SimpleDataSource source = new Jdbc3SimpleDataSource();
@@ -53,20 +54,20 @@ public class AkademikConfiguration {
 		source.setPassword("qwert678");
 
 		return source;
-	}
+	}*/
 	
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		logg.debug("----->>> LocalContainerEntityManagerFactoryBean bean configuration");
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-		em.setDataSource(postgresDataSource());
+		// em.setDataSource(postgresDataSource());
 		em.setPackagesToScan("org.wojtekz.akademik.entity");
 
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setJpaDialect(new HibernateJpaDialect());
 		// em.setJpaProperties(hibernateProperties());
-		// em.setPersistenceUnitName("unitPU");
+		em.setPersistenceUnitName("unitPU");
 
 		return em;
 	}
@@ -74,8 +75,8 @@ public class AkademikConfiguration {
 	@Bean
 	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
 		logg.debug("----->>> PlatformTransactionManager bean configuration");
-		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(emf);
+		JtaTransactionManager transactionManager = new JtaTransactionManager();
+		// transactionManager.setEntityManagerFactory(emf);
 
 		return transactionManager;
 	}
