@@ -7,18 +7,14 @@
 
 	<persistence-unit name="unitPU" transaction-type="JTA">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<jta-data-source>jdbc/Akademik</jta-data-source>
 		<properties>
-			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost/akademik" />
-			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
-			<property name="hibernate.connection.username" value="postgres" />
-			<property name="hibernate.connection.password" value="qwert678" />
 			<property name="hibernate.generate_statistics" value="true" />
 			<property name="hibernate.default_batch_fetch_size" value="2" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
-			<property name="hibernate.connection.charSet" value="UTF-8" />
-			<property name="use_sql_comments" value="true" />
+			<property name="hibernate.use_sql_comments" value="true" />
 			<property name="hibernate.archive.autodetection" value="class, hbm" />
 			<property name="hibernate.connection.zeroDateTimeBehavior" value="convertToNull" />
 			
