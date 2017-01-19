@@ -3,13 +3,11 @@ package org.wojtekz.akademik.conf;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.log4j.Logger;
-import org.postgresql.jdbc3.Jdbc3SimpleDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
@@ -43,29 +41,17 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class AkademikConfiguration {
 	private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
 	
-	/*@Bean
-	Jdbc3SimpleDataSource postgresDataSource() {
-		logg.debug("----->>> Jdbc3SimpleDataSource bean configuration");
-		Jdbc3SimpleDataSource source = new Jdbc3SimpleDataSource();
-		
-		// na razie tak zostawmy TODO
-		source.setUrl("jdbc:postgresql://localhost/akademik");
-		source.setUser("postgres");
-		source.setPassword("qwert678");
-
-		return source;
-	}*/
 	
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		logg.debug("----->>> LocalContainerEntityManagerFactoryBean bean configuration");
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-		// em.setDataSource(postgresDataSource());
+		
 		em.setPackagesToScan("org.wojtekz.akademik.entity");
 
-		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		em.setJpaVendorAdapter(vendorAdapter);
-		em.setJpaDialect(new HibernateJpaDialect());
+//		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+//		em.setJpaVendorAdapter(vendorAdapter);
+//		em.setJpaDialect(new HibernateJpaDialect());
 		// em.setJpaProperties(hibernateProperties());
 		em.setPersistenceUnitName("unitPU");
 
