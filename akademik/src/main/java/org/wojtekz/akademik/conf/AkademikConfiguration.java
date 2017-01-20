@@ -1,5 +1,10 @@
 package org.wojtekz.akademik.conf;
 
+import java.util.Map;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceUnitInfo;
+
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,6 +51,15 @@ public class AkademikConfiguration {
 		em.setPersistenceUnitName("unitPU");
 
 		return em;
+	}
+	
+	@Bean
+	public Map<String,Object> emfProperties(EntityManagerFactory emf) {
+		logg.debug("----->>> emfProperties bean configuration");
+		Map<String,Object> info = emf.getProperties();
+		
+		logg.debug("----->>> emfProperties: " + info.toString());
+		return info;
 	}
 	
 	@Bean
