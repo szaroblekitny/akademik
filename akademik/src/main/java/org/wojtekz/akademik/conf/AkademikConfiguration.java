@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.wojtekz.akademik.core.AkademikApplication;
 import org.wojtekz.akademik.core.Plikowanie;
+import org.wojtekz.akademik.core.WlasciwosciPersystencji;
 import org.wojtekz.akademik.services.KwaterunekService;
 import org.wojtekz.akademik.services.KwaterunekServiceImpl;
 import org.wojtekz.akademik.services.PokojService;
@@ -53,12 +54,11 @@ public class AkademikConfiguration {
 		return em;
 	}
 	
-	@Bean
-	public Map<String,Object> emfProperties(EntityManagerFactory emf) {
-		logg.debug("----->>> emfProperties bean configuration");
-		Map<String,Object> info = emf.getProperties();
+	@Bean(initMethod="init")
+	public WlasciwosciPersystencji emfProperties() {
+		logg.debug("----->>> WlasciwosciPersystencji bean configuration");
+		WlasciwosciPersystencji info = new WlasciwosciPersystencji();
 		
-		logg.debug("----->>> emfProperties: " + info.toString());
 		return info;
 	}
 	
