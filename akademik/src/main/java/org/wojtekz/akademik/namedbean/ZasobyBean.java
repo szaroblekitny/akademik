@@ -38,7 +38,7 @@ public class ZasobyBean implements Serializable {
     	List<String> lista = wp.listaWlasciwosci();
     	
     	if (logg.isDebugEnabled()) {
-    		logg.debug("-----------> " + lista.toString());
+    		logg.debug("-----------> lista: " + lista.toString());
     	}
     	
     	return lista;
