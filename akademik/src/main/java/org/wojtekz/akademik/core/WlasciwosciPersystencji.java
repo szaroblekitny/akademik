@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.spi.PersistenceUnitInfo;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
@@ -21,7 +23,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 public class WlasciwosciPersystencji implements Ordered {
 	private static Logger logg = Logger.getLogger(WlasciwosciPersystencji.class.getName());
 	
-	private Map<String, Object> wlasciwosci;
+	private Map<String, Object> wlasciwosciMap;
+	private PersistenceUnitInfo prsisInfo;
 	
 	@Autowired
 	private LocalContainerEntityManagerFactoryBean entityManagerFactory;
@@ -31,17 +34,42 @@ public class WlasciwosciPersystencji implements Ordered {
 	}
 	
 	public void init() {
-		this.wlasciwosci = entityManagerFactory.getJpaPropertyMap();
+		logg.debug("-----------> WlasciwosciPersystencji init");
+		/*this.wlasciwosci = entityManagerFactory.getJpaPropertyMap();
+		this.prsisInfo = entityManagerFactory.getPersistenceUnitInfo();
+		
+		if (this.wlasciwosci.isEmpty()) {
+			logg.debug("-----------> JpaPropertyMap pusta");
+		}
+		
+		if (this.prsisInfo.getProperties().isEmpty() ) {
+			logg.debug("-----------> wlasciwosciMap PersistenceUnitInfo puste");
+		}*/
 	}
 	
 	public List<String> listaWlasciwosci() {
 		List<String> stringProps = new ArrayList<>();
+		
+		this.wlasciwosciMap = entityManagerFactory.getJpaPropertyMap();
+		this.prsisInfo = entityManagerFactory.getPersistenceUnitInfo();
+		
+		if (this.wlasciwosciMap.isEmpty()) {
+			logg.debug("-----------> JpaPropertyMap pusta");
+		}
+		
+		if (this.prsisInfo.getProperties().isEmpty() ) {
+			logg.debug("-----------> wlasciwosciMap PersistenceUnitInfo puste");
+		}
+		
+		if (logg.isDebugEnabled()) {
+			logg.debug("-----------> Unit name: " + this.prsisInfo.getPersistenceUnitName());
+		}
     	
-    	for (Map.Entry<String, Object> entry : wlasciwosci.entrySet()) {
+    	for (Map.Entry<String, Object> entry : wlasciwosciMap.entrySet()) {
     		stringProps.add(entry.getKey() + "<==>" + entry.getValue());
     	}
     	
-    	if (logg.isDebugEnabled() && stringProps.isEmpty()) {
+    	if (stringProps.isEmpty()) {
     		logg.debug("-----------> wlasciwosci puste");
     	}
     	
@@ -49,16 +77,25 @@ public class WlasciwosciPersystencji implements Ordered {
 	}
 
 	public Map<String, Object> getWlasciwosci() {
-		return wlasciwosci;
+		return wlasciwosciMap;
 	}
 
 	public void setWlasciwosci(Map<String, Object> wlasciwosci) {
-		this.wlasciwosci = wlasciwosci;
+		this.wlasciwosciMap = wlasciwosci;
 	}
 
 	@Override
 	public String toString() {
 		return "WlasciwosciPersystencji: " + listaWlasciwosci().toString();
+	}
+	
+	
+	public PersistenceUnitInfo getPrsisInfo() {
+		return prsisInfo;
+	}
+
+	public void setPrsisInfo(PersistenceUnitInfo prsisInfo) {
+		this.prsisInfo = prsisInfo;
 	}
 
 	@Override
