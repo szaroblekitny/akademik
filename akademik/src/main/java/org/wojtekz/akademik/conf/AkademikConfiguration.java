@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -60,6 +61,12 @@ public class AkademikConfiguration {
 		WlasciwosciPersystencji info = new WlasciwosciPersystencji();
 		
 		return info;
+	}
+	
+	@Bean
+	MutablePersistenceUnitInfo mutablePersistenceUnitInfo() {
+		logg.debug("----->>> MutablePersistenceUnitInfo bean configuration");
+		return new MutablePersistenceUnitInfo();
 	}
 	
 	@Bean
