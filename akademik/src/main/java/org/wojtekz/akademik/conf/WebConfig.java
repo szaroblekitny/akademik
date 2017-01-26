@@ -16,7 +16,7 @@ public class WebConfig extends AbstractContextLoaderInitializer {
 	protected WebApplicationContext createRootApplicationContext() {
 		logg.debug("-----------> Kontekst webowy");
 		AnnotationConfigWebApplicationContext webContext = new AnnotationConfigWebApplicationContext();
-		webContext.register(AkademikConfiguration.class);
+		webContext.register(MainConfiguration.class);
 		return webContext;
 	}
 

@@ -10,17 +10,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-// import org.springframework.transaction.annotation.EnableTransactionManagement;
-// import org.springframework.transaction.annotation.Transactional;
-import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Student;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//ApplicationContext will be loaded from AppConfig and TestConfig
-//@ContextConfiguration(classes = {AppConfig.class, TestConfig.class})
-@ContextConfiguration(classes = {AkademikConfiguration.class})
-// @EnableTransactionManagement
-// @Transactional
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class StudentRepositoryTest {
 	private static Logger logg = Logger.getLogger(StudentRepositoryTest.class.getName());
 	private Student student;

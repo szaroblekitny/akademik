@@ -1,22 +1,12 @@
 package org.wojtekz.akademik.conf;
 
-import java.util.Map;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceUnitInfo;
-
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.oxm.xstream.XStreamMarshaller;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.jta.JtaTransactionManager;
 import org.wojtekz.akademik.core.AkademikApplication;
 import org.wojtekz.akademik.core.Plikowanie;
 import org.wojtekz.akademik.core.WlasciwosciPersystencji;
@@ -38,22 +28,8 @@ import org.wojtekz.akademik.util.DaneTestowe;
  */
 @Configuration
 @ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.namedbean"})
-@EnableTransactionManagement
-@EnableJpaRepositories("org.wojtekz.akademik.repos")
 public class AkademikConfiguration {
 	private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
-	
-	
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-		logg.debug("----->>> LocalContainerEntityManagerFactoryBean bean configuration");
-		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-		
-		em.setPackagesToScan("org.wojtekz.akademik.entity");
-		em.setPersistenceUnitName("unitPU");
-
-		return em;
-	}
 	
 	@Bean(initMethod="init")
 	public WlasciwosciPersystencji emfProperties() {
@@ -69,13 +45,6 @@ public class AkademikConfiguration {
 		return new MutablePersistenceUnitInfo();
 	}
 	
-	@Bean
-	public PlatformTransactionManager transactionManager() {
-		logg.debug("----->>> PlatformTransactionManager bean configuration");
-		JtaTransactionManager transactionManager = new JtaTransactionManager();
-
-		return transactionManager;
-	}
 
 	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
@@ -101,6 +70,12 @@ public class AkademikConfiguration {
 		return new KwaterunekServiceImpl();
 	}
 	
+	@Bean
+	DaneTestowe daneTestowe() {
+		logg.debug("----->>> daneTestowe bean configuration");
+		return new DaneTestowe();
+	}
+	
 	/*@Bean
 	Plikowanie plikowanie() {
 		logg.debug("----->>> plikowanie bean configuration");
@@ -124,9 +99,5 @@ public class AkademikConfiguration {
 		return new AkademikApplication();
 	}*/
 	
-	/*@Bean
-	DaneTestowe daneTestowe() {
-		logg.debug("----->>> daneTestowe bean configuration");
-		return new DaneTestowe();
-	}*/
+	
 }
