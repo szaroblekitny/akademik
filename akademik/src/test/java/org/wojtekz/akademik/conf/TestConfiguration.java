@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.wojtekz.akademik.util.DaneTestowe;
@@ -36,8 +37,18 @@ public class TestConfiguration {
 		
 		em.setPackagesToScan("org.wojtekz.akademik.entity");
 		em.setDataSource(hsqldbDataSource());
+		em.setJpaVendorAdapter(hibJpaVendorAdapter());
 
 		return em;
+	}
+	
+	@Bean
+	public HibernateJpaVendorAdapter hibJpaVendorAdapter() {
+		HibernateJpaVendorAdapter adapt = new HibernateJpaVendorAdapter();
+		adapt.setDatabasePlatform("org.hibernate.dialect.HSQLDialect");
+		adapt.setGenerateDdl(true);
+		
+		return adapt;
 	}
 	
 	@Bean
