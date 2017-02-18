@@ -12,6 +12,10 @@
 	<logger name="org.springframework">
 		<level value="DEBUG" />
 	</logger>
+	
+	<logger name="org.hibernate">
+		<level value="INFO" />
+	</logger>
 
 	<root>
 		<level value="DEBUG" />
