@@ -11,7 +11,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.wojtekz.akademik.util.DaneTestowe;
 
 @Configuration
 @EnableTransactionManagement
@@ -44,6 +43,7 @@ public class TestConfiguration {
 	
 	@Bean
 	public HibernateJpaVendorAdapter hibJpaVendorAdapter() {
+		logg.debug("----->>> HibernateJpaVendorAdapter TEST configuration");
 		HibernateJpaVendorAdapter adapt = new HibernateJpaVendorAdapter();
 		adapt.setDatabasePlatform("org.hibernate.dialect.HSQLDialect");
 		adapt.setGenerateDdl(true);

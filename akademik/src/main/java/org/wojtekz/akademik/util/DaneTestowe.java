@@ -40,7 +40,7 @@ public class DaneTestowe {
 	private PokojService pokojService;
 
 	/**
-	 * Wype³nia pola przyk³adowymi danymi testowymi.
+	 * Wype³nia pola przyk³adowymi danymi testowymi zdefiniowanymi w tym konstruktorze.
 	 */
 	public DaneTestowe() {
 		logg.debug("----->>> Dane testowe - konstruktor pe³ny");
@@ -160,6 +160,15 @@ public class DaneTestowe {
 		mieszkancy.add(student6);
 	}
 
+	/**
+	 * Wrzuca dane przekazane przez listê do tabeli w bazie okreœlonej przez
+	 * typ listy. Obs³ugiwane typy to Pokoj i Student. Przed wrzuceniem
+	 * danych dotychczasowe s¹ kasowane: mo¿na u¿ywaæ tylko w celach testowych
+	 * lub do migracji danych.
+	 * 
+	 * @param lista - lista obiektów wrzucanych do tabeli okreœlonym przez
+	 *                typ listy
+	 */
 	public <T> void wrzucTrocheDanychDoBazy(List<T> lista) {
 		logg.debug("----->>> wrzucTrocheDanychDoBazy start ");
 
@@ -192,6 +201,13 @@ public class DaneTestowe {
 
 	}
 
+	/**
+	 * Wrzuca do bazy gotowe listy danych o typach Pokoj i Student.
+	 * 
+	 * @param pokoje - lista z danymi o pokojach
+	 * @param studenci - lista z danymi o strudentach
+	 * 
+	 */
 	public void wrzucTrocheDanychDoBazy(List<Pokoj> pokoje,
 			List<Student> studenci) {
 		logg.debug("----->>> wrzucTrocheDanychDoBazy pokoje i studenci");
@@ -200,6 +216,11 @@ public class DaneTestowe {
 
 	}
 
+	/**
+	 * Wrzuca do bazy dane o pokojach i studentach przekazane do klasy w polach
+	 * pokoje i mieszkancy.
+	 * 
+	 */
 	public void wrzucTrocheDanychDoBazy() {
 		wrzucTrocheDanychDoBazy(this.pokoje, this.mieszkancy);
 	}
