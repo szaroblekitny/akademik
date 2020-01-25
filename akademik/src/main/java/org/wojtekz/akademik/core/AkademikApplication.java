@@ -10,7 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -30,7 +31,7 @@ import com.thoughtworks.xstream.io.StreamException;
  *
  */
 public class AkademikApplication {
-	private static Logger logg = Logger.getLogger(AkademikApplication.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	private static Charset charset = StandardCharsets.UTF_8;
 	
 	@Autowired

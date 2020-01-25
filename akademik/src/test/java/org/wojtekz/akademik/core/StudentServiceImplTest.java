@@ -2,7 +2,8 @@ package org.wojtekz.akademik.core;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,7 +19,7 @@ import org.wojtekz.akademik.entity.Student;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AkademikConfiguration.class})
 public class StudentServiceImplTest {
-	private static Logger logg = Logger.getLogger(StudentServiceImplTest.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	Student student;
 	

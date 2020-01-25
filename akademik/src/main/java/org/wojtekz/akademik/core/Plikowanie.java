@@ -8,7 +8,8 @@ import java.util.List;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
@@ -24,7 +25,7 @@ import org.wojtekz.akademik.entity.Student;
  *
  */
 public class Plikowanie {
-	private static Logger logg = Logger.getLogger(Plikowanie.class.getName());
+	private static Logger logg = LogManager.getLogger();
 
 	private static Marshaller marshaller;
 	private static Unmarshaller unmarshaller;

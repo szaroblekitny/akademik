@@ -14,7 +14,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +40,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class AkademikApplicationTest {
 	private final String PLIK_POKOI = "pokoje_test_appl.xml";
 	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
-	private static Logger logg = Logger.getLogger(AkademikApplicationTest.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	private static Path pathPokoi;
 	private static Path pathStudentow;
 	private static Charset charset = StandardCharsets.UTF_8;

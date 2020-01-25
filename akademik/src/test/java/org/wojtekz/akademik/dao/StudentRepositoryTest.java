@@ -2,7 +2,8 @@ package org.wojtekz.akademik.dao;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,19 +11,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-// import org.springframework.transaction.annotation.EnableTransactionManagement;
-// import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
 import org.wojtekz.akademik.entity.Student;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//ApplicationContext will be loaded from AppConfig and TestConfig
-//@ContextConfiguration(classes = {AppConfig.class, TestConfig.class})
 @ContextConfiguration(classes = {AkademikConfiguration.class})
-// @EnableTransactionManagement
-// @Transactional
 public class StudentRepositoryTest {
-	private static Logger logg = Logger.getLogger(StudentRepositoryTest.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	private Student student;
 	
 	@Autowired

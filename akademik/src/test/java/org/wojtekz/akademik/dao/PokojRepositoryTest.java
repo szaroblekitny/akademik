@@ -2,7 +2,8 @@ package org.wojtekz.akademik.dao;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +21,7 @@ import org.wojtekz.akademik.entity.Pokoj;
 @EnableTransactionManagement
 @Transactional
 public class PokojRepositoryTest {
-	private static Logger logg = Logger.getLogger(PokojRepositoryTest.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	Pokoj pokoj;
 	
