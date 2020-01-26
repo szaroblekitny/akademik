@@ -3,7 +3,8 @@ package org.wojtekz.akademik.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
@@ -18,7 +19,7 @@ import org.wojtekz.akademik.services.StudentService;
  *
  */
 public class DaneTestowe {
-	private static Logger logg = Logger.getLogger(DaneTestowe.class.getName());
+	private static Logger logg = LogManager.getLogger();
 
 	private Pokoj pokoj1;
 	private Pokoj pokoj2;

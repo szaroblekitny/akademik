@@ -4,7 +4,8 @@ package org.wojtekz.akademik.services;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +25,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
 public class KwaterunekServiceImplTest {
-	private static Logger logg = Logger.getLogger(KwaterunekServiceImplTest.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	private Kwaterunek kwt1 = new Kwaterunek();
 	private Kwaterunek kwt2 = new Kwaterunek();

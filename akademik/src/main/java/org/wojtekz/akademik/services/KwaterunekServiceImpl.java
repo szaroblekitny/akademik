@@ -3,7 +3,8 @@ package org.wojtekz.akademik.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ import org.wojtekz.akademik.repos.KwaterunekRepository;
 @Repository
 @Transactional(readOnly = true)
 public class KwaterunekServiceImpl implements KwaterunekService {
-	private static Logger logg = Logger.getLogger(KwaterunekServiceImpl.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	@Autowired
 	KwaterunekRepository kwaterunekRep;

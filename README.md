@@ -1,4 +1,4 @@
-akademik
+Akademik
 ========
 
 A very simple application for learning Spring purpose (in Polish).

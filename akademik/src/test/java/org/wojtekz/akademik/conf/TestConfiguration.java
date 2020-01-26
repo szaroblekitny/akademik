@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.conf;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories("org.wojtekz.akademik.repos")
 @Import(AkademikConfiguration.class)
 public class TestConfiguration {
-	private static Logger logg = Logger.getLogger(TestConfiguration.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	@Bean
 	JDBCDataSource hsqldbDataSource() {

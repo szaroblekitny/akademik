@@ -6,7 +6,8 @@ import java.util.Map;
 
 import javax.persistence.spi.PersistenceUnitInfo;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -21,7 +22,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
  *
  */
 public class WlasciwosciPersystencji implements Ordered {
-	private static Logger logg = Logger.getLogger(WlasciwosciPersystencji.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	private Map<String, Object> wlasciwosciMap;
 	private PersistenceUnitInfo prsisInfo;

@@ -1,5 +1,6 @@
 package org.wojtekz.akademik.core;
 
+import org.junit.After;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
@@ -13,7 +14,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -41,7 +43,9 @@ import org.wojtekz.akademik.util.DaneTestowe;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AkademikConfiguration.class})
 public class AkademikApplicationTest {
-	private static Logger logg = Logger.getLogger(AkademikApplicationTest.class.getName());
+	private final String PLIK_POKOI = "pokoje_test_appl.xml";
+	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
+	private static Logger logg = LogManager.getLogger();
 	private static Path pathPokoi;
 	private static Path pathStudentow;
 	private static Charset charset = StandardCharsets.UTF_8;
@@ -128,8 +132,8 @@ public class AkademikApplicationTest {
 		
 		// saveObjectList(BufferedWriter writer, List<T> list)
 		
-		pathPokoi = FileSystems.getDefault().getPath("pokoje_test_appl.xml");
-		pathStudentow = FileSystems.getDefault().getPath("studenci_test_appl.xml");
+		pathPokoi = FileSystems.getDefault().getPath(PLIK_POKOI);
+		pathStudentow = FileSystems.getDefault().getPath(PLIK_STUDENTOW);
 		BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
 		logg.debug("----->>> " + pokoje.toString());
 		plikowanie.saveObjectList(bufWriter, pokoje);
@@ -229,6 +233,11 @@ public class AkademikApplicationTest {
 		
 	}
 	
+	@After
+	public void poTescie() throws Exception {
+		usunPlik(pathPokoi);
+		usunPlik(pathStudentow);
+	}
 	
 	/**
 	 * wstawia pokoje i studentów do bazy
@@ -251,6 +260,11 @@ public class AkademikApplicationTest {
 		pokService.deleteAll();
 		studService.deleteAll();
 		kwaterunekService.deleteAll();
+	}
+	
+	private void usunPlik(Path plik) throws IOException {
+		logg.debug("----->>> kasowanie pliku " + plik.getFileName());
+		Files.delete(plik);
 	}
 
 }

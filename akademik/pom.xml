@@ -22,13 +22,15 @@
 	<properties>
 		<project.build.sourceEncoding>Cp1250</project.build.sourceEncoding>
 
-		<spring.version>4.3.6.RELEASE</spring.version>
-		<spring-data-jpa.version>1.11.23.RELEASE</spring-data-jpa.version>
-		<java.version>1.8</java.version>
-		<maven-compiler.version>3.2</maven-compiler.version>
-		<hibernate.version>5.2.6.Final</hibernate.version>
-		<log4j.version>1.2.17</log4j.version>
-		<hsqldb.version>2.3.4</hsqldb.version>
+		<spring.version>5.2.3.RELEASE</spring.version>
+		<java.version>11</java.version>
+		<maven-compiler.version>3.8.1</maven-compiler.version>
+		<hibernate.version>4.3.11.Final</hibernate.version>
+		<javax.persistence.version>1.0.2</javax.persistence.version>
+		<spring-data-jpa.version>1.11.22.RELEASE</spring-data-jpa.version>
+		<log4j.version>2.8.2</log4j.version>
+		<hsqldb.version>2.2.4</hsqldb.version>
+		<slf4j.version>1.7.30</slf4j.version>
 		<xstream.version>1.4.7</xstream.version>
 		<postgresql.version>9.4.1212</postgresql.version>
 		<querydsl.version>4.1.4</querydsl.version>
@@ -72,10 +74,6 @@
 				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
 					<artifactId>spring-aop</artifactId>
 				</exclusion>
 			</exclusions>
@@ -97,11 +95,23 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${hibernate.version}</version>
+			<!-- <exclusions>
+        		<exclusion>
+        			<groupId>org.javassist</groupId>
+            		<artifactId>javassist</artifactId>
+        		</exclusion>
+    		</exclusions> -->
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
+			<exclusions>
+        		<exclusion>
+        			<groupId>org.javassist</groupId>
+            		<artifactId>javassist</artifactId>
+        		</exclusion>
+    		</exclusions>
 		</dependency>
 		
 		<dependency>
@@ -115,12 +125,19 @@
 			<artifactId>xstream</artifactId>
 			<version>${xstream.version}</version>
 		</dependency>
+		
+		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-slf4j-impl</artifactId>
+    		<version>${log4j.version}</version>
+		</dependency>
 
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-core</artifactId>
+    		<version>${log4j.version}</version>
 		</dependency>
+
 
 		<!-- tests -->
 		<dependency>
@@ -141,14 +158,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
-			<exclusions>
-				<!-- Exclude Commons Logging in favor of log4j -->
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-
 			<scope>test</scope>
 		</dependency>
 
@@ -163,23 +172,23 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<compilerVersion>${java.version}</compilerVersion>
 					<showWarnings>true</showWarnings>
 				</configuration>
 			</plugin>
 			
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
-				<configuration>
-					<systemProperties>
-						<!-- ustawiamy org.jboss.logging.provider na log4j -->
-						<property>
-							<name>org.jboss.logging.provider</name>
-							<value>log4j</value>
-						</property>
-					</systemProperties>
-				</configuration>
+
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-jar-plugin</artifactId>
+        		<version>3.2.0</version>
+        		<configuration>
+          			<archive>
+            			<manifestEntries>
+    						<Multi-Release>true</Multi-Release>
+						</manifestEntries>
+          			</archive>
+        		</configuration>
 			</plugin>
 			
 			<!-- tworzymy manifest, żeby uruchomić plik jar z linii poleceń -->
@@ -187,7 +196,7 @@
 			<plugin>
     			<groupId>org.apache.maven.plugins</groupId>
     			<artifactId>maven-shade-plugin</artifactId>
-    			<version>2.3</version>
+    			<version>3.2.1</version>
     			<executions>
       				<execution>
         				<phase>package</phase>

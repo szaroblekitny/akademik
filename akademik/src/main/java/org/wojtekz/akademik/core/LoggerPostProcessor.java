@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.core;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.Ordered;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LoggerPostProcessor implements BeanPostProcessor, Ordered {
-	private static Logger logg = Logger.getLogger(LoggerPostProcessor.class.getName());
+	private static Logger logg = LogManager.getLogger();
 
 	@Override
 	public int getOrder() {

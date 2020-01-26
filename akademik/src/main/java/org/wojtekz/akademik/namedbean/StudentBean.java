@@ -6,7 +6,8 @@ import java.util.List;
 
 import javax.faces.bean.SessionScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Student;
@@ -23,7 +24,7 @@ import org.wojtekz.akademik.services.StudentService;
 public class StudentBean implements Serializable {
 	private static final long serialVersionUID = 297092190215801549L;
 
-	private static Logger logg = Logger.getLogger(StudentBean.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	@Autowired
 	StudentService studentServ;

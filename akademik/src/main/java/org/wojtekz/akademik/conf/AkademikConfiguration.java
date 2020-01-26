@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.conf;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
 @Configuration
 @ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.namedbean"})
 public class AkademikConfiguration {
-	private static Logger logg = Logger.getLogger(AkademikConfiguration.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	@Bean(initMethod="init")
 	public WlasciwosciPersystencji emfProperties() {

@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.core;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
-	private static Logger logg = Logger.getLogger(LoggerFactoryPostProcessor.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	public LoggerFactoryPostProcessor() {
 		logg.debug("-----------> konstruktor LoggerFactoryPostProcessor");

@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.conf;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,7 +23,7 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 @EnableJpaRepositories("org.wojtekz.akademik.repos")
 @Import(AkademikConfiguration.class)
 public class MainConfiguration {
-	private static Logger logg = Logger.getLogger(MainConfiguration.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {

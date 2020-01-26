@@ -5,7 +5,8 @@ import java.util.List;
 
 import javax.faces.bean.SessionScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.core.WlasciwosciPersystencji;
@@ -21,7 +22,7 @@ import org.wojtekz.akademik.core.WlasciwosciPersystencji;
 public class ZasobyBean implements Serializable {
 	private static final long serialVersionUID = -8799560567435187001L;
 
-	private static Logger logg = Logger.getLogger(ZasobyBean.class.getName());
+	private static Logger logg = LogManager.getLogger();
 	
     @Autowired
 	private WlasciwosciPersystencji wp;
