@@ -6,10 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
-import org.springframework.oxm.xstream.XStreamMarshaller;
-import org.wojtekz.akademik.core.AkademikApplication;
-import org.wojtekz.akademik.core.Plikowanie;
 import org.wojtekz.akademik.core.WlasciwosciPersystencji;
 import org.wojtekz.akademik.services.KwaterunekService;
 import org.wojtekz.akademik.services.KwaterunekServiceImpl;
@@ -29,6 +27,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  */
 @Configuration
 @ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.namedbean"})
+@EnableJpaRepositories("org.wojtekz.akademik.repos")
 public class AkademikConfiguration {
 	private static Logger logg = LogManager.getLogger();
 	
@@ -76,29 +75,5 @@ public class AkademikConfiguration {
 		logg.debug("----->>> daneTestowe bean configuration");
 		return new DaneTestowe();
 	}
-	
-	/*@Bean
-	Plikowanie plikowanie() {
-		logg.debug("----->>> plikowanie bean configuration");
-		Plikowanie plikowanie = new Plikowanie();
-		plikowanie.setMarshaller(xStreamMarshaller());
-		plikowanie.setUnmarshaller(xStreamMarshaller());
-		return plikowanie;
-	}*/
-	
-	/*@Bean
-	XStreamMarshaller xStreamMarshaller() {
-		logg.debug("----->>> xStreamMarshaller bean configuration");
-		// XStreamMarshaller xsm = new XStreamMarshaller();
-		// xsm.
-		return new XStreamMarshaller();
-	}*/
-	
-	/*@Bean
-	AkademikApplication akademikApplication() {
-		logg.debug("----->>> akademikApplication bean configuration");
-		return new AkademikApplication();
-	}*/
-	
 	
 }

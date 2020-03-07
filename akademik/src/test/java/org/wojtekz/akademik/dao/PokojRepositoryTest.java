@@ -13,12 +13,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.repos.PokojRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AkademikConfiguration.class})
+@ContextConfiguration(classes = {TestConfiguration.class})
 @EnableTransactionManagement
 @Transactional
 public class PokojRepositoryTest {

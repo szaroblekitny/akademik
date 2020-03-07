@@ -55,6 +55,7 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring-data-jpa.version}</version>
+			<!-- wyłączenie starych wersji -->
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -70,26 +71,46 @@
 				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
-					<artifactId>spring-orm</artifactId>
+					<artifactId>spring-aop</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
+					<artifactId>spring-tx</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-orm</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-context</artifactId>
+    		<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-orm</artifactId>
+    		<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-tx</artifactId>
+    		<version>${spring.version}</version>
+		</dependency>
+		
+		
+		<!-- koniec Springa -->
 		
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -185,35 +206,6 @@
         		</configuration>
 			</plugin>
 			
-			<!-- tworzymy manifest, żeby uruchomić plik jar z linii poleceń -->
-			<!-- dla aplikacji web nie robimy kompletu			
-			<plugin>
-    			<groupId>org.apache.maven.plugins</groupId>
-    			<artifactId>maven-shade-plugin</artifactId>
-    			<version>3.2.1</version>
-    			<executions>
-      				<execution>
-        				<phase>package</phase>
-        				<goals>
-          					<goal>shade</goal>
-        				</goals>
-        				<configuration>
-          					<transformers>
-            					<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              						<mainClass>org.wojtekz.akademik.core.AkademikApplication</mainClass>
-            					</transformer>
-            					<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            		<resource>META-INF/spring.handlers</resource>
-                        		</transformer>
-                        		<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            		<resource>META-INF/spring.schemas</resource>
-                        		</transformer>
-          					</transformers>
-        				</configuration>
-      				</execution>
-    			</executions>
-  			</plugin> -->
-  			
 		</plugins>
 	</build>
 

@@ -11,12 +11,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repos.StudentRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AkademikConfiguration.class})
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class StudentRepositoryTest {
 	private static Logger logg = LogManager.getLogger();
 	private Student student;
