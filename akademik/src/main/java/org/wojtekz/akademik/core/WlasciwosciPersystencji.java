@@ -13,9 +13,9 @@ import org.springframework.core.Ordered;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 /**
- * Opakowanie dla w³aœciwoœci LocalContainerEntityManagerFactoryBean. S¹ one zwracane
- * przez metodê getJpaPropertyMap() jako Map. To dosyæ bruŸdzi, bo jeœli zrobiæ
- * beana o typie Map, to sporo innych próbuje go do³¹czyæ z komunikatem
+ * Opakowanie dla wÅ‚aÅ›ciwoÅ›ci LocalContainerEntityManagerFactoryBean. SÄ… one zwracane
+ * przez metodÄ™ getJpaPropertyMap() jako Map. To dosyÄ‡ bruÅºdzi, bo jeÅ›li zrobiÄ‡
+ * beana o typie Map, to sporo innych prÃ³buje go doÅ‚Ä…czyÄ‡ z komunikatem
  * "Autowiring by type from bean name 'xxxXXX' to bean named 'yyyYYY'"
  * 
  * @author wojtek

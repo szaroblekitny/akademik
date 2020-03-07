@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Æwiczenie dla zobaczenia jak dzia³a BeanFactoryPostProcessor.
+ * Ä†wiczenie dla zobaczenia jak dziaÅ‚a BeanFactoryPostProcessor.
  * @author wojtek
  *
  */
@@ -21,7 +21,7 @@ public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
 	}
 
 	/**
-	 * Tylko loguje nazwê BeanClassLoadera.
+	 * Tylko loguje nazwÄ™ BeanClassLoadera.
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {

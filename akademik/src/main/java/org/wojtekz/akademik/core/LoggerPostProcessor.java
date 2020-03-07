@@ -8,9 +8,9 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 /**
- * Ta klasa jest æwiczeniem implementacji interfejsu BeanPostProcessor.
- * Chwilowo tylko sobie patrzê, jak dzia³a ten mechanizm. Po prostu wpisujê do logu
- * punkty inicjalizacji beanów.
+ * Ta klasa jest Ä‡wiczeniem implementacji interfejsu BeanPostProcessor.
+ * Chwilowo tylko sobie patrzÄ™, jak dziaÅ‚a ten mechanizm. Po prostu wpisujÄ™ do logu
+ * punkty inicjalizacji beanÃ³w.
  * 
  * @author wojtek
  *

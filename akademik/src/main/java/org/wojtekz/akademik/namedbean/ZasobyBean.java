@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.core.WlasciwosciPersystencji;
 
 /**
- * Wczytywanie opisÛw zasobÛw aplikacji.
+ * Wczytywanie opis√≥w zasob√≥w aplikacji.
  *  
  * @author wojtek
  *
@@ -28,10 +28,10 @@ public class ZasobyBean implements Serializable {
 	private WlasciwosciPersystencji wp;
     
     /**
-     * Uøywa klasy WlasciwosciPersystencji do pobrania w≥aúciwoúci z EntityManagerFactory
-     * i zwraca jπ w formie listy prostej do wyúwietlenia.
+     * U≈ºywa klasy WlasciwosciPersystencji do pobrania w≈Ça≈õciwo≈õci z EntityManagerFactory
+     * i zwraca jƒÖ w formie listy prostej do wy≈õwietlenia.
      * 
-     * @return lista w≥aúciwoúci EntityManagerFactory zwiπzanego z aplikacjπ.
+     * @return lista w≈Ça≈õciwo≈õci EntityManagerFactory zwiƒÖzanego z aplikacjƒÖ.
      */
     public List<String> pobierzProperties() {
     	logg.debug("-----------> pobierzProperties");

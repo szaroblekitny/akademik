@@ -1,5 +1,5 @@
 /**
- * Klasy ob≥ugi aplikacji w technologii JavaServer Faces, czyli tak zwane named beans.
+ * Klasy ob≈Çugi aplikacji w technologii JavaServer Faces, czyli tak zwane named beans.
  * 
  * @author wojtek
  *

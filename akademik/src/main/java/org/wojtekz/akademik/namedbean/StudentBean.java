@@ -14,7 +14,7 @@ import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.services.StudentService;
 
 /**
- * Obs³uga studentów od strony aplikacji JSF.
+ * ObsÅ‚uga studentÃ³w od strony aplikacji JSF.
  * 
  * @author wojtek
  *
@@ -30,9 +30,9 @@ public class StudentBean implements Serializable {
 	StudentService studentServ;
 	
 	/**
-	 * Pobiera listê studentów z bazy i przekszta³ca na Stringi czytelne dla strony web.
+	 * Pobiera listÄ™ studentÃ³w z bazy i przeksztaÅ‚ca na Stringi czytelne dla strony web.
 	 * 
-	 * @return lista studentów
+	 * @return lista studentÃ³w
 	 */
 	public List<String> pobierzStudentow() {
 		logg.debug("-----------> pobierzStudentow start");
@@ -41,14 +41,14 @@ public class StudentBean implements Serializable {
 		if (studentServ != null) {
 			listaStudentow = studentServ.listAll();
 		} else {
-			logg.debug("-----------> nulowa lista studentów, coœ nie bangla");
+			logg.debug("-----------> nulowa lista studentÃ³w, coÅ› nie bangla");
 		}
 		
 		for (Student ss : listaStudentow) {
 			studenci.add(ss.toString());
 		}
 		
-		logg.debug("-----------> mamy studentów dla stronki");
+		logg.debug("-----------> mamy studentÃ³w dla stronki");
 		return studenci;
 	}
 	

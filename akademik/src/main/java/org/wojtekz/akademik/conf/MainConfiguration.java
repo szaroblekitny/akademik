@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
- * Ta klasa konfiguruje "produkcyjne" (nietestowe) po³¹czenie z baz¹ danych.
- * Do testów konfiguracja bêdzie brana z TestConfiguration.
+ * Ta klasa konfiguruje "produkcyjne" (nietestowe) poÅ‚Ä…czenie z bazÄ… danych.
+ * Do testÃ³w konfiguracja bÄ™dzie brana z TestConfiguration.
  * 
  * @author wojtek
  *
