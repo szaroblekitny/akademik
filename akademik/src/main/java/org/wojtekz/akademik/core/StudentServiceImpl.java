@@ -12,7 +12,7 @@ import org.wojtekz.akademik.entity.Student;
 /**
  * Implementacja interfejsu StudentService.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 @Transactional(readOnly = true)

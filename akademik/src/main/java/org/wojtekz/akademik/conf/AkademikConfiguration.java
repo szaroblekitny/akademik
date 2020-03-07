@@ -18,11 +18,11 @@ import org.wojtekz.akademik.core.StudentServiceImpl;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
- * Klasa konfiguracyjna aplikacji. Zawiera definicje beanów springa w formie klasy,
- * co oznacza, ¿e nie jest konieczny plik konfiguracyjny xml. W plikach s¹ konfiguracje
- * persystencji, dostêpu do danych i logowania log4j.
+ * Klasa konfiguracyjna aplikacji. Zawiera definicje beanÃ³w springa w formie klasy,
+ * co oznacza, Å¼e nie jest konieczny plik konfiguracyjny xml. W plikach sÄ… konfiguracje
+ * persystencji, dostÄ™pu do danych i logowania log4j.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 @Configuration

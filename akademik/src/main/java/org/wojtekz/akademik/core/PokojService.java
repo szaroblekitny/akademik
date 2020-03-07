@@ -5,23 +5,23 @@ import java.util.List;
 import org.wojtekz.akademik.entity.Pokoj;
 
 /**
- * <p>Ten interfejs specyfikuje metody niezbêdne do przetwarzania klasy (tabeli)
+ * <p>Ten interfejs specyfikuje metody niezbÄ™dne do przetwarzania klasy (tabeli)
  * Pokoj w bazie danych. Zwykle zawiera metody wyszukiwania, zapisu, odczytu
- * i modyfikacji (CRUD). Uniezale¿nia core aplikacji od warstwy bezpoœrednio
- * siêgaj¹cej do bazy danych (w tym przypadku zrealizowanej na repozytoriach
- * Spring Data JPA). Zapewne mo¿na to jeszcze jakoœ uogólniæ...</p>
+ * i modyfikacji (CRUD). UniezaleÅ¼nia core aplikacji od warstwy bezpoÅ›rednio
+ * siÄ™gajÄ…cej do bazy danych (w tym przypadku zrealizowanej na repozytoriach
+ * Spring Data JPA). Zapewne moÅ¼na to jeszcze jakoÅ› uogÃ³lniÄ‡...</p>
  * 
- * <p>W naszym przypadku chcemy zapsiaæ pokój w bazie danych, odzczytaæ
- * z bazy - zarówno pojedynczy pokój, jak i listê, znaæ liczbê pokoi, zmianê
- * danych zostawiê na póŸniej.</p>
+ * <p>W naszym przypadku chcemy zapsiaÄ‡ pokÃ³j w bazie danych, odzczytaÄ‡
+ * z bazy - zarÃ³wno pojedynczy pokÃ³j, jak i listÄ™, znaÄ‡ liczbÄ™ pokoi, zmianÄ™
+ * danych zostawiÄ™ na pÃ³Åºniej.</p>
  * 
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 public interface PokojService {
 	/**
-	 * Zapisuje pokój w bazie danych.
+	 * Zapisuje pokÃ³j w bazie danych.
 	 * @param pokoj Pokoj
 	 */
 	public void save(Pokoj pokoj);
@@ -33,7 +33,7 @@ public interface PokojService {
 	public List<Pokoj> listAll();
 	
 	/**
-	 * Wyszukuje w bazie pokój o podanym numerze.
+	 * Wyszukuje w bazie pokÃ³j o podanym numerze.
 	 * 
 	 * @param numerPokoju jako String
 	 * @return Pokoj
@@ -41,19 +41,19 @@ public interface PokojService {
 	public Pokoj findByNumber(String numerPokoju);
 	
 	/**
-	 * Podaje liczbê pokoi zapisanych z bazie danych.
+	 * Podaje liczbÄ™ pokoi zapisanych z bazie danych.
 	 * 
 	 * @return liczba pokoi
 	 */
 	public long ilePokoi();
 	
 	/**
-	 * Kasuje ca³¹ tabelê pokoi.
+	 * Kasuje caÅ‚Ä… tabelÄ™ pokoi.
 	 */
 	public void deleteAll();
 	
 	/**
-	 * Kasuje pokój o wybranym numerze.
+	 * Kasuje pokÃ³j o wybranym numerze.
 	 * 
 	 * @param numerPokoju jako String (to nie jest id pokoju)
 	 */

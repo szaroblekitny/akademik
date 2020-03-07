@@ -17,7 +17,7 @@ import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 /**
- * Test danych testowych. Konieczny ze wzgledu na koniecznoœæ rozpoznawania
+ * Test danych testowych. Konieczny ze wzgledu na koniecznoÅ›Ä‡ rozpoznawania
  * typu listy przekazywanej do zapisywania w bazie.
  * 
  * @author Wojtek

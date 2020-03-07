@@ -74,7 +74,7 @@ public class PlikowanieTest {
 			Assert.assertTrue(true);
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> testWriteList: ", ee);
-			Assert.assertFalse("----->>> Mamy b³¹d zapisu", true);
+			Assert.assertFalse("----->>> Mamy bÅ‚Ä…d zapisu", true);
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class PlikowanieTest {
 			listaPokoi = (List<Pokoj>)plikowanie.loadObjectList(buReader);
 		} catch (Exception ex) {
 			logg.error("----- ERROR >> testWriteList: ", ex);
-			Assert.assertFalse("----->>> Mamy b³¹d zapisu", true);
+			Assert.assertFalse("----->>> Mamy bÅ‚Ä…d zapisu", true);
 		}
 		
 		logg.debug("----->>> Odczytana lista pokoi:");

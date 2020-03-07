@@ -13,7 +13,7 @@ import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 /**
- * Klasa przygotowujπca dane testowe: 3 pokoje i 6 studentÛw.
+ * Klasa przygotowujƒÖca dane testowe: 3 pokoje i 6 student√≥w.
  * 
  * @author Wojtek
  *
@@ -41,10 +41,10 @@ public class DaneTestowe {
 	private PokojService pokojService;
 
 	/**
-	 * Wype≥nia pola przyk≥adowymi danymi testowymi.
+	 * Wype≈Çnia pola przyk≈Çadowymi danymi testowymi.
 	 */
 	public DaneTestowe() {
-		logg.debug("----->>> Dane testowe - konstruktor pe≥ny");
+		logg.debug("----->>> Dane testowe - konstruktor pe≈Çny");
 
 		pokoj1 = new Pokoj();
 		pokoj1.setId(1);
@@ -87,13 +87,13 @@ public class DaneTestowe {
 
 		student4 = new Student();
 		student4.setId(4);
-		student4.setImie("Miros≥aw");
+		student4.setImie("Miros≈Çaw");
 		student4.setNazwisko("Nowak");
 		student4.setPlec(Plec.Mezczyzna);
 
 		student5 = new Student();
 		student5.setId(5);
-		student5.setImie("Ma≥gorzata");
+		student5.setImie("Ma≈Çgorzata");
 		student5.setNazwisko("Nowakowska");
 		student5.setPlec(Plec.Kobieta);
 
@@ -103,7 +103,7 @@ public class DaneTestowe {
 		student6.setNazwisko("Patafian");
 		student6.setPlec(Plec.Mezczyzna);
 
-		// przestawiona kolejnoúÊ
+		// przestawiona kolejno≈õƒá
 		mieszkancy = new ArrayList<Student>();
 		mieszkancy.add(student2);
 		mieszkancy.add(student1);
@@ -116,7 +116,7 @@ public class DaneTestowe {
 	}
 
 	/**
-	 * Tworzy obiekt z danymi i pozwala go wypelniÊ parametrami zewnÍtrznymi.
+	 * Tworzy obiekt z danymi i pozwala go wypelniƒá parametrami zewnƒôtrznymi.
 	 * 
 	 * @param pokoj1 dane pokoju 1.
 	 * @param pokoj2 dane pokoju 2.
@@ -182,7 +182,7 @@ public class DaneTestowe {
 			}
 
 			if (className.equals("Student")) {
-				logg.debug("----->>> wrzucam dane studentÛw");
+				logg.debug("----->>> wrzucam dane student√≥w");
 				studentService.deleteAll();
 				for (T stud : lista) {
 					studentService.save((Student) stud);

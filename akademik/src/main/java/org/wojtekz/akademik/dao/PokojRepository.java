@@ -5,19 +5,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.wojtekz.akademik.entity.Pokoj;
 
 /**
- * Interfejs rozszerzaj¹cy JpaRepository dla klasy Pokoj. Zawiera dodatkowe metody
- * dla obs³ugi Pokoi w bazie danych.
+ * Interfejs rozszerzajÄ…cy JpaRepository dla klasy Pokoj. Zawiera dodatkowe metody
+ * dla obsÅ‚ugi Pokoi w bazie danych.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 public interface PokojRepository extends JpaRepository<Pokoj, Long> {
 	
 	/**
-	 * Wyszukiwanie pokoju po jego numerze. Tu jest niejawne za³o¿enie, ¿e istnieje
-	 * tylko jeden pokój o podanym numerze.
+	 * Wyszukiwanie pokoju po jego numerze. Tu jest niejawne zaÅ‚oÅ¼enie, Å¼e istnieje
+	 * tylko jeden pokÃ³j o podanym numerze.
 	 * 
-	 * @param numerPokoju numer pokoju, nie jest to¿samy z identyfikatorem, np. mo¿e byæ numer "103A"
+	 * @param numerPokoju numer pokoju, nie jest toÅ¼samy z identyfikatorem, np. moÅ¼e byÄ‡ numer "103A"
 	 * @return obiekt Pokoj
 	 */
 	@Query("select pp from Pokoj pp where pp.numerPokoju = ?1")

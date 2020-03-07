@@ -7,31 +7,31 @@ import org.springframework.data.jpa.repository.Query;
 import org.wojtekz.akademik.entity.Kwaterunek;
 
 /**
- * Interfejs rozszerzaj¹cy JpaRepository dla klasy Kwaterunek. Zawiera dodatkowe metody
- * dla obs³ugi Kwaterunku w bazie danych.
+ * Interfejs rozszerzajÄ…cy JpaRepository dla klasy Kwaterunek. Zawiera dodatkowe metody
+ * dla obsÅ‚ugi Kwaterunku w bazie danych.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 public interface KwaterunekRepository extends JpaRepository<Kwaterunek, Long> {
 	
 	/**
 	 * Wyszukuje rekordy klasy Kwaterunek dla danego identyfikatora studenta.
-	 * Teoretycznie powinien byæ jeden taki rekord pokazuj¹cy, w którym pokoju
+	 * Teoretycznie powinien byÄ‡ jeden taki rekord pokazujÄ…cy, w ktÃ³rym pokoju
 	 * mieszka student o podanym identyfikatorze.
 	 * 
 	 * @param idStudenta identyfikator studenta
-	 * @return lista obiektów Kwaterunek
+	 * @return lista obiektÃ³w Kwaterunek
 	 */
 	@Query("select kw from Kwaterunek kw where kw.student = ?1")
 	public List<Kwaterunek> findByIdStudenta(long idStudenta);
 	
 	/**
 	 * Wyszukuje rekordy klasy Kwaterunek dla danego identyfikatora pokoju.
-	 * Tworzy spis studentów mieszkaj¹cych w podanym pokoju.
+	 * Tworzy spis studentÃ³w mieszkajÄ…cych w podanym pokoju.
 	 * 
 	 * @param idPokoju idnetyfikator pokoju
-	 * @return lista obiektów Kwaterunek o identycznym identyfikatorze pokoju
+	 * @return lista obiektÃ³w Kwaterunek o identycznym identyfikatorze pokoju
 	 */
 	@Query("select kw from Kwaterunek kw where kw.pokoj = ?1")
 	public List<Kwaterunek> findByIdPokoju(long idPokoju);

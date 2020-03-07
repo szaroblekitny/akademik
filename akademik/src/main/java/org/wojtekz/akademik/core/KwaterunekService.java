@@ -7,7 +7,7 @@ import org.wojtekz.akademik.entity.Student;
 
 
 /**
- * Serwis dla klasy (tabeli) Kwaterunek. Zawiera metody obs³ugi rekordów dla tej tabeli.
+ * Serwis dla klasy (tabeli) Kwaterunek. Zawiera metody obsÅ‚ugi rekordÃ³w dla tej tabeli.
  * 
  * @author Wojtek
  *
@@ -21,13 +21,13 @@ public interface KwaterunekService {
 	public void save(Kwaterunek kwaterunek);
 	
 	/**
-	 * Lista wszystkich kwaterunków w bazie.
-	 * @return lista obiektów Kwaterunek
+	 * Lista wszystkich kwaterunkÃ³w w bazie.
+	 * @return lista obiektÃ³w Kwaterunek
 	 */
 	public List<Kwaterunek> listAll();
 	
 	/**
-	 * Znajduje Kwaterunek po identyfikatorze w³asnym.
+	 * Znajduje Kwaterunek po identyfikatorze wÅ‚asnym.
 	 * 
 	 * @param id
 	 * @return obiekt Kwaterunek
@@ -35,27 +35,27 @@ public interface KwaterunekService {
 	public Kwaterunek findById(long id);
 	
 	/**
-	 * Znajduje Kwaterunek po identyfikatorze studenta. Teoretycznie powinien byæ to jeden
+	 * Znajduje Kwaterunek po identyfikatorze studenta. Teoretycznie powinien byÄ‡ to jeden
 	 * rekord (?).
 	 * 
 	 * @param idStudenta
-	 * @return lista obiektów Kwaterunek
+	 * @return lista obiektÃ³w Kwaterunek
 	 */
 	public List<Kwaterunek> findByIdStudenta(long idStudenta);
 	
 	/**
-	 * Lista obiektów Kwaterunek o podanym identyfikatorze pokoju.
+	 * Lista obiektÃ³w Kwaterunek o podanym identyfikatorze pokoju.
 	 * 
 	 * @param idPokoju
-	 * @return lista obiektów Kwaterunek
+	 * @return lista obiektÃ³w Kwaterunek
 	 */
 	public List<Kwaterunek> findByIdPokoju(long idPokoju);
 	
 	/**
-	 * Wyszukuje studentów zamieszka³ych w pokoju przez wyszukanie ich kwaterunków.
+	 * Wyszukuje studentÃ³w zamieszkaÅ‚ych w pokoju przez wyszukanie ich kwaterunkÃ³w.
 	 * 
 	 * @param idPokoju
-	 * @return lista studentów
+	 * @return lista studentÃ³w
 	 */
 	public List<Student> findStudenciWPokoju(long idPokoju);
 	

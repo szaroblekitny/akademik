@@ -25,9 +25,9 @@ import org.wojtekz.akademik.entity.Student;
 import com.thoughtworks.xstream.io.StreamException;
 
 /**
- * To jest g³ówna klasa naszej aplikacji pod tytu³em Manager akademika. Zobacz opis aplikacji.
+ * To jest gÅ‚Ã³wna klasa naszej aplikacji pod tytuÅ‚em Manager akademika. Zobacz opis aplikacji.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 public class AkademikApplication {
@@ -47,16 +47,16 @@ public class AkademikApplication {
 	Plikowanie plikowanie;
 	
 	/**
-	 * Wywo³anie naszej aplikacji. Podajemy plik z pokojami, plik ze studentami i plik wyjœciowy,
-	 * a resztê ma zrobiæ program, czyli zakwaterowaæ studentów i wypisaæ wynik.
+	 * WywoÅ‚anie naszej aplikacji. Podajemy plik z pokojami, plik ze studentami i plik wyjÅ›ciowy,
+	 * a resztÄ™ ma zrobiÄ‡ program, czyli zakwaterowaÄ‡ studentÃ³w i wypisaÄ‡ wynik.
 	 * 
-	 * @param args argumenty: nazwa pliku z pokojami, nazwa pliku ze strudentami i nazwa pliku wyjœciowego
+	 * @param args argumenty: nazwa pliku z pokojami, nazwa pliku ze strudentami i nazwa pliku wyjÅ›ciowego
 	 */
 	public static void main(String[] args) {
-		logg.info("----->>> Pocz¹tek aplikacji AkademikApplication");
+		logg.info("----->>> PoczÄ…tek aplikacji AkademikApplication");
 		
 		if (args.length != 3) {
-			System.out.println("Wywo³anie z argumentami: nazwa_pliku_z_pokojami nazwa_pliku_ze_studentami nazwa_pliku_wynikowego");
+			System.out.println("WywoÅ‚anie z argumentami: nazwa_pliku_z_pokojami nazwa_pliku_ze_studentami nazwa_pliku_wynikowego");
 			return;
 		}
 		
@@ -67,7 +67,7 @@ public class AkademikApplication {
 			studenciReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[1]), charset);
 		} catch (IOException ie) {
 			logg.error("Problemy plikowe", ie);
-			System.out.println("Pliki wejœciowe s¹ niew³aœciwe");
+			System.out.println("Pliki wejÅ›ciowe sÄ… niewÅ‚aÅ›ciwe");
 			return;
 		}
 		
@@ -80,7 +80,7 @@ public class AkademikApplication {
 		
 		logg.debug("----->>> Mamy kontekst AkademikApplication");
 		
-		// ot i ca³a logika naszej aplikacji:
+		// ot i caÅ‚a logika naszej aplikacji:
 		try {
 			
 			pokojService.deleteAll();
@@ -103,15 +103,15 @@ public class AkademikApplication {
 			logg.error("----- ERROR >> Nie ma takiego pliku: ", nsfe);
 			System.err.println("Nie ma takiego pliku: " + nsfe.getMessage());
 		} catch (StreamException se) {
-			logg.error("----- ERROR >> B³¹d parsowania pliku: ", se);
-			System.err.println("Oczekujê pliku xml o pokojach lub studentach, " + se.getMessage());
+			logg.error("----- ERROR >> BÅ‚Ä…d parsowania pliku: ", se);
+			System.err.println("OczekujÄ™ pliku xml o pokojach lub studentach, " + se.getMessage());
 		} catch (Exception ee) {
-			logg.error("----- ERROR >> Ca³kowicie b³êdny b³¹d: ", ee);
+			logg.error("----- ERROR >> CaÅ‚kowicie bÅ‚Ä™dny bÅ‚Ä…d: ", ee);
 			ee.printStackTrace();
 		} finally {
 			logg.debug("----->>> Zamykamy kontekst AkademikApplication");
 			((AbstractApplicationContext) applicationContext).close();
-			logg.info("----->>> Ca³kowity koniec AkademikApplication");
+			logg.info("----->>> CaÅ‚kowity koniec AkademikApplication");
 		
 		}
 	}
@@ -119,7 +119,7 @@ public class AkademikApplication {
 	// ------------------------------------------------------------------------------------------
 	
 	/**
-	 * Pobiera listê pokoi z pliku XML i zapisuje w bazie danych.
+	 * Pobiera listÄ™ pokoi z pliku XML i zapisuje w bazie danych.
 	 * 
 	 * @param reader BufferedReader
 	 * @throws XmlMappingException
@@ -137,7 +137,7 @@ public class AkademikApplication {
 	}
 	
 	/**
-	 * Pobiera listê studentów z pliku XML i zapisuje w bazie danych.
+	 * Pobiera listÄ™ studentÃ³w z pliku XML i zapisuje w bazie danych.
 	 * 
 	 * @param reader
 	 * @throws XmlMappingException
@@ -156,31 +156,31 @@ public class AkademikApplication {
 	
 	
 	/**
-	 * Tworzy wpsiy w tabeli poœredniej Kwaterunek, która zapisuje ³¹czniki studentów
+	 * Tworzy wpsiy w tabeli poÅ›redniej Kwaterunek, ktÃ³ra zapisuje Å‚Ä…czniki studentÃ³w
 	 * z pokojami.
-	 * <p>Najprostszy algorytm: dla ka¿dego studenta wybiera pokój, dla którego zajêtoœæ
-	 * jest mniejsza od pojemnoœæ, tworzy wpis w tabeli kwaterunku i zwiêksza zajêtoœæ
-	 * pokoju o jeden. Wymaga: znacznika stopnia zajêtoœci pokoju i czyszczenia tych
-	 * znaczników przed rozpoczêciem kwaterunku.</p>
+	 * <p>Najprostszy algorytm: dla kaÅ¼dego studenta wybiera pokÃ³j, dla ktÃ³rego zajÄ™toÅ›Ä‡
+	 * jest mniejsza od pojemnoÅ›Ä‡, tworzy wpis w tabeli kwaterunku i zwiÄ™ksza zajÄ™toÅ›Ä‡
+	 * pokoju o jeden. Wymaga: znacznika stopnia zajÄ™toÅ›ci pokoju i czyszczenia tych
+	 * znacznikÃ³w przed rozpoczÄ™ciem kwaterunku.</p>
 	 * 
-	 * <p>Algorytm oparty na bazie danych: dla ka¿dego studenta sprawdza, czy student nie
-	 * ma wpisu w tabeli kwaterunek. Jeœli nie, dla ka¿dego pokoju sprawdza liczbê wpisów
-	 * dla tego pokoju. Jeœli liczba jest mniejsza od pojemnoœci, dodaje wpis
-	 * ³¹cz¹cy pokój ze studentem. Na oko trochê kosztowniejszy od poprzedniego, ale
-	 * nie wymaga ¿adnych dodatkowych pól, a przed kwaterunkiem wystarczy tylko
+	 * <p>Algorytm oparty na bazie danych: dla kaÅ¼dego studenta sprawdza, czy student nie
+	 * ma wpisu w tabeli kwaterunek. JeÅ›li nie, dla kaÅ¼dego pokoju sprawdza liczbÄ™ wpisÃ³w
+	 * dla tego pokoju. JeÅ›li liczba jest mniejsza od pojemnoÅ›ci, dodaje wpis
+	 * Å‚Ä…czÄ…cy pokÃ³j ze studentem. Na oko trochÄ™ kosztowniejszy od poprzedniego, ale
+	 * nie wymaga Å¼adnych dodatkowych pÃ³l, a przed kwaterunkiem wystarczy tylko
 	 * wyczyszczenie tablicy kwaterunek.</p>
 	 * 
-	 * Na razie bez uwzglêdniania p³ci.
+	 * Na razie bez uwzglÄ™dniania pÅ‚ci.
 	 * 
-	 * @return true, jeœli wszyscy studenci zostali zakwaterowani
+	 * @return true, jeÅ›li wszyscy studenci zostali zakwaterowani
 	 * 
 	 */
 	public boolean zakwateruj() {
 		logg.debug("----->>> zakwateruj begins");
-		// czyœcimy kwaterunek
+		// czyÅ›cimy kwaterunek
 		kwaterunekService.deleteAll();
 		
-		// listy studentów i pokoi
+		// listy studentÃ³w i pokoi
 		List<Student> studenci = studentService.listAll();
 		List<Pokoj> pokoje = pokojService.listAll();
 		if (logg.isDebugEnabled()) {
@@ -190,11 +190,11 @@ public class AkademikApplication {
 		long kolKwaterunek = 1;
 		int iluZakwater;
 		
-		// dla ka¿dego studenta
+		// dla kaÅ¼dego studenta
 		for (Student student : studenci) {
 			iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 			if (logg.isDebugEnabled()) {
-				logg.debug("----->>> dla studenta " + student.getId() + " ilu ju¿ jest: " + iluZakwater);
+				logg.debug("----->>> dla studenta " + student.getId() + " ilu juÅ¼ jest: " + iluZakwater);
 			}
 			
 			if (iluZakwater == 0) {
@@ -204,7 +204,7 @@ public class AkademikApplication {
 					int zajeteMiejsca = kwaterunekService.findByIdPokoju(pokoj.getId()).size();
 					
 					if (logg.isDebugEnabled()) {
-						logg.debug("----->>> dla pokoju " + pokoj.getId() + " miejsc: " + pokoj.getLiczbaMiejsc() + " zajêtych: " + zajeteMiejsca);
+						logg.debug("----->>> dla pokoju " + pokoj.getId() + " miejsc: " + pokoj.getLiczbaMiejsc() + " zajÄ™tych: " + zajeteMiejsca);
 					}
 					
 					if (pokoj.getLiczbaMiejsc() > zajeteMiejsca) {
@@ -219,28 +219,28 @@ public class AkademikApplication {
 					}
 				}
 				
-				// na koniec sprawdzamy, czy student zosta³ zakwaterowany,
-				// jeœli nie, mamy przepe³nienie
+				// na koniec sprawdzamy, czy student zostaÅ‚ zakwaterowany,
+				// jeÅ›li nie, mamy przepeÅ‚nienie
 				iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 				if (iluZakwater == 0) {
-					logg.warn("----->>> Nie mo¿na zakwaterowaæ studenta " + student.toString());
-					logg.warn("----->>> Przepe³nienie!");
+					logg.warn("----->>> Nie moÅ¼na zakwaterowaÄ‡ studenta " + student.toString());
+					logg.warn("----->>> PrzepeÅ‚nienie!");
 					return false;
 				}
 				
 			}
 			
-		}  // dla ka¿dego studenta
+		}  // dla kaÅ¼dego studenta
 		
 		return true;
 	}
 	
 	/**
-	 * Wypisuje stan kwaterunku akademika. Podaje listê pokoi z nazwiskami
-	 * zakwaterowanych studentów.
+	 * Wypisuje stan kwaterunku akademika. Podaje listÄ™ pokoi z nazwiskami
+	 * zakwaterowanych studentÃ³w.
 	 * 
 	 * @param writer BufferedWriter
-	 * @param udaloSie true, jeœli wszyscy studenci zostali zakwaterowani
+	 * @param udaloSie true, jeÅ›li wszyscy studenci zostali zakwaterowani
 	 * @throws IOException 
 	 */
 	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {

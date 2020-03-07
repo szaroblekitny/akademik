@@ -19,7 +19,7 @@ import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 /**
- * Klasa do obs³ugi operacji plikowych.
+ * Klasa do obsÅ‚ugi operacji plikowych.
  * 
  * @author Wojtek
  *
@@ -69,10 +69,10 @@ public class Plikowanie {
 
 
 	/**
-	 * Zapisuje listê obiektów do pliku XML.
+	 * Zapisuje listÄ™ obiektÃ³w do pliku XML.
 	 * 
 	 * @param writer BufferedWriter
-	 * @param list lista obiektów podanego typu
+	 * @param list lista obiektÃ³w podanego typu
 	 * @throws XmlMappingException
 	 * @throws IOException
 	 */
@@ -85,13 +85,13 @@ public class Plikowanie {
 
 	
 	/**
-	 * Przekszta³ca dane z pliku XML na listê obiektów.
+	 * PrzeksztaÅ‚ca dane z pliku XML na listÄ™ obiektÃ³w.
 	 * 
 	 * @param reader buforowy
-	 * @return listê obiektów odczytanych z pliku
+	 * @return listÄ™ obiektÃ³w odczytanych z pliku
 	 * @throws XmlMappingException w przypadku niepowodzenia mapowania pliku XML na obiekty
-	 *         podanego typu; równie¿ gdy plik nie jest plikiem XML
-	 * @throws IOException b³¹d odczytu z pliku
+	 *         podanego typu; rÃ³wnieÅ¼ gdy plik nie jest plikiem XML
+	 * @throws IOException bÅ‚Ä…d odczytu z pliku
 	 */
 	public List<?> loadObjectList(BufferedReader reader)
 			throws XmlMappingException, IOException {
@@ -102,7 +102,7 @@ public class Plikowanie {
 	
 	
 	/**
-	 * Metoda pomocnicza s³u¿¹ca do zapisania pokojów z bazy danych do pliku.
+	 * Metoda pomocnicza sÅ‚uÅ¼Ä…ca do zapisania pokojÃ³w z bazy danych do pliku.
 	 * 
 	 * @param writer BufferedWriter
 	 * @throws IOException 
@@ -114,7 +114,7 @@ public class Plikowanie {
 	}
 
 	/**
-	 * Metoda pomocnicza s³u¿¹ca do zapisania studentów z bazy danych do pliku.
+	 * Metoda pomocnicza sÅ‚uÅ¼Ä…ca do zapisania studentÃ³w z bazy danych do pliku.
 	 * 
 	 * @param writer BufferedWriter
 	 * @throws IOException 

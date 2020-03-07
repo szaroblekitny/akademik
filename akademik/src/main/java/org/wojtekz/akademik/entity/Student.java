@@ -13,7 +13,7 @@ import javax.persistence.Id;
  * <li>Plec plec
  * </ul>
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 @Entity
