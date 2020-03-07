@@ -1,5 +1,5 @@
 /**
- * Teoria m�wi, ze repozytoria sa w osobnym pakiecie
+ * Teoria mówi, ze repozytoria są w osobnym pakiecie
  * 
  * @author wojtek
  *
