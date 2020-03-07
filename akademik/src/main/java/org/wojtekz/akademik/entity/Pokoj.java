@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- * Entity dla pokoju - odzwierciedla pokój jako rekord w bazie danych.
+ * Entity dla pokoju - odzwierciedla pokÃ³j jako rekord w bazie danych.
  * Zawiera trzy pola:
  * <ul>
  * <li>long id
@@ -12,7 +12,7 @@ import javax.persistence.Id;
  * <li>int liczbaMiejsc
  * </ul>
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 @Entity

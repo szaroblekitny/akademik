@@ -1,6 +1,6 @@
 /**
- * Pakiet zawieraj¹cy encje bazodanowe. Definiuj¹ one tabele w bazie danych,
- * bêd¹ce jednoczeœnie g³ównymi obiektami naszej aplikacji.
+ * Pakiet zawierajÄ…cy encje bazodanowe. DefiniujÄ… one tabele w bazie danych,
+ * bÄ™dÄ…ce jednoczeÅ›nie gÅ‚Ã³wnymi obiektami naszej aplikacji.
  * 
  * @author Wojtek
  *

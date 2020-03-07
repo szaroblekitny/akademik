@@ -5,16 +5,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.wojtekz.akademik.entity.Student;
 
 /**
- * Interfejs rozszerzaj¹cy JpaRepository dla klasy Student. Zawiera dodatkowe metody
- * dla obs³ugi Studentów w bazie danych.
+ * Interfejs rozszerzajÄ…cy JpaRepository dla klasy Student. Zawiera dodatkowe metody
+ * dla obsÅ‚ugi StudentÃ³w w bazie danych.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 public interface StudentRepository extends JpaRepository<Student, Long> {
 	
 	/**
-	 * Wyszukowanie studentów wg nazwiska (nazwy). Istnieje niejawne za³o¿enie, ¿e istnieje
+	 * Wyszukowanie studentÃ³w wg nazwiska (nazwy). Istnieje niejawne zaÅ‚oÅ¼enie, Å¼e istnieje
 	 * tylko jeden student o podanej nazwie.
 	 * 
 	 * @param name nazwisko studenta

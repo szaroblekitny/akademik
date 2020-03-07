@@ -34,7 +34,7 @@ import org.wojtekz.akademik.services.StudentService;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
- * G³ówny test g³ównej klasy naszego Akademika.
+ * GÅ‚Ã³wny test gÅ‚Ã³wnej klasy naszego Akademika.
  * 
  * @author Wojtek
  *
@@ -120,7 +120,7 @@ public class AkademikApplicationTest {
 		
 		Student nowak = new Student();
 		nowak.setId(4);
-		nowak.setImie("Miros³aw");
+		nowak.setImie("MirosÅ‚aw");
 		nowak.setNazwisko("Nowak");
 		nowak.setPlec(Plec.Mezczyzna);
 		
@@ -150,7 +150,7 @@ public class AkademikApplicationTest {
 	}
 
 	/**
-	 * Test, czy aplikacja umie pobraæ dane z pliku i zapisaæ je w bazie danych.
+	 * Test, czy aplikacja umie pobraÄ‡ dane z pliku i zapisaÄ‡ je w bazie danych.
 	 */
 	@Test
 	public void testPobierzPokoje() {
@@ -165,7 +165,7 @@ public class AkademikApplicationTest {
 			Assert.assertEquals(3, pokZBazy.getLiczbaMiejsc());
 			
 		} catch (IOException ee) {
-			logg.error("----- ERROR >> B³¹d odczytu pliku z pokojami");
+			logg.error("----- ERROR >> BÅ‚Ä…d odczytu pliku z pokojami");
 			Assert.fail("Exception: " + ee.getMessage());
 		}
 		
@@ -185,7 +185,7 @@ public class AkademikApplicationTest {
 			Assert.assertEquals(3, malinowskiZBazy.getId());
 			
 		} catch (IOException ee) {
-			logg.error("----- ERROR >> B³¹d odczytu pliku ze studentami");
+			logg.error("----- ERROR >> BÅ‚Ä…d odczytu pliku ze studentami");
 			Assert.fail("Exception: " + ee.getMessage());
 		}
 		
@@ -225,7 +225,7 @@ public class AkademikApplicationTest {
 			int ileLinii = wszyskieLinie.size();
 			Assert.assertEquals("===================", wszyskieLinie.get(ileLinii - 1));
 		} catch (IOException ee) {
-			logg.error("----->>> testStanuAkademika B³¹d bufora ", ee);
+			logg.error("----->>> testStanuAkademika BÅ‚Ä…d bufora ", ee);
 			Assert.fail("Exception: " + ee.getMessage());
 		} finally {
 			usunDane();
@@ -240,7 +240,7 @@ public class AkademikApplicationTest {
 	}
 	
 	/**
-	 * wstawia pokoje i studentów do bazy
+	 * wstawia pokoje i studentÃ³w do bazy
 	 */
 	private void zapelnijDanymi() {
 		logg.debug("----->>> zapelnijDanymi starts");

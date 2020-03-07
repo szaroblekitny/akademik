@@ -13,7 +13,7 @@ import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repos.KwaterunekRepository;
 
 /**
- * Implementacja obs≥ugi tabelki kwaterunek.
+ * Implementacja obs≈Çugi tabelki kwaterunek.
  * 
  * @author Wojtek
  *

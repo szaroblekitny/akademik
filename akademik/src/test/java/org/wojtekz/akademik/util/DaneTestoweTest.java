@@ -16,7 +16,7 @@ import org.wojtekz.akademik.services.PokojService;
 import org.wojtekz.akademik.services.StudentService;
 
 /**
- * Test danych testowych. Konieczny ze wzgledu na koniecznoœæ rozpoznawania
+ * Test danych testowych. Konieczny ze wzgledu na koniecznoÅ›Ä‡ rozpoznawania
  * typu listy przekazywanej do zapisywania w bazie.
  * 
  * @author Wojtek

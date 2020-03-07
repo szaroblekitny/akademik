@@ -13,7 +13,7 @@ import org.wojtekz.akademik.repos.StudentRepository;
 /**
  * Implementacja interfejsu StudentService.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 @Repository

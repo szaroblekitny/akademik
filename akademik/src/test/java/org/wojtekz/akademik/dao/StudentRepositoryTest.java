@@ -32,10 +32,10 @@ public class StudentRepositoryTest {
 	}
 
 	/**
-	 * Metoda testuje tylko, czy zwracany obiekt nie jest nulem. W³aœciwie s³u¿y
-	 * do przetestowania ca³ego ci¹gu persystencji dla klasy Student. W tym teœcie
-	 * ¿adnymi danymi siê nie przejmujemy. Tak napradwdê sprawdzane jest, czy cokolwiek
-	 * jest zwracane po przejœciu wszystkich stopni po³¹czenia z baz¹ danych. 
+	 * Metoda testuje tylko, czy zwracany obiekt nie jest nulem. WÅ›aÅ›ciwie sÅ‚uÅ¼y
+	 * do przetestowania caÅ‚ego ciÄ…gu persystencji dla klasy Student. W tym teÅ›cie
+	 * zadnymi danymi siÄ™ nie przejmujemy. Tak napradwdÄ… sprawdzane jest, czy cokolwiek
+	 * jest zwracane po przejÅ›ciu wszystkich stopni poÅ‚Ä…czenia z bazÄ… danych. 
 	 */
 	@Test
 	public void findAllTest() {
@@ -45,8 +45,8 @@ public class StudentRepositoryTest {
 	
 	/**
 	 * Metoda kasuje wszystkie rekordy, zapisuje naszego studenta do bazy
-	 * i wyszukuje wszystkich studentów,
-	 * co ma daæ niepusty zbiór studentów
+	 * i wyszukuje wszystkich studentÃ³w,
+	 * co ma daÄ‡ niepusty zbiÃ³r studentÃ³w
 	 */
 	@Test
 	public void zapiszIOdczytay() {
@@ -54,7 +54,6 @@ public class StudentRepositoryTest {
 		logg.debug("----->>> zapiszIOdczytay method fired");
 		studentRep.deleteAll();
 		logg.debug("----->>> zapiszIOdczytay po deleteAll");
-		// public <S extends Student> S save(S entity) {
 		studentRep.save(student);
 		logg.debug("----->>> zapiszIOdczytay po save student");
 		listaStudentow = studentRep.findAll();

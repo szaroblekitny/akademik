@@ -1,9 +1,9 @@
 package org.wojtekz.akademik.entity;
 
 /**
- * Wbrew wszelkim odchy³om p³cie s¹ tylko dwie: kobieta i mê¿czyzna.
+ * Wbrew wszelkim odchyÅ‚om pÅ‚cie sÄ… tylko dwie: kobieta i mÄ™Å¼czyzna.
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 public enum Plec {

@@ -4,9 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
- * Ta klasa reprezentuje powi¹zanie pomiêdzy pokojami a studentami.
- * Oprócz swojego identyfikatora ma identyfikator pokoju i studenta
- * mieszkaj¹cego w nim.
+ * Ta klasa reprezentuje powiÄ…zanie pomiÄ™dzy pokojami a studentami.
+ * OprÃ³cz swojego identyfikatora ma identyfikator pokoju i studenta
+ * mieszkajÄ…cego w nim.
  * 
  * @author Wojtek
  *
@@ -27,7 +27,7 @@ public class Kwaterunek {
 	}
 	
 	/**
-	 * Kostruktor parametrowy. Tworzy obiekt z wype³nionymi polami.
+	 * Kostruktor parametrowy. Tworzy obiekt z wypeÅ‚nionymi polami.
 	 * 
 	 * @param id unikalny identyfikator rekordu
 	 * @param student identyfikator studenta

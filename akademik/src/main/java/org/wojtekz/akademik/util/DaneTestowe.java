@@ -13,7 +13,7 @@ import org.wojtekz.akademik.services.PokojService;
 import org.wojtekz.akademik.services.StudentService;
 
 /**
- * Klasa przygotowuj¹ca dane testowe: 3 pokoje i 6 studentów.
+ * Klasa przygotowujÄ…ca dane testowe: 3 pokoje i 6 studentÃ³w.
  * 
  * @author Wojtek
  *
@@ -41,10 +41,10 @@ public class DaneTestowe {
 	private PokojService pokojService;
 
 	/**
-	 * Wype³nia pola przyk³adowymi danymi testowymi zdefiniowanymi w tym konstruktorze.
+	 * WypeÅ‚nia pola przykÅ‚adowymi danymi testowymi zdefiniowanymi w tym konstruktorze.
 	 */
 	public DaneTestowe() {
-		logg.debug("----->>> Dane testowe - konstruktor pe³ny");
+		logg.debug("----->>> Dane testowe - konstruktor peÅ‚ny");
 
 		pokoj1 = new Pokoj();
 		pokoj1.setId(1);
@@ -87,13 +87,13 @@ public class DaneTestowe {
 
 		student4 = new Student();
 		student4.setId(4);
-		student4.setImie("Miros³aw");
+		student4.setImie("MirosÅ‚aw");
 		student4.setNazwisko("Nowak");
 		student4.setPlec(Plec.Mezczyzna);
 
 		student5 = new Student();
 		student5.setId(5);
-		student5.setImie("Ma³gorzata");
+		student5.setImie("MaÅ‚gorzata");
 		student5.setNazwisko("Nowakowska");
 		student5.setPlec(Plec.Kobieta);
 
@@ -103,7 +103,7 @@ public class DaneTestowe {
 		student6.setNazwisko("Patafian");
 		student6.setPlec(Plec.Mezczyzna);
 
-		// przestawiona kolejnoœæ
+		// przestawiona kolejnoÅ›Ä‡
 		mieszkancy = new ArrayList<Student>();
 		mieszkancy.add(student2);
 		mieszkancy.add(student1);
@@ -116,7 +116,7 @@ public class DaneTestowe {
 	}
 
 	/**
-	 * Tworzy obiekt z danymi i pozwala go wypelniæ parametrami zewnêtrznymi.
+	 * Tworzy obiekt z danymi i pozwala go wypelniÄ‡ parametrami zewnÄ™trznymi.
 	 * 
 	 * @param pokoj1 dane pokoju 1.
 	 * @param pokoj2 dane pokoju 2.
@@ -162,12 +162,12 @@ public class DaneTestowe {
 	}
 
 	/**
-	 * Wrzuca dane przekazane przez listê do tabeli w bazie okreœlonej przez
-	 * typ listy. Obs³ugiwane typy to Pokoj i Student. Przed wrzuceniem
-	 * danych dotychczasowe s¹ kasowane: mo¿na u¿ywaæ tylko w celach testowych
+	 * Wrzuca dane przekazane przez listÄ™ do tabeli w bazie okreÅ›lonej przez
+	 * typ listy. ObsÅ‚ugiwane typy to Pokoj i Student. Przed wrzuceniem
+	 * danych dotychczasowe sÄ… kasowane: moÅ¼na uÅ¼ywaÄ‡ tylko w celach testowych
 	 * lub do migracji danych.
 	 * 
-	 * @param lista - lista obiektów wrzucanych do tabeli okreœlonym przez
+	 * @param lista - lista obiektÃ³w wrzucanych do tabeli okreÅ›lonym przez
 	 *                typ listy
 	 */
 	public <T> void wrzucTrocheDanychDoBazy(List<T> lista) {
@@ -191,7 +191,7 @@ public class DaneTestowe {
 			}
 
 			if (className.equals("Student")) {
-				logg.debug("----->>> wrzucam dane studentów");
+				logg.debug("----->>> wrzucam dane studentÃ³w");
 				studentService.deleteAll();
 				for (T stud : lista) {
 					studentService.save((Student) stud);

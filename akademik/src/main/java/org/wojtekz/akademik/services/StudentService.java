@@ -5,7 +5,7 @@ import java.util.List;
 import org.wojtekz.akademik.entity.Student;
 
 /**
- * Metody obs≥ugi studenta.
+ * Metody obs≈Çugi studenta.
  * 
  * @author Wojtek
  *

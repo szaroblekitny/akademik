@@ -1,8 +1,8 @@
 /**
- * G³ówny pakiet aplikacji Manager Akademika. Zawiera klasê AkademikApplication,
- * klasy serwisów bazodanowych oraz klasy logiki wykonuj¹ce poszczególne zadania.
+ * GÅ‚Ã³wny pakiet aplikacji Manager Akademika. Zawiera klasÄ™ AkademikApplication,
+ * klasy serwisÃ³w bazodanowych oraz klasy logiki wykonujÄ…ce poszczegÃ³lne zadania.
  *  
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 package org.wojtekz.akademik.core;

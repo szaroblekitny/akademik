@@ -1,11 +1,11 @@
 /**
- * Pakiet konfiguracyjny aplikacji. Zawiera klasê konfiguracyjn¹ - na razie jedn¹.
- * Konfiguracja jest rozbita na czêœæ zawart¹ w klasie i czêœæ w plikach XML, a to
- * ze wzglêdu na fakt, ¿e Spring niby pozwala na pe³n¹ konfiguracjê w Javie,
- * ale znakomita wiêkszoœæ dokumentacji pos³uguje siê konfiguracj¹ XML. Nie chcia³em
- * walczyæ z ca³ym œwiatem i poszed³em na kompromis.  
+ * Pakiet konfiguracyjny aplikacji. Zawiera klasÄ™ konfiguracyjnÄ… - na razie jednÄ….
+ * Konfiguracja jest rozbita na czÄ™Å›Ä‡ zawartÄ… w klasie i czÄ™Å›Ä‡ w plikach XML, a to
+ * ze wzglÄ™du na fakt, Å¼e Spring niby pozwala na peÅ‚nÄ… konfiguracjÄ™ w Javie,
+ * ale znakomita wiÄ™kszoÅ›Ä‡ dokumentacji posÅ‚uguje siÄ™ konfiguracjÄ… XML. Nie chciaÅ‚em
+ * walczyÄ‡ z caÅ‚ym Å›wiatem i poszedÅ‚em na kompromis.  
  * 
- * @author Wojtek Zarêba
+ * @author Wojtek ZarÄ™ba
  *
  */
 package org.wojtekz.akademik.conf;
