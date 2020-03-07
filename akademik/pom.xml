@@ -10,7 +10,7 @@
      wynik w postaci listy pokoi z zakwaterowanymi studentami.</description>
      
 	<properties>
-		<project.build.sourceEncoding>Cp1250</project.build.sourceEncoding>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
 		<spring.version>5.2.3.RELEASE</spring.version>
 		<java.version>11</java.version>
@@ -48,12 +48,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>${hibernate.version}</version>
-			<!-- <exclusions>
-        		<exclusion>
-        			<groupId>org.javassist</groupId>
-            		<artifactId>javassist</artifactId>
-        		</exclusion>
-    		</exclusions> -->
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
