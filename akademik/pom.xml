@@ -180,6 +180,27 @@
 	
 	<build>
 		<plugins>
+		
+			<plugin>
+    			<artifactId>maven-clean-plugin</artifactId>
+    			<version>3.1.0</version>
+    			<configuration>
+      				<filesets>
+        				<fileset>
+          					<directory>.</directory>
+          					<includes>
+          						<include>target</include>
+            					<include>dependency-reduced-pom.xml</include>
+            					<include>pokoje_test.xml</include>
+            					<include>studenci_test.xml</include>
+            					<include>stan_akademika.txt</include>
+          					</includes>
+          					<followSymlinks>false</followSymlinks>
+        				</fileset>
+      				</filesets>
+    			</configuration>
+  			</plugin>
+  
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
