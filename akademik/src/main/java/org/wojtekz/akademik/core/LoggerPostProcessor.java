@@ -27,14 +27,14 @@ public class LoggerPostProcessor implements BeanPostProcessor, Ordered {
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName)
 			throws BeansException {
-		logg.debug("-----------> postProcessBeforeInitialization for bean " + beanName);
+		logg.trace("-----------> postProcessBeforeInitialization for bean " + beanName);
 		return bean;
 	}
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName)
 			throws BeansException {
-		logg.debug("-----------> AfterInitialization bean '" + beanName + "' created : " + bean.toString());
+		logg.trace("-----------> AfterInitialization bean '" + beanName + "' created : " + bean.toString());
 		return bean;
 	}
 

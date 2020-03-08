@@ -17,7 +17,7 @@ public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
 	private static Logger logg = LogManager.getLogger();
 	
 	public LoggerFactoryPostProcessor() {
-		logg.debug("-----------> konstruktor LoggerFactoryPostProcessor");
+		logg.debug("-------> konstruktor LoggerFactoryPostProcessor");
 	}
 
 	/**
@@ -29,14 +29,14 @@ public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
 		if (logg.isDebugEnabled()) {
 			logg.debug("-----------> postProcessBeanFactory moze modyfikowac kontekst dla faktory " + factory.getClass().getName());
 			
-			logg.debug("------------------------> Beany:");
+			logg.trace("------------------------> Beany:");
 			String[] listaBeanow = factory.getBeanDefinitionNames();
 			for (int ii = 0; ii < listaBeanow.length; ii++) {
-				logg.debug("***** " + listaBeanow[ii]);
+				logg.trace("***** " + listaBeanow[ii]);
 			}
 			
 			if (factory.getBeanClassLoader() != null) {
-				logg.debug("-------------------------------------> BeanClassLoader: " + factory.getBeanClassLoader().getClass().getName());
+				logg.debug("-----------> BeanClassLoader: " + factory.getBeanClassLoader().getClass().getName());
 			}
 		}
 		
