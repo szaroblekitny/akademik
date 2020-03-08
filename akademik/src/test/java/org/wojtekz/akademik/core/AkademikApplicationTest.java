@@ -17,13 +17,12 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
@@ -39,9 +38,8 @@ import org.wojtekz.akademik.util.DaneTestowe;
  * @author Wojtek
  *
  */
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AkademikConfiguration.class})
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class AkademikApplicationTest {
 	private final String PLIK_POKOI = "pokoje_test_appl.xml";
 	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
@@ -54,22 +52,22 @@ public class AkademikApplicationTest {
 	private List<Student> studenci = new ArrayList<Student>();
 	
 	@Autowired
-	PokojService pokService;
+	private Akademik akademik;
 	
 	@Autowired
-	StudentService studService;
+	private PokojService pokojService;
 	
 	@Autowired
-	KwaterunekService kwaterunekService;
+	private StudentService studentService;
 	
 	@Autowired
-	Plikowanie plikowanie;
+	private KwaterunekService kwaterunekService;
 	
 	@Autowired
-	AkademikApplication akademik;
+	private DaneTestowe daneTestowe;
 	
 	@Autowired
-	DaneTestowe daneTestowe;
+	private Plikowanie plikowanie;
 	
 	@Before
 	public void przedTest() throws Exception {
@@ -130,17 +128,20 @@ public class AkademikApplicationTest {
 		studenci.add(malinowski);
 		
 		
-		// saveObjectList(BufferedWriter writer, List<T> list)
-		
+		logg.debug("----->>> Przygotowanie plików");
 		pathPokoi = FileSystems.getDefault().getPath(PLIK_POKOI);
 		pathStudentow = FileSystems.getDefault().getPath(PLIK_STUDENTOW);
 		BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
-		logg.debug("----->>> " + pokoje.toString());
+		logg.debug("----->>> Pokoje: " + pokoje.toString());
+		logg.debug("----->>> bufWriter: " + bufWriter);
+		if (bufWriter == null) {
+			throw new IOException("======>>> bufWriter jest nullem");
+		}
 		plikowanie.saveObjectList(bufWriter, pokoje);
 		bufWriter.close();
 			
 		bufWriter = Files.newBufferedWriter(pathStudentow, charset);
-		logg.debug("----->>> " + studenci.toString());
+		logg.debug("----->>> Studenci: " + studenci.toString());
 		plikowanie.saveObjectList(bufWriter, studenci);
 		bufWriter.close();
 		
@@ -161,7 +162,7 @@ public class AkademikApplicationTest {
 			akademik.pobierzPokoje(reader);
 			reader.close();
 			
-			Pokoj pokZBazy = pokService.findByNumber("102");
+			Pokoj pokZBazy = pokojService.findByNumber("102");
 			Assert.assertEquals(3, pokZBazy.getLiczbaMiejsc());
 			
 		} catch (IOException ee) {
@@ -180,8 +181,9 @@ public class AkademikApplicationTest {
 			BufferedReader reader = Files.newBufferedReader(pathStudentow, charset);
 			akademik.pobierzStudentow(reader);
 			reader.close();
+			logg.debug("----->>> studenci pobrani");
 			
-			Student malinowskiZBazy = studService.findByName("Malinowski");
+			Student malinowskiZBazy = studentService.findByName("Malinowski");
 			Assert.assertEquals(3, malinowskiZBazy.getId());
 			
 		} catch (IOException ee) {
@@ -197,8 +199,8 @@ public class AkademikApplicationTest {
 	public void testKwaterunku() {
 		logg.debug("----->>> testKwaterunku starts");
 		zapelnijDanymi();
-		Assert.assertEquals(2, pokService.ilePokoi());
-		Assert.assertEquals(4, studService.iluStudentow());
+		Assert.assertEquals(2, pokojService.ilePokoi());
+		Assert.assertEquals(4, studentService.iluStudentow());
 		
 		akademik.zakwateruj();
 		List<Kwaterunek> powiazania = kwaterunekService.listAll();
@@ -213,7 +215,9 @@ public class AkademikApplicationTest {
 		logg.debug("----->>> testStanuAkademika starts");
 		
 		daneTestowe.wrzucTrocheDanychDoBazy();
+		logg.debug("----->>> przed zakwateruj");
 		akademik.zakwateruj();
+		logg.debug("----->>> po zakwateruj");
 		
 		try {
 			BufferedWriter outputWriter = Files.newBufferedWriter(FileSystems.getDefault()
@@ -245,10 +249,10 @@ public class AkademikApplicationTest {
 	private void zapelnijDanymi() {
 		logg.debug("----->>> zapelnijDanymi starts");
 		for (Pokoj pokoj : pokoje) {
-			pokService.save(pokoj);
+			pokojService.save(pokoj);
 		}
 		for (Student student : studenci) {
-			studService.save(student);
+			studentService.save(student);
 		}
 	}
 	
@@ -257,8 +261,8 @@ public class AkademikApplicationTest {
 	 */
 	private void usunDane() {
 		logg.debug("----->>> usunDane starts");
-		pokService.deleteAll();
-		studService.deleteAll();
+		pokojService.deleteAll();
+		studentService.deleteAll();
 		kwaterunekService.deleteAll();
 	}
 	

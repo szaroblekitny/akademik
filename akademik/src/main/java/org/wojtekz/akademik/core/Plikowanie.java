@@ -15,25 +15,29 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.xstream.XStreamMarshaller;
+import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.services.PokojService;
 import org.wojtekz.akademik.services.StudentService;
 
+import com.thoughtworks.xstream.XStreamer;
+
 /**
  * Klasa do obsługi operacji plikowych.
  * 
- * @author Wojtek
+ * @author Wojtek Zaręba
  *
  */
+@Component
 public class Plikowanie {
 	private static Logger logg = LogManager.getLogger();
 
-	private static Marshaller marshaller;
-	private static Unmarshaller unmarshaller;
+	@Autowired
+	private Marshaller marshaller;
 	
 	@Autowired
-    XStreamMarshaller xStreamMarshaller;
+	private Unmarshaller unmarshaller;
 	
 	@Autowired
 	PokojService pokojService;
@@ -42,33 +46,10 @@ public class Plikowanie {
 	StudentService studentService;
 	
 	/**
-	 * Konstruktor ustawia marszalera na XStreamMarshaller.
+	 * Konstruktor komponentu.
 	 */
 	public Plikowanie() {
-		Plikowanie.marshaller = xStreamMarshaller;
-		Plikowanie.unmarshaller = xStreamMarshaller;
 	}
-
-	/**
-	 * Ustawia marshallera do generowania XML'a.
-	 * 
-	 * @param marshaller
-	 */
-	public void setMarshaller(Marshaller marshaller) {
-		logg.debug("----->>> setMarshaller method fired");
-		Plikowanie.marshaller = marshaller;
-	}
-
-	/**
-	 * Ustawia unmarshallera do dekompozycji XML'a w obiekt.
-	 * 
-	 * @param unmarshaller
-	 */
-	public void setUnmarshaller(Unmarshaller unmarshaller) {
-		logg.debug("----->>> setUnmarshaller method fired");
-		Plikowanie.unmarshaller = unmarshaller;
-	}
-
 
 	/**
 	 * Zapisuje listę obiektów do pliku XML.
@@ -81,8 +62,22 @@ public class Plikowanie {
 	public <T> void saveObjectList(BufferedWriter writer, List<T> list)
 			throws XmlMappingException, IOException {
 		logg.debug("----->>> saveObjectList method fired");
+		
+		if (writer == null) {
+			logg.error("----->>> saveObjectList writer pusty");
+			throw new IOException();
+		}
+		
+		if (list == null || list.isEmpty()) {
+			logg.error("----->>> saveObjectList pusta lista");
+			throw new IOException();
+		}
+		
 		StreamResult result = new StreamResult(writer);
-		Plikowanie.marshaller.marshal(list, result);
+		logg.debug("----->>> result: " + result);
+		marshaller.marshal(list, result);
+		
+		logg.debug("----->>> saveObjectList koniec");
 	}
 
 	
@@ -98,7 +93,7 @@ public class Plikowanie {
 	public List<?> loadObjectList(BufferedReader reader)
 			throws XmlMappingException, IOException {
 		List<?> obj;
-		obj =  (List<?>) Plikowanie.unmarshaller.unmarshal(new StreamSource(reader));
+		obj =  (List<?>) unmarshaller.unmarshal(new StreamSource(reader));
 		return obj;
 	}
 	

@@ -17,7 +17,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.AkademikConfiguration;
@@ -39,9 +38,6 @@ public class PlikowanieTest {
     
     @Autowired
     Plikowanie plikowanie;
-    
-    @Autowired
-    XStreamMarshaller xStreamMarshaller;
     
     @Before
     public void before() {
@@ -68,8 +64,6 @@ public class PlikowanieTest {
 	@Test
 	public void testWriteListyStudentow() {
 		logg.debug("----->>> testWriteList");
-		plikowanie.setMarshaller(xStreamMarshaller);
-		plikowanie.setUnmarshaller(xStreamMarshaller);
 		try {
 			buffWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
 			plikowanie.saveObjectList(buffWriter, listaStudentow);
