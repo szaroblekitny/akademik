@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.wojtekz.akademik.core.WlasciwosciPersystencji;
 import org.wojtekz.akademik.services.KwaterunekService;
 import org.wojtekz.akademik.services.KwaterunekServiceImpl;
@@ -74,6 +77,18 @@ public class AkademikConfiguration {
 	DaneTestowe daneTestowe() {
 		logg.debug("----->>> daneTestowe bean configuration");
 		return new DaneTestowe();
+	}
+	
+	@Bean
+	Marshaller marshaller() {
+		logg.debug("----->>> xStreamMarshaller bean configuration");
+		return new XStreamMarshaller();
+	}
+	
+	@Bean
+	Unmarshaller unmarshaller() {
+		logg.debug("----->>> xStreamMarshaller bean configuration");
+		return new XStreamMarshaller();
 	}
 	
 }
