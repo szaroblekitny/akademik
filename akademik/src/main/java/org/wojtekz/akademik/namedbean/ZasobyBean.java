@@ -25,7 +25,7 @@ public class ZasobyBean implements Serializable {
 	private static Logger logg = LogManager.getLogger();
 	
     @Autowired
-	private WlasciwosciPersystencji wp;
+	private transient WlasciwosciPersystencji wp;
     
     /**
      * Używa klasy WlasciwosciPersystencji do pobrania właściwości z EntityManagerFactory

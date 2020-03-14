@@ -19,26 +19,6 @@ public class Kwaterunek {
 	private long student;
 	private long pokoj;
 	
-	/**
-	 * Pusty konstruktor klasy.
-	 */
-	public Kwaterunek() {
-		
-	}
-	
-	/**
-	 * Kostruktor parametrowy. Tworzy obiekt z wypełnionymi polami.
-	 * 
-	 * @param id unikalny identyfikator rekordu
-	 * @param student identyfikator studenta
-	 * @param pokoj identyfikator pokoju
-	 */
-	/*public Kwaterunek(long id, long student, long pokoj) {
-		this.id = id;
-		this.student = student;
-		this.pokoj = pokoj;
-	}*/
-
 
 	public long getId() {
 		return id;

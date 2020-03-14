@@ -27,7 +27,7 @@ public class StudentBean implements Serializable {
 	private static Logger logg = LogManager.getLogger();
 	
 	@Autowired
-	StudentService studentServ;
+	private transient StudentService studentServ;
 	
 	/**
 	 * Pobiera listę studentów z bazy i przekształca na Stringi czytelne dla strony web.

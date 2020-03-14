@@ -24,11 +24,6 @@ public class Student {
 	private String nazwisko;
 	private Plec plec;
 	
-	/**
-	 * Pusty konstruktor.
-	 */
-	public Student() {
-	}
 
 	public long getId() {
 		return id;

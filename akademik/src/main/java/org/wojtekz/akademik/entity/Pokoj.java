@@ -22,12 +22,6 @@ public class Pokoj {
 	private String numerPokoju;
 	private int liczbaMiejsc;
 	
-	/**
-	 * Pusty konstruktor klasy Pokoj.
-	 */
-	public Pokoj() {
-	}
-	
 	
 	public long getId() {
 		return id;

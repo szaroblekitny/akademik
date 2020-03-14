@@ -18,7 +18,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
  * beana o typie Map, to sporo innych próbuje go dołączyć z komunikatem
  * "Autowiring by type from bean name 'xxxXXX' to bean named 'yyyYYY'"
  * 
- * @author wojtek
+ * @author Wojtek Zaręba
  *
  */
 public class WlasciwosciPersystencji implements Ordered {
@@ -36,16 +36,6 @@ public class WlasciwosciPersystencji implements Ordered {
 	
 	public void init() {
 		logg.debug("-----------> WlasciwosciPersystencji init");
-		/*this.wlasciwosci = entityManagerFactory.getJpaPropertyMap();
-		this.prsisInfo = entityManagerFactory.getPersistenceUnitInfo();
-		
-		if (this.wlasciwosci.isEmpty()) {
-			logg.debug("-----------> JpaPropertyMap pusta");
-		}
-		
-		if (this.prsisInfo.getProperties().isEmpty() ) {
-			logg.debug("-----------> wlasciwosciMap PersistenceUnitInfo puste");
-		}*/
 	}
 	
 	public List<String> listaWlasciwosci() {
