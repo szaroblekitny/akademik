@@ -40,7 +40,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
-public class AkademikApplicationTest {
+public class AkademikTest {
 	private final String PLIK_POKOI = "pokoje_test_appl.xml";
 	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
 	private static Logger logg = LogManager.getLogger();
@@ -50,7 +50,7 @@ public class AkademikApplicationTest {
 	
 	private List<Pokoj> pokoje = new ArrayList<Pokoj>();
 	private List<Student> studenci = new ArrayList<Student>();
-	
+
 	@Autowired
 	private Akademik akademik;
 	
