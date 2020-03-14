@@ -58,7 +58,6 @@ public class Akademik {
 			System.err.println("Oczekuję pliku xml o pokojach lub studentach, " + se.getMessage());
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> Całkowicie błędny błąd: ", ee);
-			ee.printStackTrace();
 		}
 	}
  	
@@ -126,9 +125,6 @@ public class Akademik {
 	public boolean zakwateruj() {
 		logg.debug("----->>> zakwateruj begins");
 		// czyścimy kwaterunek
-		if (kwaterunekService == null) {
-			logg.error("kwaterunekService nie istnieje!!");
-		}
 		kwaterunekService.deleteAll();
 		
 		// listy studentów i pokoi
