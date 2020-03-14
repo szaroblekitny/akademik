@@ -39,25 +39,21 @@ public class AkademikApplication {
 			return;
 		}
 		
-		BufferedReader pokojeReader;
-		BufferedReader studenciReader;
-		BufferedWriter outputWriter;
-		try {
-			pokojeReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[0]), charset);
-			studenciReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[1]), charset);
-			outputWriter = Files.newBufferedWriter(FileSystems.getDefault().getPath(args[2]), charset);
-		} catch (IOException ie) {
-			logg.error("Problemy plikowe", ie);
-			System.out.println("Pliki wejściowe są niewłaściwe");
-			return;
-		}
-		
 		GenericApplicationContext applicationContext = new AnnotationConfigApplicationContext(AkademikConfiguration.class);
-		
 		logg.debug("----->>> Mamy kontekst AkademikApplication");
 		
 		Akademik akademik = applicationContext.getBean(Akademik.class);
-		akademik.akademik(pokojeReader, studenciReader, outputWriter);
+		
+		try (
+			BufferedReader pokojeReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[0]), charset);
+			BufferedReader studenciReader = Files.newBufferedReader(FileSystems.getDefault().getPath(args[1]), charset);
+			BufferedWriter outputWriter = Files.newBufferedWriter(FileSystems.getDefault().getPath(args[2]), charset))
+		{
+			akademik.akademik(pokojeReader, studenciReader, outputWriter);
+		} catch (IOException ie) {
+			logg.error("Problemy plikowe", ie);
+			System.out.println("Pliki wejściowe są niewłaściwe");
+		}
 		
 		applicationContext.close();
 		
