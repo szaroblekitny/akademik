@@ -40,16 +40,11 @@ public class Plikowanie {
 	private Unmarshaller unmarshaller;
 	
 	@Autowired
-	PokojService pokojService;
+	private PokojService pokojService;
 	
 	@Autowired
-	StudentService studentService;
+	private StudentService studentService;
 	
-	/**
-	 * Konstruktor komponentu.
-	 */
-	public Plikowanie() {
-	}
 
 	/**
 	 * Zapisuje listę obiektów do pliku XML.
@@ -84,7 +79,7 @@ public class Plikowanie {
 	/**
 	 * Przekształca dane z pliku XML na listę obiektów.
 	 * 
-	 * @param reader buforowy
+	 * @param reader BufferedReader - odczytywane dane
 	 * @return listę obiektów odczytanych z pliku
 	 * @throws XmlMappingException w przypadku niepowodzenia mapowania pliku XML na obiekty
 	 *         podanego typu; również gdy plik nie jest plikiem XML
