@@ -23,6 +23,7 @@ import com.thoughtworks.xstream.io.StreamException;
 @Component
 public class Akademik {
 	private static Logger logg = LogManager.getLogger();
+	private long kwatId;
 	
 	@Autowired
 	private PokojService pokojService;
@@ -105,19 +106,20 @@ public class Akademik {
 	/**
 	 * Tworzy wpsiy w tabeli pośredniej Kwaterunek, która zapisuje łączniki studentów
 	 * z pokojami.
-	 * <p>Najprostszy algorytm: dla każdego studenta wybiera pokój, dla którego zajętość
+	 * <p>Najprostszy jest algorytm: dla każdego studenta wybiera pokój, dla którego zajętość
 	 * jest mniejsza od pojemność, tworzy wpis w tabeli kwaterunku i zwiększa zajętość
 	 * pokoju o jeden. Wymaga: znacznika stopnia zajętości pokoju i czyszczenia tych
 	 * znaczników przed rozpoczęciem kwaterunku.</p>
 	 * 
-	 * <p>Algorytm oparty na bazie danych: dla każdego studenta sprawdza, czy student nie
-	 * ma wpisu w tabeli kwaterunek. Jeśli nie, dla każdego pokoju sprawdza liczbę wpisów
+	 * <p>Tu został zastosowany algorytm oparty na bazie danych: dla każdego studenta sprawdza,
+	 * czy student nie ma wpisu w tabeli kwaterunek. Jeśli nie, dla każdego pokoju sprawdza liczbę wpisów
 	 * dla tego pokoju. Jeśli liczba jest mniejsza od pojemności, dodaje wpis
 	 * łączący pokój ze studentem. Na oko trochę kosztowniejszy od poprzedniego, ale
 	 * nie wymaga żadnych dodatkowych pól, a przed kwaterunkiem wystarczy tylko
-	 * wyczyszczenie tablicy kwaterunek.</p>
+	 * wyczyszczenie tablicy kwaterunek. Kosztowny ze względu na ciągłe
+	 * manipulacje w bazie danych.</p>
 	 * 
-	 * Na razie bez uwzględniania płci.
+	 * <p>Na razie bez uwzględniania płci.
 	 * 
 	 * @return true, jeśli wszyscy studenci zostali zakwaterowani
 	 * 
@@ -134,49 +136,24 @@ public class Akademik {
 			logg.debug("----->>> mamy pokoi " + pokoje.size());
 		}
 		
-		long kolKwaterunek = 1;
 		int iluZakwater;
 		
 		// dla każdego studenta
 		for (Student student : studenci) {
 			iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 			if (logg.isDebugEnabled()) {
-				logg.debug("----->>> dla studenta " + student.getId() + " ilu już jest: " + iluZakwater);
+				logg.debug("----->>> student " + student.getId() + " ma przydziałów: " + iluZakwater);
 			}
 			
 			if (iluZakwater == 0) {
-				logg.debug("----->>> po pokojach");
-				pokojeLab:
-				for (Pokoj pokoj : pokoje) {
-					int zajeteMiejsca = kwaterunekService.findByIdPokoju(pokoj.getId()).size();
-					
-					if (logg.isDebugEnabled()) {
-						logg.debug("----->>> dla pokoju " + pokoj.getId() + " miejsc: " + pokoj.getLiczbaMiejsc() + " zajętych: " + zajeteMiejsca);
-					}
-					
-					if (pokoj.getLiczbaMiejsc() > zajeteMiejsca) {
-						if (logg.isDebugEnabled()) {
-							logg.debug("----->>> Nowy kwaterunek " + kolKwaterunek + "" + student.getId() + "" + pokoj.getId());
-						}
-						// Kwaterunek nowyKwaterunek = new Kwaterunek(kolKwaterunek, student.getId(), pokoj.getId());
-						Kwaterunek nowyKwaterunek = new Kwaterunek();
-						nowyKwaterunek.setId(kolKwaterunek);
-						nowyKwaterunek.setStudent(student.getId());
-						nowyKwaterunek.setPokoj(pokoj.getId());
-						
-						kolKwaterunek++;
-						kwaterunekService.save(nowyKwaterunek);
-						// wyskakujemy z pokoi
-						break pokojeLab;
-					}
-				}
+				petlaPoPokojach(pokoje, student);
 				
 				// na koniec sprawdzamy, czy student został zakwaterowany,
 				// jeśli nie, mamy przepełnienie
 				iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 				if (iluZakwater == 0) {
 					logg.warn("----->>> Nie można zakwaterować studenta " + student.toString());
-					logg.warn("----->>> Przepełnienie!");
+					logg.error("----->>> Przepełnienie!");
 					return false;
 				}
 				
@@ -186,6 +163,58 @@ public class Akademik {
 		
 		return true;
 	}
+	
+
+	/**
+	 * Kwateruje studenta w pokoju dodając wpis do tabeli kwaterunek.
+	 * 
+	 * @param kolKwaterunek numer kwaterunku
+	 * @param student kwaterowany student
+	 * @param pokoj pokój dla studenta
+	 * @return następny numer kwaterunku
+	 */
+	private void kwaterujStudenta(Student student, Pokoj pokoj) {
+		if (logg.isDebugEnabled()) {
+			logg.debug("----->>> Nowy kwaterunek " + kwatId + " student " + student.getId() + " pokój " + pokoj.getId());
+		}
+		// Kwaterunek nowyKwaterunek = new Kwaterunek(kolKwaterunek, student.getId(), pokoj.getId());
+		Kwaterunek nowyKwaterunek = new Kwaterunek();
+		nowyKwaterunek.setId(kwatId);
+		nowyKwaterunek.setStudent(student.getId());
+		nowyKwaterunek.setPokoj(pokoj.getId());
+		kwaterunekService.save(nowyKwaterunek);
+		
+		kwatId++;
+	}
+	
+	
+	/**
+	 * Przelatuje po pokojach usiłując wepchnąć tam studenta.
+	 * 
+	 * @param pokoje lista pokoi
+	 * @param student delikwent do zakwaterowania
+	 * 
+	 */
+	private void petlaPoPokojach(List<Pokoj> pokoje, Student student) {
+		logg.debug("----->>> po pokojach");
+		
+		pokojeLab:
+		for (Pokoj pokoj : pokoje) {
+			int zajeteMiejsca = kwaterunekService.findByIdPokoju(pokoj.getId()).size();
+			
+			if (logg.isDebugEnabled()) {
+				logg.debug("----->>> dla pokoju " + pokoj.getId() + " miejsc: " + pokoj.getLiczbaMiejsc() + " zajętych: " + zajeteMiejsca);
+			}
+			
+			if (pokoj.getLiczbaMiejsc() > zajeteMiejsca) {
+				kwaterujStudenta(student, pokoj);
+				// wyskakujemy z pokoi po zakwaterowaniu
+				break pokojeLab;
+			}
+		}
+		
+	}
+	
 	
 	/**
 	 * Wypisuje stan kwaterunku akademika. Podaje listę pokoi z nazwiskami
