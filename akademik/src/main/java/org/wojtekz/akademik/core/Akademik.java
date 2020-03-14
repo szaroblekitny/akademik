@@ -168,16 +168,14 @@ public class Akademik {
 	/**
 	 * Kwateruje studenta w pokoju dodając wpis do tabeli kwaterunek.
 	 * 
-	 * @param kolKwaterunek numer kwaterunku
 	 * @param student kwaterowany student
 	 * @param pokoj pokój dla studenta
-	 * @return następny numer kwaterunku
 	 */
 	private void kwaterujStudenta(Student student, Pokoj pokoj) {
 		if (logg.isDebugEnabled()) {
 			logg.debug("----->>> Nowy kwaterunek " + kwatId + " student " + student.getId() + " pokój " + pokoj.getId());
 		}
-		// Kwaterunek nowyKwaterunek = new Kwaterunek(kolKwaterunek, student.getId(), pokoj.getId());
+
 		Kwaterunek nowyKwaterunek = new Kwaterunek();
 		nowyKwaterunek.setId(kwatId);
 		nowyKwaterunek.setStudent(student.getId());
