@@ -102,25 +102,25 @@ public class AkademikApplicationTest {
 		kowalski.setId(1);
 		kowalski.setImie("Jan");
 		kowalski.setNazwisko("Kowalski");
-		kowalski.setPlec(Plec.Mezczyzna);
+		kowalski.setPlec(Plec.MEZCZYZNA);
 		
 		Student kowalska = new Student();
 		kowalska.setId(2);
 		kowalska.setImie("Janina");
 		kowalska.setNazwisko("Kowalska");
-		kowalska.setPlec(Plec.Kobieta);
+		kowalska.setPlec(Plec.KOBIETA);
 		
 		Student malinowski = new Student();
 		malinowski.setId(3);
 		malinowski.setImie("Adam");
 		malinowski.setNazwisko("Malinowski");
-		malinowski.setPlec(Plec.Mezczyzna);
+		malinowski.setPlec(Plec.MEZCZYZNA);
 		
 		Student nowak = new Student();
 		nowak.setId(4);
 		nowak.setImie("Mirosław");
 		nowak.setNazwisko("Nowak");
-		nowak.setPlec(Plec.Mezczyzna);
+		nowak.setPlec(Plec.MEZCZYZNA);
 		
 		studenci.add(kowalska);
 		studenci.add(kowalski);

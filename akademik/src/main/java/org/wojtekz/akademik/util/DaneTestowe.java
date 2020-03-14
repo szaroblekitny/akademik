@@ -71,37 +71,37 @@ public class DaneTestowe {
 		student1.setId(1);
 		student1.setImie("Jan");
 		student1.setNazwisko("Kowalski");
-		student1.setPlec(Plec.Mezczyzna);
+		student1.setPlec(Plec.MEZCZYZNA);
 
 		student2 = new Student();
 		student2.setId(2);
 		student2.setImie("Janina");
 		student2.setNazwisko("Kowalska");
-		student2.setPlec(Plec.Kobieta);
+		student2.setPlec(Plec.KOBIETA);
 
 		student3 = new Student();
 		student3.setId(3);
 		student3.setImie("Adam");
 		student3.setNazwisko("Malinowski");
-		student3.setPlec(Plec.Mezczyzna);
+		student3.setPlec(Plec.MEZCZYZNA);
 
 		student4 = new Student();
 		student4.setId(4);
 		student4.setImie("Mirosław");
 		student4.setNazwisko("Nowak");
-		student4.setPlec(Plec.Mezczyzna);
+		student4.setPlec(Plec.MEZCZYZNA);
 
 		student5 = new Student();
 		student5.setId(5);
 		student5.setImie("Małgorzata");
 		student5.setNazwisko("Nowakowska");
-		student5.setPlec(Plec.Kobieta);
+		student5.setPlec(Plec.KOBIETA);
 
 		student6 = new Student();
 		student6.setId(6);
 		student6.setImie("Ignacy");
 		student6.setNazwisko("Patafian");
-		student6.setPlec(Plec.Mezczyzna);
+		student6.setPlec(Plec.MEZCZYZNA);
 
 		// przestawiona kolejność
 		mieszkancy = new ArrayList<Student>();

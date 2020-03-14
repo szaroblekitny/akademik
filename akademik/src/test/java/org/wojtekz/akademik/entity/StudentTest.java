@@ -15,7 +15,7 @@ public class StudentTest {
 		student.setId(1);
 		student.setImie("Wojtek");
 		student.setNazwisko("Kowalski");
-		student.setPlec(Plec.Mezczyzna);
+		student.setPlec(Plec.MEZCZYZNA);
 	}
 
 	@Test

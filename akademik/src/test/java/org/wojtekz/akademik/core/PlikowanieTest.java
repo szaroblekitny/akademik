@@ -45,13 +45,13 @@ public class PlikowanieTest {
     	student.setId(1);
     	student.setImie("Ignacy");
     	student.setNazwisko("Patafian");
-    	student.setPlec(Plec.Mezczyzna);
+    	student.setPlec(Plec.MEZCZYZNA);
     	
     	drugiStudent = new Student();
     	drugiStudent.setId(2);
     	drugiStudent.setImie("Jan");
     	drugiStudent.setNazwisko("Kowalski");
-    	drugiStudent.setPlec(Plec.Mezczyzna);
+    	drugiStudent.setPlec(Plec.MEZCZYZNA);
     	
     	listaStudentow.add(student);
     	listaStudentow.add(drugiStudent);

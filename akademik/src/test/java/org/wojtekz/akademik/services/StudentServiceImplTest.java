@@ -35,7 +35,7 @@ public class StudentServiceImplTest {
 		student.setId(1);
 		student.setImie("Jan");
 		student.setNazwisko("Kowalski");
-		student.setPlec(Plec.Mezczyzna);
+		student.setPlec(Plec.MEZCZYZNA);
 	}
 
 	@After
