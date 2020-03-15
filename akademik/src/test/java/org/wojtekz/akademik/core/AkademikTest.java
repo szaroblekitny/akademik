@@ -43,9 +43,11 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class AkademikTest {
 	private final String PLIK_POKOI = "pokoje_test_appl.xml";
 	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
+	private final String PLIK_RAPORTU = "raport_test_appl.txt";
 	private static Logger logg = LogManager.getLogger();
 	private static Path pathPokoi;
 	private static Path pathStudentow;
+	private static Path pathRaportu;
 	private static Charset charset = StandardCharsets.UTF_8;
 	
 	private List<Pokoj> pokoje = new ArrayList<Pokoj>();
@@ -131,6 +133,7 @@ public class AkademikTest {
 		logg.debug("----->>> Przygotowanie plików");
 		pathPokoi = FileSystems.getDefault().getPath(PLIK_POKOI);
 		pathStudentow = FileSystems.getDefault().getPath(PLIK_STUDENTOW);
+		pathRaportu = FileSystems.getDefault().getPath(PLIK_RAPORTU);
 		BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
 		logg.debug("----->>> Pokoje: " + pokoje.toString());
 		logg.debug("----->>> bufWriter: " + bufWriter);
@@ -207,6 +210,26 @@ public class AkademikTest {
 		Assert.assertEquals(4, powiazania.size());
 		
 		usunDane();
+	}
+	
+	/**
+	 * Test głównej aplikacji plikowej.
+	 */
+	@Test
+	public void testAkademika() {
+		logg.debug("----->>> testAkademika starts");
+		try (
+			BufferedReader pokojeReader = Files.newBufferedReader(pathPokoi, charset);
+			BufferedReader studenciReader = Files.newBufferedReader(pathStudentow, charset);
+			BufferedWriter outputWriter = Files.newBufferedWriter(pathRaportu, charset))
+		{
+			akademik.akademik(pokojeReader, studenciReader, outputWriter);
+		} catch (IOException ie) {
+			logg.error("----->>> testAkademika - problemy plikowe", ie);
+			Assert.fail("Exception: " + ie.getMessage());
+		} finally {
+			usunDane();
+		}
 	}
 	
 	
