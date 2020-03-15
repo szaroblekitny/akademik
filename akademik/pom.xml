@@ -31,7 +31,7 @@
 		<junit.version>4.12</junit.version>
 		
 		<!-- Sonar -->
-  		<sonar.java.pmd.reportPaths>./target/pmd.xml</sonar.java.pmd.reportPaths>
+  		<sonar.java.pmd.reportPaths>${project.build.directory}/pmd.xml</sonar.java.pmd.reportPaths>
 	</properties>
 	
 	<dependencies>
@@ -180,13 +180,13 @@
     			<configuration>
       				<filesets>
         				<fileset>
-          					<directory>.</directory>
+          					<directory>${project.basedir}</directory>
           					<includes>
           						<include>target</include>
             					<include>dependency-reduced-pom.xml</include>
             					<include>pokoje_test.xml</include>
             					<include>studenci_test.xml</include>
-            					<include>stan_akademika.txt</include>
+            					<include>raport_test_appl.txt</include>
           					</includes>
           					<followSymlinks>false</followSymlinks>
         				</fileset>
