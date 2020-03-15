@@ -130,13 +130,12 @@ public class AkademikTest {
 		studenci.add(malinowski);
 		
 		
-		logg.debug("----->>> Przygotowanie plików");
+		logg.trace("----->>> Przygotowanie plików");
 		pathPokoi = FileSystems.getDefault().getPath(PLIK_POKOI);
 		pathStudentow = FileSystems.getDefault().getPath(PLIK_STUDENTOW);
 		pathRaportu = FileSystems.getDefault().getPath(PLIK_RAPORTU);
 		BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
-		logg.debug("----->>> Pokoje: " + pokoje.toString());
-		logg.debug("----->>> bufWriter: " + bufWriter);
+		logg.debug("----->>> Pokoje: {}", pokoje);
 		if (bufWriter == null) {
 			throw new IOException("======>>> bufWriter jest nullem");
 		}
@@ -144,7 +143,7 @@ public class AkademikTest {
 		bufWriter.close();
 			
 		bufWriter = Files.newBufferedWriter(pathStudentow, charset);
-		logg.debug("----->>> Studenci: " + studenci.toString());
+		logg.debug("----->>> Studenci: {}", studenci);
 		plikowanie.saveObjectList(bufWriter, studenci);
 		bufWriter.close();
 		
@@ -169,11 +168,10 @@ public class AkademikTest {
 			Assert.assertEquals(3, pokZBazy.getLiczbaMiejsc());
 			
 		} catch (IOException ee) {
-			logg.error("----- ERROR >> Błąd odczytu pliku z pokojami");
+			logg.error("----->>> testPobierzPokoje: Błąd odczytu pliku z pokojami", ee);
 			Assert.fail("Exception: " + ee.getMessage());
 		}
 		
-		logg.debug("----->>> testPobierzPokoje finish");
 	}
 	
 	@Test
@@ -184,7 +182,7 @@ public class AkademikTest {
 			BufferedReader reader = Files.newBufferedReader(pathStudentow, charset);
 			akademik.pobierzStudentow(reader);
 			reader.close();
-			logg.debug("----->>> studenci pobrani");
+			logg.trace("----->>> studenci pobrani");
 			
 			Student malinowskiZBazy = studentService.findByName("Malinowski");
 			Assert.assertEquals(3, malinowskiZBazy.getId());
@@ -194,7 +192,6 @@ public class AkademikTest {
 			Assert.fail("Exception: " + ee.getMessage());
 		}
 		
-		logg.debug("----->>> testPobierzStudentow finish");
 	}
 	
 	
@@ -224,6 +221,12 @@ public class AkademikTest {
 			BufferedWriter outputWriter = Files.newBufferedWriter(pathRaportu, charset))
 		{
 			akademik.akademik(pokojeReader, studenciReader, outputWriter);
+			
+			List<String> wszyskieLinie = Files.readAllLines(pathRaportu, charset);
+			int ileLinii = wszyskieLinie.size();
+			
+			Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA]", wszyskieLinie.get(ileLinii - 4));
+			
 		} catch (IOException ie) {
 			logg.error("----->>> testAkademika - problemy plikowe", ie);
 			Assert.fail("Exception: " + ie.getMessage());
@@ -238,17 +241,15 @@ public class AkademikTest {
 		logg.debug("----->>> testStanuAkademika starts");
 		
 		daneTestowe.wrzucTrocheDanychDoBazy();
-		logg.debug("----->>> przed zakwateruj");
+		logg.trace("----->>> przed zakwateruj");
 		akademik.zakwateruj();
-		logg.debug("----->>> po zakwateruj");
+		logg.trace("----->>> po zakwateruj");
 		
 		try {
-			BufferedWriter outputWriter = Files.newBufferedWriter(FileSystems.getDefault()
-					.getPath("stan_akademika.txt"), charset);
+			BufferedWriter outputWriter = Files.newBufferedWriter(pathRaportu, charset);
 			akademik.podajStanAkademika(outputWriter, true);
 			outputWriter.close();
-			List<String> wszyskieLinie = Files.readAllLines(FileSystems.getDefault()
-					.getPath("stan_akademika.txt"), charset);
+			List<String> wszyskieLinie = Files.readAllLines(pathRaportu, charset);
 			int ileLinii = wszyskieLinie.size();
 			Assert.assertEquals("===================", wszyskieLinie.get(ileLinii - 1));
 		} catch (IOException ee) {
@@ -262,8 +263,14 @@ public class AkademikTest {
 	
 	@After
 	public void poTescie() throws Exception {
+		logg.debug("----->>> poTescie");
 		usunPlik(pathPokoi);
 		usunPlik(pathStudentow);
+		
+		// jeśli jest, usuwa plik raportu testowego
+		if (Files.exists(pathRaportu)) {
+			usunPlik(pathRaportu);
+		}
 	}
 	
 	/**
@@ -283,14 +290,14 @@ public class AkademikTest {
 	 * usuwa dane z bazy
 	 */
 	private void usunDane() {
-		logg.debug("----->>> usunDane starts");
+		logg.trace("----->>> usunDane starts");
 		pokojService.deleteAll();
 		studentService.deleteAll();
 		kwaterunekService.deleteAll();
 	}
 	
 	private void usunPlik(Path plik) throws IOException {
-		logg.debug("----->>> kasowanie pliku " + plik.getFileName());
+		logg.trace("----->>> kasowanie pliku " + plik.getFileName());
 		Files.delete(plik);
 	}
 
