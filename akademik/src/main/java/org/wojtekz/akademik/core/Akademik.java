@@ -69,7 +69,7 @@ public class Akademik {
 	 * @throws IOException błąd plikowy
 	 */
 	@SuppressWarnings("unchecked")
-	public void pobierzPokoje(BufferedReader reader) throws XmlMappingException, IOException {
+	public void pobierzPokoje(BufferedReader reader) throws IOException {
 		logg.debug("----->>> pobierzPokoje begins");
 		List<Pokoj> pokoje;
 		pokoje = (List<Pokoj>) plikowanie.loadObjectList(reader);
@@ -87,7 +87,7 @@ public class Akademik {
 	 * @throws IOException błąd plikowy
 	 */
 	@SuppressWarnings("unchecked")
-	public void pobierzStudentow(BufferedReader reader) throws XmlMappingException, IOException {
+	public void pobierzStudentow(BufferedReader reader) throws IOException {
 		logg.debug("----->>> pobierzStudentow begins");
 		List<Student> studenci;
 		studenci = (List<Student>) plikowanie.loadObjectList(reader);
