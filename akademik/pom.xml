@@ -11,13 +11,6 @@
      Aplikacja pozwala wpisać dane pokoi, studentów, wykonać akcję "zakwateruj" i wyświetlić
      wynik w postaci listy pokoi z zakwaterowanymi studentami.</description>
      
-    <repositories>
-		<repository>
-			<id>cntr</id>
-			<name>Central repository</name>
-			<url>http://central.maven.org/maven2</url>
-		</repository>
-	</repositories>
      
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
@@ -36,6 +29,9 @@
 		<querydsl.version>4.1.4</querydsl.version>
 
 		<junit.version>4.12</junit.version>
+		
+		<!-- Sonar -->
+  		<sonar.java.pmd.reportPaths>./target/pmd.xml</sonar.java.pmd.reportPaths>
 	</properties>
 	
 	<dependencies>
@@ -224,13 +220,88 @@
         		</configuration>
 			</plugin>
 			
+			<!-- Sonar i raporty dla niego -->
+			<!-- mvn clean package spotbugs:spotbugs pmd:pmd checkstyle:checkstyle sonar:sonar -->
+			<!-- mvn clean package spotbugs:spotbugs jacoco:report pmd:pmd sonar:sonar -->
+			<!-- mvn clean package jacoco:report pmd:pmd sonar:sonar -->
 			<plugin>
         		<groupId>org.sonarsource.scanner.maven</groupId>
         		<artifactId>sonar-maven-plugin</artifactId>
         		<version>3.6.0.1398</version>
       		</plugin>
+      		
+      		<plugin>
+   				<groupId>org.apache.maven.plugins</groupId>
+   				<artifactId>maven-pmd-plugin</artifactId>
+   				<version>3.13.0</version>
+			</plugin>
+			<plugin>
+  				<groupId>com.github.spotbugs</groupId>
+  				<artifactId>spotbugs-maven-plugin</artifactId>
+  				<version>3.1.12.2</version>
+  				<dependencies>
+    				<!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+    				<dependency>
+      					<groupId>com.github.spotbugs</groupId>
+      					<artifactId>spotbugs</artifactId>
+      					<version>4.0.0</version>
+    				</dependency>
+  				</dependencies>
+			</plugin>
+			
+			<plugin>
+      			<groupId>org.jacoco</groupId>
+      			<artifactId>jacoco-maven-plugin</artifactId>
+      			<version>0.8.5</version>
+				<executions>
+        			<execution>
+            			<id>default-prepare-agent</id>
+            			<goals>
+                			<goal>prepare-agent</goal>
+            			</goals>
+        			</execution>
+        			<execution>
+            			<id>default-report</id>
+            			<phase>prepare-package</phase>
+            			<goals>
+                			<goal>report</goal>
+            			</goals>
+        			</execution>
+        			<execution>
+            			<id>default-check</id>
+            			<goals>
+                			<goal>check</goal>
+            			</goals>
+        			</execution>
+    			</executions>
+    		</plugin>
 			
 		</plugins>
 	</build>
+	
+	<reporting>
+	    <plugins>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-jxr-plugin</artifactId>
+	            <version>2.3</version>
+	        </plugin>
+	        
+	        <!-- pokrycie źródeł testami -->
+	        <plugin>
+        		<groupId>org.jacoco</groupId>
+        		<artifactId>jacoco-maven-plugin</artifactId>
+        		<reportSets>
+          			<reportSet>
+            			<reports>
+              				<!-- select non-aggregate reports -->
+              				<report>report</report>
+            			</reports>
+          			</reportSet>
+        		</reportSets>
+      		</plugin>
+	    </plugins>
+	    
+	</reporting>
 
 </project>
