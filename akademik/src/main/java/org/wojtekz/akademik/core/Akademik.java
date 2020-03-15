@@ -53,10 +53,8 @@ public class Akademik {
 			
 		} catch (NoSuchFileException nsfe) {
 			logg.error("----- ERROR >> Nie ma takiego pliku: ", nsfe);
-			System.err.println("Nie ma takiego pliku: " + nsfe.getMessage());
 		} catch (StreamException se) {
 			logg.error("----- ERROR >> Błąd parsowania pliku: ", se);
-			System.err.println("Oczekuję pliku xml o pokojach lub studentach, " + se.getMessage());
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> Całkowicie błędny błąd: ", ee);
 		}
@@ -99,7 +97,7 @@ public class Akademik {
 		for (Student student: studenci) {
 			studentService.save(student);
 		}
-		logg.info("----->>> studenci zapisani do bazy danych");
+		logg.debug("----->>> studenci zapisani do bazy danych");
 	}
 	
 	
@@ -133,7 +131,7 @@ public class Akademik {
 		List<Student> studenci = studentService.listAll();
 		List<Pokoj> pokoje = pokojService.listAll();
 		if (logg.isDebugEnabled()) {
-			logg.debug("----->>> mamy pokoi " + pokoje.size());
+			logg.debug("----->>> mamy pokoi {}", pokoje.size());
 		}
 		
 		int iluZakwater;
@@ -142,7 +140,7 @@ public class Akademik {
 		for (Student student : studenci) {
 			iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 			if (logg.isDebugEnabled()) {
-				logg.debug("----->>> student " + student.getId() + " ma przydziałów: " + iluZakwater);
+				logg.debug("----->>> student {} ma przydziałów: {}", student.getId(), iluZakwater);
 			}
 			
 			if (iluZakwater == 0) {
@@ -152,7 +150,7 @@ public class Akademik {
 				// jeśli nie, mamy przepełnienie
 				iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 				if (iluZakwater == 0) {
-					logg.warn("----->>> Nie można zakwaterować studenta " + student.toString());
+					logg.warn("----->>> Nie można zakwaterować studenta {}", student);
 					logg.error("----->>> Przepełnienie!");
 					return false;
 				}
@@ -173,7 +171,7 @@ public class Akademik {
 	 */
 	private void kwaterujStudenta(Student student, Pokoj pokoj) {
 		if (logg.isDebugEnabled()) {
-			logg.debug("----->>> Nowy kwaterunek " + kwatId + " student " + student.getId() + " pokój " + pokoj.getId());
+			logg.debug("----->>> Nowy kwaterunek {} student {} pokój {}", kwatId, student.getId(), pokoj.getId());
 		}
 
 		Kwaterunek nowyKwaterunek = new Kwaterunek();
@@ -194,15 +192,13 @@ public class Akademik {
 	 * 
 	 */
 	private void petlaPoPokojach(List<Pokoj> pokoje, Student student) {
-		logg.debug("----->>> po pokojach");
+		logg.trace("----->>> po pokojach");
 		
 		pokojeLab:
 		for (Pokoj pokoj : pokoje) {
 			int zajeteMiejsca = kwaterunekService.findByIdPokoju(pokoj.getId()).size();
 			
-			if (logg.isDebugEnabled()) {
-				logg.debug("----->>> dla pokoju " + pokoj.getId() + " miejsc: " + pokoj.getLiczbaMiejsc() + " zajętych: " + zajeteMiejsca);
-			}
+			logg.debug("----->>> dla pokoju {} miejsc: {}, zajętych {}", pokoj.getId(), pokoj.getLiczbaMiejsc(), zajeteMiejsca);
 			
 			if (pokoj.getLiczbaMiejsc() > zajeteMiejsca) {
 				kwaterujStudenta(student, pokoj);
