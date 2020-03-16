@@ -1,9 +1,7 @@
 /**
- * Pakiet konfiguracyjny aplikacji. Zawiera klasę konfiguracyjną - na razie jedną.
- * Konfiguracja jest rozbita na część zawartą w klasie i część w plikach XML, a to
- * ze względu na fakt, że Spring niby pozwala na pełną konfigurację w Javie,
- * ale znakomita większość dokumentacji posługuje się konfiguracją XML. Nie chciałem
- * walczyć z całym światem i poszedłem na kompromis.  
+ * Pakiet konfiguracyjny aplikacji. Klasa wspólna AkademikConfiguration
+ * jest wykorzystywana przez konfigurację testów, aplikacji plikowej
+ * i aplikacji webowej.
  * 
  * @author Wojtek Zaręba
  *
