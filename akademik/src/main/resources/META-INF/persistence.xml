@@ -9,14 +9,13 @@
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<jta-data-source>jdbc/Akademik</jta-data-source>
 		<properties>
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect" />
-			<property name="hibernate.generate_statistics" value="true" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect" />
+			<property name="hibernate.generate_statistics" value="false" />
 			<property name="hibernate.default_batch_fetch_size" value="2" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.use_sql_comments" value="true" />
 			<property name="hibernate.archive.autodetection" value="class, hbm" />
-			<property name="hibernate.connection.zeroDateTimeBehavior" value="convertToNull" />
 			
 		</properties>
 	</persistence-unit>
