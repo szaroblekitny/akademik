@@ -26,6 +26,7 @@
 		<slf4j.version>1.7.30</slf4j.version>
 		<xstream.version>1.4.11.1</xstream.version>
 		<postgresql.version>42.2.10</postgresql.version>
+		<atomikos.version>5.0.6</atomikos.version>
 		<querydsl.version>4.1.4</querydsl.version>
 
 		<junit.version>4.12</junit.version>
@@ -133,6 +134,20 @@
 			<artifactId>xstream</artifactId>
 			<version>${xstream.version}</version>
 		</dependency>
+		
+		<!-- JTA Atomikos -->
+		<dependency>
+    		<groupId>com.atomikos</groupId>
+    		<artifactId>atomikos-util</artifactId>
+    		<version>${atomikos.version}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>com.atomikos</groupId>
+    		<artifactId>transactions-jta</artifactId>
+    		<version>${atomikos.version}</version>
+		</dependency>
+		
 		
 		<dependency>
     		<groupId>org.apache.logging.log4j</groupId>
