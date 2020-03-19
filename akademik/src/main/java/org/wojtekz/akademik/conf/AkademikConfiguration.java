@@ -11,7 +11,6 @@ import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.xstream.XStreamMarshaller;
-import org.wojtekz.akademik.core.WlasciwosciPersystencji;
 import org.wojtekz.akademik.services.KwaterunekService;
 import org.wojtekz.akademik.services.KwaterunekServiceImpl;
 import org.wojtekz.akademik.services.PokojService;
@@ -33,14 +32,6 @@ import org.wojtekz.akademik.util.DaneTestowe;
 @EnableJpaRepositories("org.wojtekz.akademik.repos")
 public class AkademikConfiguration {
 	private static Logger logg = LogManager.getLogger();
-	
-	@Bean(initMethod="init")
-	public WlasciwosciPersystencji emfProperties() {
-		logg.debug("----->>> WlasciwosciPersystencji bean configuration");
-		WlasciwosciPersystencji info = new WlasciwosciPersystencji();
-		
-		return info;
-	}
 	
 	@Bean
 	MutablePersistenceUnitInfo mutablePersistenceUnitInfo() {
