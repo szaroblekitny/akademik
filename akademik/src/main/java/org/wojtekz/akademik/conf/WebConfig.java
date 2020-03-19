@@ -10,7 +10,7 @@ public class WebConfig extends AbstractContextLoaderInitializer {
 	private static Logger logg = LogManager.getLogger();
 	
 	public WebConfig() {
-		logg.debug("-----------> konstruktor WebConfig");
+		logg.trace("-----------> konstruktor WebConfig");
 	}
 	
 	@Override
