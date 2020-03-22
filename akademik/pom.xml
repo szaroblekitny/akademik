@@ -25,7 +25,7 @@
 		<hsqldb.version>2.2.4</hsqldb.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<xstream.version>1.4.11.1</xstream.version>
-		<postgresql.version>42.2.10</postgresql.version>
+		<postgresql-jdbc.version>42.2.10</postgresql-jdbc.version>
 		<atomikos.version>5.0.6</atomikos.version>
 		<querydsl.version>4.1.4</querydsl.version>
 
@@ -133,7 +133,7 @@
 		<dependency>
     		<groupId>org.postgresql</groupId>
     		<artifactId>postgresql</artifactId>
-    		<version>${postgresql.version}</version>
+    		<version>${postgresql-jdbc.version}</version>
 		</dependency>
 		
 		<dependency>
