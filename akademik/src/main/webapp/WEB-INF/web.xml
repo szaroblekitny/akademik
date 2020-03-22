@@ -3,6 +3,17 @@
          xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+         
+	<display-name>Akademik</display-name>
+    
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  	</listener>
+  	
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+         
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
@@ -10,18 +21,36 @@
     
     <context-param>
     	<param-name>log4jConfigLocation</param-name>
-    	<param-value>/WEB-INF/classes/log4j.xml</param-value>
+    	<param-value>/WEB-INF/classes/log4j2.xml</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+	</context-param>
+	
+	<context-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>org.wojtekz.akademik.conf.MainConfiguration</param-value>
 	</context-param>
     
     <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <servlet-name>facesServlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     
     <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-name>facesServlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>facesServlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>facesServlet</servlet-name>
+        <url-pattern>*.faces</url-pattern>
     </servlet-mapping>
     
     <session-config>
@@ -29,15 +58,7 @@
     </session-config>
     
     <welcome-file-list>
-        <welcome-file>student.xhtml</welcome-file>
+        <welcome-file>faces/student.xhtml</welcome-file>
     </welcome-file-list>
     
-    <resource-ref>
-    	<description />
-    	<res-ref-name>jdbc/Akademik</res-ref-name>
-    	<res-type>javax.sql.DataSource</res-type>
-    	<res-auth>Container</res-auth>
-    	<res-sharing-scope>Shareable</res-sharing-scope>
-	</resource-ref>
-	
 </web-app>
