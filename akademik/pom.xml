@@ -94,13 +94,6 @@
 		
 		<dependency>
     		<groupId>org.springframework</groupId>
-    		<artifactId>spring-webmvc</artifactId>
-    		<version>${spring.version}</version>
-		</dependency>
-		
-		
-		<dependency>
-    		<groupId>org.springframework</groupId>
     		<artifactId>spring-context</artifactId>
     		<version>${spring.version}</version>
 		</dependency>
@@ -194,6 +187,9 @@
 	</dependencies>
 	
 	<build>
+	
+		<finalName>akademik</finalName>
+	
 		<plugins>
 		
 			<plugin>
@@ -281,6 +277,26 @@
       			<groupId>org.jacoco</groupId>
       			<artifactId>jacoco-maven-plugin</artifactId>
       			<version>0.8.5</version>
+      			<configuration>
+      				<rules>
+  						<rule>
+    						<element>BUNDLE</element>
+    						<limits>
+      							<limit>
+        							<counter>INSTRUCTION</counter>
+        							<value>COVEREDRATIO</value>
+        							<minimum>0.80</minimum>
+      							</limit>
+      							<limit>
+        							<counter>CLASS</counter>
+        							<value>MISSEDCOUNT</value>
+        							<maximum>0</maximum>
+      							</limit>
+    						</limits>
+  						</rule>
+					</rules>
+					<haltOnFailure>false</haltOnFailure>
+      			</configuration>
 				<executions>
         			<execution>
             			<id>default-prepare-agent</id>
