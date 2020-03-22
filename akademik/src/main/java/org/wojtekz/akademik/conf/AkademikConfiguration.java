@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.xstream.XStreamMarshaller;
@@ -33,13 +32,6 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class AkademikConfiguration {
 	private static Logger logg = LogManager.getLogger();
 	
-	@Bean
-	MutablePersistenceUnitInfo mutablePersistenceUnitInfo() {
-		logg.debug("----->>> MutablePersistenceUnitInfo bean configuration");
-		return new MutablePersistenceUnitInfo();
-	}
-	
-
 	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 		logg.debug("----->>> PersistenceExceptionTranslationPostProcessor bean configuration");
