@@ -55,6 +55,13 @@ public class MainConfiguration {
 	    return properties;
 	}
 	
+	/**
+	 * Obstługa bazy danych przez uniwersalny kontener. Być może trzeba będzie zmienić,
+	 * ale na razie to działa.
+	 * 
+	 * @return LocalContainerEntityManagerFactoryBean z włączonym Hibernejtem
+	 *         i szukaniem źródła danych przez JNDI
+	 */
     @Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		logg.debug("----->>> LocalContainerEntityManagerFactoryBean bean configuration");
@@ -74,12 +81,23 @@ public class MainConfiguration {
 		return em;
 	}
     
+    /**
+     * Pobiera JNDI dla naszej aplikacji.
+     * 
+     * @return DataSource brane z zasobu określonego przez JNDI
+     * @throws NamingException
+     */
     @Bean
     public DataSource dataSource() throws NamingException {
     	logg.debug("----->>> DataSource bean configuration");
         return (DataSource) new JndiTemplate().lookup("java:comp/env/jdbc/akademik");
     }
 	
+    /**
+     * UserTransactionManager Atomikosa dla JTA.
+     * 
+     * @return UserTransactionManager
+     */
 	@Bean
 	public UserTransactionManager atomikosTransactionManager() {
 		logg.debug("----->>> UserTransactionManager bean configuration");
@@ -91,11 +109,16 @@ public class MainConfiguration {
 		}
 		
 		// when close is called, should we force transactions to terminate, or not?
-		userTransactionManager.setForceShutdown(false);
+		userTransactionManager.setForceShutdown(true);
 		
 		return userTransactionManager;
 	}
 	
+	/**
+	 * JTA UserTransaction Atomikosa. Błąd przechwytywany, może to błąd?
+	 * 
+	 * @return UserTransaction
+	 */
 	@Bean
 	UserTransaction userTransaction() {
 		logg.debug("----->>> UserTransaction bean configuration");
@@ -103,11 +126,17 @@ public class MainConfiguration {
 		try {
 			userTransaction.setTransactionTimeout(300);
 		} catch (SystemException se) {
-			logg.error("----->>> STRASZNY BŁĄD SERWISU TRANSAKCJI", se);
+			logg.error("----->>> STRASZNY BŁĄD TRANSAKCJI", se);
 		}
 		return userTransaction;
 	}
 	
+	/**
+	 * PlatformTransactionManager dla aplikacji skonfigurowany jako JTA
+	 * i obsługiwany przez Atomikosa.
+	 * 
+	 * @return PlatformTransactionManager
+	 */
 	@Bean
 	public PlatformTransactionManager transactionManager() {
 		logg.debug("----->>> PlatformTransactionManager bean configuration");
