@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.bean.SessionScoped;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.services.StudentService;
@@ -16,11 +15,11 @@ import org.wojtekz.akademik.services.StudentService;
 /**
  * Obsługa studentów od strony aplikacji JSF.
  * 
- * @author wojtek
+ * @author Wojciech Zaręba
  *
  */
 @Component
-@SessionScoped
+@Scope("session")
 public class StudentBean implements Serializable {
 	private static final long serialVersionUID = 297092190215801549L;
 
@@ -41,7 +40,7 @@ public class StudentBean implements Serializable {
 		if (studentServ != null) {
 			listaStudentow = studentServ.listAll();
 		} else {
-			logg.debug("-----------> nulowa lista studentów, coś nie bangla");
+			logg.warn("------->> Brak StudentService, coś nie bangla");
 		}
 		
 		for (Student ss : listaStudentow) {
