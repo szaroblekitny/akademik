@@ -10,6 +10,11 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   	</listener>
   	
+  	<!-- Niszczy, co nie zostało zniszczone, a implementuje DisposableBean -->
+  	<listener>
+		<listener-class>org.springframework.web.context.ContextCleanupListener</listener-class>
+  	</listener>
+  	
 	<listener>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>

@@ -38,51 +38,7 @@ public class MainConfiguration {
 	private static Logger logg = LogManager.getLogger();
 	
 	/**
-	 * Właściwości dla Hibernejta. W zasadzie powinny być w pliku, 
-	 * ale tu jest na razie łatwiej.
-	 * 
-	 * @return właściwosci sterujące Hibernejtem
-	 */
-	Properties hibernatelProperties() {
-	    Properties properties = new Properties();
-	    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
-	    properties.setProperty("hibernate.generate_statistics", "false");
-	    properties.setProperty("hibernate.default_batch_fetch_size", "2");
-	    properties.setProperty("hibernate.show_sql", "true");
-	    properties.setProperty("hibernate.format_sql", "true");
-	    properties.setProperty("hibernate.use_sql_comments", "true");
-	    
-	    return properties;
-	}
-	
-	/**
-	 * Obstługa bazy danych przez uniwersalny kontener. Być może trzeba będzie zmienić,
-	 * ale na razie to działa.
-	 * 
-	 * @return LocalContainerEntityManagerFactoryBean z włączonym Hibernejtem
-	 *         i szukaniem źródła danych przez JNDI
-	 */
-    @Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-		logg.debug("----->>> LocalContainerEntityManagerFactoryBean bean configuration");
-		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-		
-		em.setPackagesToScan("org.wojtekz.akademik.entity");
-		try {
-			em.setJtaDataSource(dataSource());
-		} catch (NamingException ne) {
-			logg.error("=====>> Błąd szukania bazy danych!");
-		}
-		
-		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		em.setJpaVendorAdapter(vendorAdapter);
-		em.setJpaProperties(hibernatelProperties());
-
-		return em;
-	}
-    
-    /**
-     * Pobiera JNDI dla naszej aplikacji.
+     * DataSource. Pobiera JNDI dla naszej aplikacji.
      * 
      * @return DataSource brane z zasobu określonego przez JNDI
      * @throws NamingException
@@ -92,6 +48,55 @@ public class MainConfiguration {
     	logg.debug("----->>> DataSource bean configuration");
         return (DataSource) new JndiTemplate().lookup("java:comp/env/jdbc/akademik");
     }
+	
+	/**
+	 * Właściwości dla Hibernejta. W zasadzie powinny być w pliku, 
+	 * ale tu jest na razie łatwiej.
+	 * 
+	 * @return właściwosci sterujące Hibernejtem
+	 */
+	Properties hibernateProperties() {
+	    Properties properties = new Properties();
+	    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
+	    properties.setProperty("hibernate.transaction.coordinator_class", "jta");
+	    properties.setProperty("hibernate.transaction.jta.platform", "Atomikos");
+	    properties.setProperty("hibernate.jta.allowTransactionAccess", "true");
+	    properties.setProperty("hibernate.generate_statistics", "false");
+	    properties.setProperty("hibernate.default_batch_fetch_size", "2");
+	    properties.setProperty("hibernate.show_sql", "true");
+	    properties.setProperty("hibernate.format_sql", "true");
+	    properties.setProperty("hibernate.use_sql_comments", "true");
+	    
+	    return properties;
+	}
+
+
+	/**
+	 * Obstługa bazy danych przez uniwersalny kontener. Być może trzeba będzie zmienić,
+	 * ale na razie to działa.
+	 * 
+	 * @return LocalContainerEntityManagerFactoryBean z włączonym Hibernejtem
+	 *         i szukaniem źródła danych przez JNDI
+	 */
+    @Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+    	logg.debug("----->>> LocalContainerEntityManagerFactoryBean bean configuration");
+    	LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+	  
+    	em.setPackagesToScan("org.wojtekz.akademik.entity");
+    	try {
+    		em.setJtaDataSource(dataSource());
+    	} catch (NamingException ne) {
+    		logg.error("=====>> Błąd szukania bazy danych!");
+    	}
+	  
+    	JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+    	em.setJpaVendorAdapter(vendorAdapter);
+    	em.setJpaProperties(hibernateProperties());
+	  
+    	return em;
+	}
+    
 	
     /**
      * UserTransactionManager Atomikosa dla JTA.
