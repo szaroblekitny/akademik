@@ -1,5 +1,6 @@
 package org.wojtekz.akademik.entity;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -22,6 +23,8 @@ public class Student {
 	private long id;
 	private String imie;
 	private String nazwisko;
+	
+	@Convert( converter = KonwerterPlci.class )
 	private Plec plec;
 	
 
