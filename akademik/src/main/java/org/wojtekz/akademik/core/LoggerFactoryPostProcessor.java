@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Ćwiczenie dla zobaczenia jak działa BeanFactoryPostProcessor.
- * @author wojtek
+ * @author Wojciech Zaręba
  *
  */
 @Component
@@ -27,16 +27,18 @@ public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {
 		
 		if (logg.isDebugEnabled()) {
-			logg.debug("-----------> postProcessBeanFactory moze modyfikowac kontekst dla faktory " + factory.getClass().getName());
+			logg.debug("-----------> postProcessBeanFactory moze modyfikowac kontekst dla faktory {}", factory.getClass().getName());
 			
-			logg.trace("------------------------> Beany:");
-			String[] listaBeanow = factory.getBeanDefinitionNames();
-			for (int ii = 0; ii < listaBeanow.length; ii++) {
-				logg.trace("***** " + listaBeanow[ii]);
+			if (logg.isTraceEnabled()) {
+				logg.trace("-------------> Beany:");
+				String[] listaBeanow = factory.getBeanDefinitionNames();
+				for (int ii = 0; ii < listaBeanow.length; ii++) {
+					logg.trace("***** {}", listaBeanow[ii]);
+				}
 			}
 			
 			if (factory.getBeanClassLoader() != null) {
-				logg.debug("-----------> BeanClassLoader: " + factory.getBeanClassLoader().getClass().getName());
+				logg.debug("-----------> BeanClassLoader: {}", factory.getBeanClassLoader().getClass().getName());
 			}
 		}
 		
