@@ -97,5 +97,13 @@ public class KwaterunekServiceImplTest {
 		
 		Assert.assertEquals("Kowalska", stdWPokoju.get(0).getNazwisko());
 	}
+	
+	@Test
+	public void testListyWszystkich() {
+		logg.debug("----->>> testListyWszystkich");
+		List<Kwaterunek> listaKwat = kwatService.listAll();
+		logg.debug("----->>> Mamy {} kwaterunków", listaKwat.size());
+		Assert.assertEquals(2, listaKwat.size());
+	}
 
 }

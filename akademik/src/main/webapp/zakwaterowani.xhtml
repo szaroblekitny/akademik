@@ -9,5 +9,10 @@
 </h:head> 
 <body> 
 	<h2>Zakwaterowani</h2>
+	<ul>
+		<ui:repeat var="kwaterunek" value="#{kwaterunekBean.pobierzKwaterunki()}">
+			<li><h:outputText value="#{kwaterunek}" /></li>
+		</ui:repeat>
+	</ul>
 </body> 
 </html>
