@@ -1,7 +1,5 @@
 package org.wojtekz.akademik.services;
 
-// import static org.junit.Assert.*;
-
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,9 +42,9 @@ public class KwaterunekServiceImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		logg.debug("----->>> setupik");
+		logg.debug("----->>> setupik dla KwaterunekServiceImplTest");
 		danne.wrzucTrocheDanychDoBazy();
-		logg.debug("----->>> setupik dane wrzucone");
+		logg.trace("----->>> setupik dane wrzucone");
 		kwt1.setId(1);
 		kwt1.setPokoj(1);
 		kwt1.setStudent(2);

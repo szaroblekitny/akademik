@@ -190,6 +190,15 @@
 			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- java.util.MissingResourceException: Can't find bundle for base name
+			javax.servlet.LocalStrings, locale pl_PL -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 	
