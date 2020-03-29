@@ -63,7 +63,7 @@
     </session-config>
     
     <welcome-file-list>
-        <welcome-file>faces/student.xhtml</welcome-file>
+        <welcome-file>faces/akademik.xhtml</welcome-file>
     </welcome-file-list>
     
 </web-app>
