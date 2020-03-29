@@ -55,7 +55,7 @@ public class MainConfiguration {
 	 * 
 	 * @return właściwosci sterujące Hibernejtem
 	 */
-	Properties hibernateProperties() {
+	private Properties hibernateProperties() {
 	    Properties properties = new Properties();
 	    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
 	    properties.setProperty("hibernate.transaction.coordinator_class", "jta");
