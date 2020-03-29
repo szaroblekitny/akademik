@@ -1,5 +1,6 @@
 package org.wojtekz.akademik.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -19,7 +20,11 @@ import javax.persistence.Id;
 public class Pokoj {
 	@Id
 	private long id;
+	
+	@Column(name = "numer_pokoju")
 	private String numerPokoju;
+	
+	@Column(name="liczba_miejsc")
 	private int liczbaMiejsc;
 	
 	
