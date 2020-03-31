@@ -34,14 +34,9 @@ public class StudentBean implements Serializable {
 	 * @return lista studentów
 	 */
 	public List<String> pobierzStudentow() {
-		logg.debug("-----------> pobierzStudentow start");
+		logg.trace("-----------> pobierzStudentow start");
 		List<String> studenci = new ArrayList<>();
-		List<Student> listaStudentow = new ArrayList<>();
-		if (studentServ != null) {
-			listaStudentow = studentServ.listAll();
-		} else {
-			logg.warn("------->> Brak StudentService, coś nie bangla");
-		}
+		List<Student> listaStudentow = studentServ.listAll();
 		
 		for (Student ss : listaStudentow) {
 			studenci.add(ss.toString());

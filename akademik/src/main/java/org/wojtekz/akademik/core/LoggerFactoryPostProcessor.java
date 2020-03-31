@@ -21,7 +21,7 @@ public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
 	}
 
 	/**
-	 * Tylko loguje nazwę BeanClassLoadera.
+	 * Tylko loguje nazwę BeanClassLoadera i jako trace spis beanów.
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {
