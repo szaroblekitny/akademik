@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
 	<h:head>
 		<title>Akademik</title>
 	</h:head>
@@ -10,11 +12,28 @@
 		<h2>Studenci</h2>
 	
 		<ul>
-	
 			<ui:repeat var="student" value="#{studentBean.pobierzStudentow()}">
 				<li><h:outputText value="#{student}" /></li>
 			</ui:repeat>
-	
 		</ul>
+		<h3>Studenci w tabelce</h3>
+		<p:dataTable var="student" value="#{studentBean.studenci}">
+    		<p:column headerText="Id">
+        		<h:outputText value="#{student.id}" />
+    		</p:column>
+ 
+    		<p:column headerText="Imie">
+        		<h:outputText value="#{student.imie}" />
+    		</p:column>
+ 
+			<p:column headerText="Nazwisko">
+        		<h:outputText value="#{student.nazwisko}" />
+    		</p:column>
+ 			
+    		<p:column headerText="Płeć">
+        		<h:outputText value="#{student.plec}" />
+    		</p:column>
+		</p:dataTable>
+		
 	</h:body>
 </html>
