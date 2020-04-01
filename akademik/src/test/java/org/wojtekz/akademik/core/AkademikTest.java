@@ -124,10 +124,17 @@ public class AkademikTest {
 		nowak.setNazwisko("Nowak");
 		nowak.setPlec(Plec.MEZCZYZNA);
 		
+		Student malinowski2 = new Student();
+		malinowski2.setId(5);
+		malinowski2.setImie("Jerzy");
+		malinowski2.setNazwisko("Malinowski");
+		malinowski2.setPlec(Plec.MEZCZYZNA);
+		
 		studenci.add(kowalska);
 		studenci.add(kowalski);
 		studenci.add(nowak);
 		studenci.add(malinowski);
+		studenci.add(malinowski2);
 		
 		
 		logg.trace("----->>> Przygotowanie plików");
@@ -184,8 +191,10 @@ public class AkademikTest {
 			reader.close();
 			logg.trace("----->>> studenci pobrani");
 			
-			Student malinowskiZBazy = studentService.findByName("Malinowski");
-			Assert.assertEquals(3, malinowskiZBazy.getId());
+			List<Student> malinowscyZBazy = studentService.findByName("Malinowski");
+			Assert.assertEquals(3, malinowscyZBazy.get(0).getId());
+			Assert.assertEquals("Adam", malinowscyZBazy.get(0).getImie());
+			Assert.assertEquals("Jerzy", malinowscyZBazy.get(1).getImie());
 			
 		} catch (IOException ee) {
 			logg.error("----- ERROR >> Błąd odczytu pliku ze studentami");
@@ -200,11 +209,11 @@ public class AkademikTest {
 		logg.debug("----->>> testKwaterunku starts");
 		zapelnijDanymi();
 		Assert.assertEquals(2, pokojService.ilePokoi());
-		Assert.assertEquals(4, studentService.iluStudentow());
+		Assert.assertEquals(5, studentService.iluStudentow());
 		
 		akademik.zakwateruj();
 		List<Kwaterunek> powiazania = kwaterunekService.listAll();
-		Assert.assertEquals(4, powiazania.size());
+		Assert.assertEquals(5, powiazania.size());
 		
 		usunDane();
 	}
@@ -225,7 +234,7 @@ public class AkademikTest {
 			List<String> wszyskieLinie = Files.readAllLines(pathRaportu, charset);
 			int ileLinii = wszyskieLinie.size();
 			
-			Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA]", wszyskieLinie.get(ileLinii - 4));
+			Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA]", wszyskieLinie.get(ileLinii - 5));
 			
 		} catch (IOException ie) {
 			logg.error("----->>> testAkademika - problemy plikowe", ie);

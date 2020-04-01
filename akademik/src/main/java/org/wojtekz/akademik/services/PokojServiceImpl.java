@@ -28,13 +28,13 @@ public class PokojServiceImpl implements PokojService {
 	@Override
 	@Transactional
 	public void save(Pokoj pokoj) {
-		logg.debug("----->>> save Pokoj");
+		logg.trace("----->>> save Pokoj {}", pokoj);
 		pokojRep.save(pokoj);
 	}
 
 	@Override
 	public List<Pokoj> listAll() {
-		logg.debug("----->>> listAll Pokoj");
+		logg.trace("----->>> listAll Pokoj");
 		
 		List<Pokoj> listaPokoi = new ArrayList<>();
 		listaPokoi = pokojRep.findAll();
@@ -43,14 +43,14 @@ public class PokojServiceImpl implements PokojService {
 
 	@Override
 	public Pokoj findByNumber(String numerPokoju) {
-		logg.debug("----->>> findByNumber Pokoj");
+		logg.trace("----->>> findByNumber Pokoj {}", numerPokoju);
 		
 		return pokojRep.findByNumber(numerPokoju);
 	}
 
 	@Override
 	public long ilePokoi() {
-		logg.debug("----->>> ilePokoi");
+		logg.trace("----->>> ilePokoi");
 		
 		return pokojRep.count();
 	}
@@ -58,7 +58,7 @@ public class PokojServiceImpl implements PokojService {
 	@Override
 	@Transactional
 	public void deleteAll() {
-		logg.debug("----->>> deleteAll Pokoj");
+		logg.trace("----->>> deleteAll Pokoj");
 		
 		pokojRep.deleteAll();
 	}
@@ -66,7 +66,7 @@ public class PokojServiceImpl implements PokojService {
 	@Override
 	@Transactional
 	public void deleteByNumber(String numerPokoju) {
-		logg.debug("----->>> deleteByNumber Pokoj");
+		logg.trace("----->>> deleteByNumber Pokoj {}", numerPokoju);
 		
 		pokojRep.deleteByNumber(numerPokoju);
 	}

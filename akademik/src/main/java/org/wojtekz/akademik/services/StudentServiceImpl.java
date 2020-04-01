@@ -27,36 +27,34 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	@Transactional
 	public void save(Student student) {
-		logg.debug("----->>> save Student");
+		logg.trace("----->>> save Student {}", student);
 		studentRep.save(student);
 
 	}
 
 	@Override
 	public List<Student> listAll() {
-		logg.debug("----->>> listAll Student");
+		logg.trace("----->>> listAll Student");
 		
 		return studentRep.findAll();
 	}
 
 	@Override
 	public Student findById(long idStudenta) {
-		if (logg.isDebugEnabled()) {
-			logg.debug("----->>> findById " + idStudenta);
-		}
+		logg.trace("----->>> findById dla studenta {}", idStudenta);
 		return studentRep.findOne(idStudenta);
 	}
 
 	@Override
-	public Student findByName(String name) {
-		logg.debug("----->>> findByName Student");
+	public List<Student> findByName(String name) {
+		logg.trace("----->>> findByName Student {}", name);
 		
 		return studentRep.findByName(name);
 	}
 
 	@Override
 	public long iluStudentow() {
-		logg.debug("----->>> iluStudentow");
+		logg.trace("----->>> iluStudentow");
 		
 		return studentRep.count();
 	}
@@ -64,7 +62,7 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	@Transactional
 	public void deleteAll() {
-		logg.debug("----->>> deleteAll Student");
+		logg.trace("----->>> deleteAll Student");
 		
 		studentRep.deleteAll();
 	}
@@ -72,7 +70,7 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	@Transactional
 	public void deleteById(long idStudenta) {
-		logg.debug("----->>> deleteById Student");
+		logg.trace("----->>> deleteById Student {}", idStudenta);
 		
 		studentRep.delete(idStudenta);
 	}

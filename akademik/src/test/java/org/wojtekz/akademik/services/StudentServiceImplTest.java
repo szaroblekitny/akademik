@@ -77,11 +77,11 @@ public class StudentServiceImplTest {
 	@Test
 	public void testFindByName() {
 		logg.debug("----->>> testFindByName");
-		Student stt;
+		List<Student> stl;
 		
 		studService.save(student);
-		stt = studService.findByName("Kowalski");
-		Assert.assertEquals("Jan", stt.getImie());
+		stl = studService.findByName("Kowalski");
+		Assert.assertEquals("Jan", stl.get(0).getImie());
 	}
 
 	@Test
