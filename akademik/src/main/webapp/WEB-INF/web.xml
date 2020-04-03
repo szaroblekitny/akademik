@@ -5,51 +5,51 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
          
 	<display-name>Akademik</display-name>
-    
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   	</listener>
-  	
+
   	<!-- Niszczy, co nie zostało zniszczone, a implementuje DisposableBean -->
   	<listener>
 		<listener-class>org.springframework.web.context.ContextCleanupListener</listener-class>
   	</listener>
-  	
+
 	<listener>
 		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
-         
+
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
     </context-param>
-    
+
     <context-param>
     	<param-name>primefaces.THEME</param-name>
     	<param-value>nova-light</param-value>
 	</context-param>
-    
+
     <context-param>
     	<param-name>log4jConfigLocation</param-name>
     	<param-value>/WEB-INF/classes/log4j2.xml</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>contextClass</param-name>
 		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
 	</context-param>
-	
+
 	<context-param>
     	<param-name>contextConfigLocation</param-name>
     	<param-value>org.wojtekz.akademik.conf.MainConfiguration</param-value>
 	</context-param>
-    
+
     <servlet>
         <servlet-name>facesServlet</servlet-name>
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>facesServlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
@@ -62,7 +62,7 @@
         <servlet-name>facesServlet</servlet-name>
         <url-pattern>*.faces</url-pattern>
     </servlet-mapping>
-    
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
@@ -70,5 +70,14 @@
     <welcome-file-list>
         <welcome-file>faces/akademik.xhtml</welcome-file>
     </welcome-file-list>
-    
+
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/errors.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/viewerror.xhtml</location>
+    </error-page>
+
 </web-app>
