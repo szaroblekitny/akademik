@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -21,6 +22,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
+import com.atomikos.icatch.config.UserTransactionService;
+import com.atomikos.icatch.config.UserTransactionServiceImp;
 import com.atomikos.icatch.jta.UserTransactionImp;
 import com.atomikos.icatch.jta.UserTransactionManager;
 
@@ -69,6 +72,22 @@ public class MainConfiguration {
 	    
 	    return properties;
 	}
+	
+	/**
+	 * Właściwości dla Atomikosa. Muszą być przekazane do konstruktora
+	 * UserTransactionServiceImp.
+	 * 
+	 * @return właściwości wymagane przez Atomikosa
+	 */
+	private Properties atomikosProperties() {
+		Properties atoProps = new Properties();
+		// atoProps.setProperty("com.atomikos.icatch.registered", "true");
+		// atoProps.setProperty("com.atomikos.icatch.log_base_dir", "${catalina.base}/logs");
+		// atoProps.setProperty("com.atomikos.icatch.output_dir", "${com.atomikos.icatch.log_base_dir}");
+		atoProps.setProperty("com.atomikos.icatch.service", "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
+
+		return atoProps;
+	}
 
 
 	/**
@@ -97,22 +116,31 @@ public class MainConfiguration {
     	return em;
 	}
     
+    /**
+     * Serwis Atomikosa do obsługi transakcji.
+     * 
+     * @return UserTransactionService
+     */
+    @Bean(initMethod = "init", destroyMethod = "shutdownForce")
+    public UserTransactionService userTransactionService() {
+    	UserTransactionService uts = new UserTransactionServiceImp(atomikosProperties());
+    	
+    	return uts;
+    }
 	
     /**
      * UserTransactionManager Atomikosa dla JTA.
      * 
      * @return UserTransactionManager
      */
-	@Bean
+	@Bean(initMethod = "init", destroyMethod = "close")
+	@DependsOn("userTransactionService")
 	public UserTransactionManager atomikosTransactionManager() {
 		logg.debug("----->>> UserTransactionManager bean configuration");
 		UserTransactionManager userTransactionManager = new UserTransactionManager();
-		try {
-			userTransactionManager.init();
-		} catch (SystemException se) {
-			logg.error("----->>> STRASZNY BŁĄD inita UserTransactionManagera", se);
-		}
 		
+		// disable startup because the userTransactionService above does this
+		userTransactionManager.setStartupTransactionService(false);
 		// when close is called, should we force transactions to terminate, or not?
 		userTransactionManager.setForceShutdown(true);
 		
@@ -125,6 +153,7 @@ public class MainConfiguration {
 	 * @return UserTransaction
 	 */
 	@Bean
+	@DependsOn("userTransactionService")
 	UserTransaction userTransaction() {
 		logg.debug("----->>> UserTransaction bean configuration");
 		UserTransaction userTransaction = new UserTransactionImp();

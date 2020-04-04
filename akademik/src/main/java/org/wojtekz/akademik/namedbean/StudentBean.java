@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.Logger;
+import org.primefaces.event.RowEditEvent;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -27,15 +29,14 @@ public class StudentBean implements Serializable {
 	private static Logger logg = LogManager.getLogger();
 
 	private List<Student> studenci;
+	private transient final StudentService studentServ;
 	
 	@Autowired
-	private transient StudentService studentServ;
-	
-	@PostConstruct
-    public void init() {
-		logg.debug("------> PostConstruct StudentBean");
+	public StudentBean(StudentService studentService) {
+		this.studentServ = studentService;
 		studenci = studentServ.listAll();
-    }
+	}
+	
 	
 	/**
 	 * Lista studentów dla PrimeFaces (jest deczko prościej).
@@ -45,6 +46,32 @@ public class StudentBean implements Serializable {
 	public List<Student> getStudenci() {
 		return studenci;
 	}
+	
+	
+	/**
+	 * Reakcja na zdarzenie edycji rekordu. Wyświetla komunikat
+	 * i zapisuje rekord do bazy.
+	 * 
+	 * @param event zdarzenie edycji z komponentu p:cellEditor
+	 */
+	public void onRowEdit(RowEditEvent event) {
+		Student student = (Student) event.getObject();
+		// String jest wymagany w FacesMessage
+        FacesMessage msg = new FacesMessage("Edycja studenta",
+        		"Student o Id " + String.valueOf(student.getId()));
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        studentServ.save(student);
+    }
+    
+	/**
+	 * Reakcja na zdarzenie anulowania edycji. Tylko wyświetla komunikat.
+	 * 
+	 * @param event zdarzenie anulowania edycji z komponentu p:cellEditor
+	 */
+    public void onRowCancel(RowEditEvent event) {
+        FacesMessage msg = new FacesMessage("Edycja anulowana", String.valueOf(((Student) event.getObject()).getId()));
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
 
 	/**
 	 * Pobiera listę studentów z bazy i przekształca na Stringi czytelne dla strony web.

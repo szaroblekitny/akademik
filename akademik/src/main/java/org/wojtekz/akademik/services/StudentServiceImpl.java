@@ -17,22 +17,22 @@ import org.wojtekz.akademik.repos.StudentRepository;
  *
  */
 @Repository
-@Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 	private static Logger logg = LogManager.getLogger();
 	
 	@Autowired
-	StudentRepository studentRep;
-
+	private StudentRepository studentRep;
+	
+	
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public void save(Student student) {
 		logg.trace("----->>> save Student {}", student);
 		studentRep.save(student);
-
 	}
-
+	
 	@Override
+	@Transactional(readOnly = true)
 	public List<Student> listAll() {
 		logg.trace("----->>> listAll Student");
 		
@@ -40,12 +40,14 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Student findById(long idStudenta) {
 		logg.trace("----->>> findById dla studenta {}", idStudenta);
 		return studentRep.findOne(idStudenta);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Student> findByName(String name) {
 		logg.trace("----->>> findByName Student {}", name);
 		
@@ -53,6 +55,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public long iluStudentow() {
 		logg.trace("----->>> iluStudentow");
 		
@@ -60,7 +63,7 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public void deleteAll() {
 		logg.trace("----->>> deleteAll Student");
 		
@@ -68,11 +71,12 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public void deleteById(long idStudenta) {
 		logg.trace("----->>> deleteById Student {}", idStudenta);
 		
 		studentRep.delete(idStudenta);
 	}
+
 
 }
