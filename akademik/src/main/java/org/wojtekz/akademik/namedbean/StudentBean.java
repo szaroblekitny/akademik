@@ -29,10 +29,11 @@ public class StudentBean implements Serializable {
 	private static Logger logg = LogManager.getLogger();
 
 	private List<Student> studenci;
-	private transient final StudentService studentServ;
+	private final transient StudentService studentServ;
 	
 	@Autowired
 	public StudentBean(StudentService studentService) {
+		logg.debug("-----> konstruktor StudentBean");
 		this.studentServ = studentService;
 		studenci = studentServ.listAll();
 	}
@@ -80,15 +81,15 @@ public class StudentBean implements Serializable {
 	 */
 	public List<String> pobierzStudentow() {
 		logg.trace("-----------> pobierzStudentow start");
-		List<String> studenci = new ArrayList<>();
+		List<String> studList = new ArrayList<>();
 		List<Student> listaStudentow = studentServ.listAll();
 		
 		for (Student ss : listaStudentow) {
-			studenci.add(ss.toString());
+			studList.add(ss.toString());
 		}
 		
 		logg.debug("-----------> mamy studentów dla stronki");
-		return studenci;
+		return studList;
 	}
 	
 

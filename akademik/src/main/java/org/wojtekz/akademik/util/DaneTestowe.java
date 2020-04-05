@@ -15,7 +15,7 @@ import org.wojtekz.akademik.services.StudentService;
 /**
  * Klasa przygotowująca dane testowe: 3 pokoje i 6 studentów.
  * 
- * @author Wojtek
+ * @author Wojtek Zaręba
  *
  */
 public class DaneTestowe {
@@ -44,7 +44,7 @@ public class DaneTestowe {
 	 * Wypełnia pola przykładowymi danymi testowymi zdefiniowanymi w tym konstruktorze.
 	 */
 	public DaneTestowe() {
-		logg.debug("----->>> Dane testowe - konstruktor pełny");
+		logg.trace("----->>> Dane testowe - konstruktor pełny");
 
 		pokoj1 = new Pokoj();
 		pokoj1.setId(1);
@@ -133,7 +133,7 @@ public class DaneTestowe {
 			Student student1, Student student2, Student student3,
 			Student student4, Student student5, Student student6) {
 
-		logg.debug("----->>> Dane testowe - konstruktor parametrowy");
+		logg.trace("----->>> Dane testowe - konstruktor parametrowy");
 
 		this.pokoj1 = pokoj1;
 		this.pokoj2 = pokoj2;
@@ -171,7 +171,7 @@ public class DaneTestowe {
 	 *                typ listy
 	 */
 	public <T> void wrzucTrocheDanychDoBazy(List<T> lista) {
-		logg.debug("----->>> wrzucTrocheDanychDoBazy start ");
+		logg.trace("----->>> wrzucTrocheDanychDoBazy start ");
 
 		if (lista.size() > 0) {
 			Class<? extends Object> superClass = lista.get(0).getClass();

@@ -32,13 +32,13 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Override
 	@Transactional
 	public void save(Kwaterunek kwaterunek) {
-		logg.debug("----->>> save kwaterunek");
+		logg.trace("-----> save kwaterunek");
 		kwaterunekRep.save(kwaterunek);
 	}
 
 	@Override
 	public List<Kwaterunek> listAll() {
-		logg.debug("----->>> listAll");
+		logg.trace("-----> listAll");
 		List<Kwaterunek> lista;
 		lista = kwaterunekRep.findAll();
 		return lista;
@@ -46,26 +46,26 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 
 	@Override
 	public Kwaterunek findById(long id) {
-		logg.debug("----->>> findById");
+		logg.trace("-----> findById");
 		return kwaterunekRep.findOne(id);
 	}
 
 	@Override
 	public List<Kwaterunek> findByIdStudenta(long idStudenta) {
-		logg.debug("----->>> findByIdStudenta");
+		logg.trace("-----> findByIdStudenta");
 		return kwaterunekRep.findByIdStudenta(idStudenta);
 	}
 
 	@Override
 	public List<Kwaterunek> findByIdPokoju(long idPokoju) {
-		logg.debug("----->>> findByIdPokoju");
+		logg.trace("-----> findByIdPokoju");
 		return kwaterunekRep.findByIdPokoju(idPokoju);
 	}
 
 	@Override
 	public List<Student> findStudenciWPokoju(long idPokoju) {
-		if (logg.isDebugEnabled()) {
-			logg.debug("----->>> findStudenciWPokoju " + idPokoju);
+		if (logg.isTraceEnabled()) {
+			logg.trace("-----> findStudenciWPokoju {}", idPokoju);
 		}
 		List<Kwaterunek> zakwaterowani;
 		List<Student> studenci = new ArrayList<Student>(); 
@@ -75,9 +75,9 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 		for (Kwaterunek kw: zakwaterowani) {
 			Student studZakw = studentServ.findById(kw.getStudent());
 			
-			if (logg.isDebugEnabled()) {
-				logg.debug("----->>> " + kw.toString());
-				logg.debug("----->>> " + studZakw.toString());
+			if (logg.isTraceEnabled()) {
+				logg.trace("-----> {}", kw);
+				logg.trace("-----> {}", studZakw);
 			}
 			studenci.add(studZakw);
 		}
@@ -87,7 +87,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Override
 	@Transactional
 	public void deleteAll() {
-		logg.debug("----->>> deleteAll");
+		logg.trace("----->>> deleteAll");
 		kwaterunekRep.deleteAll();
 
 	}
@@ -95,7 +95,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Override
 	@Transactional
 	public void deleteById(long id) {
-		logg.debug("----->>> deleteById");
+		logg.trace("----->>> deleteById");
 		kwaterunekRep.delete(id);
 
 	}
