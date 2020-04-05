@@ -2,8 +2,12 @@ package org.wojtekz.akademik.services;
 
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -55,7 +59,7 @@ public class KwaterunekServiceImplTest {
 		
 		kwatService.save(kwt1);
 		kwatService.save(kwt2);
-		logg.debug("----->>> setupik koniec setupiku");
+		logg.trace("----->>> setupik koniec setupiku");
 	}
 	
 	@After
@@ -71,6 +75,13 @@ public class KwaterunekServiceImplTest {
 		List<Kwaterunek> kk = kwatService.findByIdStudenta(2);
 		Assert.assertEquals(1, kk.get(0).getId());
 	}
+	
+	@Test
+	public void testFindById() {
+		logg.debug("----->>> testFindByIdStudenta");
+		Kwaterunek kk = kwatService.findById(2);
+		Assert.assertEquals(3, kk.getPokoj());
+	}
 
 	@Test
 	public void testFindByIdPokoju() {
@@ -84,16 +95,28 @@ public class KwaterunekServiceImplTest {
 	public void testFindStudenciWPokoju() {
 		logg.debug("----->>> testFindStudenciWPokoju");
 		
+		LoggerContext logCtx = (LoggerContext) LogManager.getContext(false);
+		Configuration logConf = logCtx.getConfiguration();
+		LoggerConfig loggerConfig = logConf.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+		Level appLevel = loggerConfig.getLevel();
+		loggerConfig.setLevel(Level.TRACE);
+		logCtx.updateLoggers();
+		
+		logg.trace("======> testFindStudenciWPokoju Level.TRACE");
+		
 		List<Student> stdWPokoju = kwatService.findStudenciWPokoju(1);
 		Assert.assertNotNull(stdWPokoju);
 		Assert.assertEquals(1, stdWPokoju.size());
 		
-		logg.info("----->>> Studenci w pokoju 1:");
+		logg.trace("----->>> Studenci w pokoju 1:");
 		for (Student student: stdWPokoju) {
-			logg.info("----->>> " + student.toString());
+			logg.trace("----->>> " + student.toString());
 		}
 		
 		Assert.assertEquals("Kowalska", stdWPokoju.get(0).getNazwisko());
+		
+		loggerConfig.setLevel(appLevel);
+		logCtx.updateLoggers();
 	}
 	
 	@Test
@@ -102,6 +125,13 @@ public class KwaterunekServiceImplTest {
 		List<Kwaterunek> listaKwat = kwatService.listAll();
 		logg.debug("----->>> Mamy {} kwaterunków", listaKwat.size());
 		Assert.assertEquals(2, listaKwat.size());
+	}
+	
+	@Test
+	public void testDeleteById() {
+		logg.debug("----->>> testDeleteById");
+		kwatService.deleteById(1);
+		Assert.assertEquals(1, kwatService.listAll().size());
 	}
 
 }
