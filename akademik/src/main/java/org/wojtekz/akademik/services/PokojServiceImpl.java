@@ -1,6 +1,5 @@
 package org.wojtekz.akademik.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,10 +34,7 @@ public class PokojServiceImpl implements PokojService {
 	@Override
 	public List<Pokoj> listAll() {
 		logg.trace("----->>> listAll Pokoj");
-		
-		List<Pokoj> listaPokoi = new ArrayList<>();
-		listaPokoi = pokojRep.findAll();
-		return listaPokoi;
+		return pokojRep.findAll();
 	}
 
 	@Override

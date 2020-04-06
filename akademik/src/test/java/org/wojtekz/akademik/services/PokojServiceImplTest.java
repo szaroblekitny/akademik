@@ -31,6 +31,7 @@ public class PokojServiceImplTest {
 		logg.debug("----->>> Pokoj before method fired");
 		pokoj = new Pokoj();
 		pokoj.setId(1);
+		pokoj.setNumerPokoju("102");
 	}
 	
 	@After
@@ -70,6 +71,13 @@ public class PokojServiceImplTest {
 	@Test
 	public void testIlePokoi() {
 		logg.debug("----->>> testIlePokoi");
+		Assert.assertEquals(0, pokService.ilePokoi());
+	}
+	
+	@Test
+	public void testDeleteById() {
+		logg.debug("----->>> testDeleteById");
+		pokService.deleteByNumber("102");
 		Assert.assertEquals(0, pokService.ilePokoi());
 	}
 

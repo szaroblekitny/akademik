@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.repos;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.wojtekz.akademik.entity.Pokoj;
 
@@ -24,11 +25,13 @@ public interface PokojRepository extends JpaRepository<Pokoj, Long> {
 	public Pokoj findByNumber(String numerPokoju);
 	
 	/**
-	 * Kasowanie pokoju o podanym numerze.
+	 * Kasowanie pokoju o podanym numerze. Ponieważ rekordy są zmieniane,
+	 * konieczne jest dodanie adnotacji Modifying.
 	 * 
 	 * @param numerPokoju numer pokoju
 	 */
-	@Query("delete Pokoj pp where pp.numerPokoju = ?1")
+	@Modifying
+	@Query("delete from Pokoj p where p.numerPokoju = ?1")
 	public void deleteByNumber(String numerPokoju);
 
 }
