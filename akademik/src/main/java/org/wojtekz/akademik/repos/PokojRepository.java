@@ -22,7 +22,7 @@ public interface PokojRepository extends JpaRepository<Pokoj, Long> {
 	 * @return obiekt Pokoj
 	 */
 	@Query("select pp from Pokoj pp where pp.numerPokoju = ?1")
-	public Pokoj findByNumber(String numerPokoju);
+	Pokoj findByNumber(String numerPokoju);
 	
 	/**
 	 * Kasowanie pokoju o podanym numerze. Ponieważ rekordy są zmieniane,
@@ -32,6 +32,6 @@ public interface PokojRepository extends JpaRepository<Pokoj, Long> {
 	 */
 	@Modifying
 	@Query("delete from Pokoj p where p.numerPokoju = ?1")
-	public void deleteByNumber(String numerPokoju);
+	void deleteByNumber(String numerPokoju);
 
 }

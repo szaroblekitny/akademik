@@ -22,6 +22,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 	 * @return obiekt Student
 	 */
 	@Query("select ss from Student ss where ss.nazwisko = ?1")
-	public List<Student> findByName(String name);
+	List<Student> findByName(String name);
 
 }
