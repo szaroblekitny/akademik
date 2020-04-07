@@ -30,6 +30,7 @@
 		<querydsl.version>4.1.4</querydsl.version>
 
 		<junit.version>4.12</junit.version>
+		<mockito.version>1.10.19</mockito.version>
 		
 		<!-- Sonar -->
   		<sonar.java.pmd.reportPaths>${project.build.directory}/pmd.xml</sonar.java.pmd.reportPaths>
@@ -182,6 +183,14 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
 		
 		<dependency>
 			<groupId>org.hsqldb</groupId>

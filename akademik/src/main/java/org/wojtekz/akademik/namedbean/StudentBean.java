@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-
 import org.apache.logging.log4j.Logger;
 import org.primefaces.event.RowEditEvent;
 import org.apache.logging.log4j.LogManager;
@@ -30,12 +27,23 @@ public class StudentBean implements Serializable {
 
 	private List<Student> studenci;
 	private final transient StudentService studentServ;
+	private transient Messagesy komunikaty;
 	
+	/**
+	 * Kostruktor, który pobiera listę wszystkich studentów (odważnie).
+	 * 
+	 * @param studentService usługa studencka
+	 */
 	@Autowired
 	public StudentBean(StudentService studentService) {
 		logg.debug("-----> konstruktor StudentBean");
 		this.studentServ = studentService;
 		studenci = studentServ.listAll();
+	}
+	
+	@Autowired
+	public void setMessagesy(Messagesy komunikaty) {
+		this.komunikaty = komunikaty;
 	}
 	
 	
@@ -57,10 +65,7 @@ public class StudentBean implements Serializable {
 	 */
 	public void onRowEdit(RowEditEvent event) {
 		Student student = (Student) event.getObject();
-		// String jest wymagany w FacesMessage
-        FacesMessage msg = new FacesMessage("Edycja studenta",
-        		"Student o Id " + String.valueOf(student.getId()));
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        komunikaty.addMessage("Edycja studenta", "Student o Id " + student.getId());
         studentServ.save(student);
     }
     
@@ -70,8 +75,7 @@ public class StudentBean implements Serializable {
 	 * @param event zdarzenie anulowania edycji z komponentu p:cellEditor
 	 */
     public void onRowCancel(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("Edycja anulowana", String.valueOf(((Student) event.getObject()).getId()));
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+    	komunikaty.addMessage("Edycja anulowana", String.valueOf(((Student) event.getObject()).getId()));
     }
 
 	/**

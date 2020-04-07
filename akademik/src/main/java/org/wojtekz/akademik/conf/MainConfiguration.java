@@ -81,9 +81,6 @@ public class MainConfiguration {
 	 */
 	private Properties atomikosProperties() {
 		Properties atoProps = new Properties();
-		// atoProps.setProperty("com.atomikos.icatch.registered", "true");
-		// atoProps.setProperty("com.atomikos.icatch.log_base_dir", "${catalina.base}/logs");
-		// atoProps.setProperty("com.atomikos.icatch.output_dir", "${com.atomikos.icatch.log_base_dir}");
 		atoProps.setProperty("com.atomikos.icatch.service", "com.atomikos.icatch.standalone.UserTransactionServiceFactory");
 
 		return atoProps;

@@ -115,51 +115,6 @@ public class DaneTestowe {
 		logg.debug("----->>> Dane testowe - koniec konstruktora");
 	}
 
-	/**
-	 * Tworzy obiekt z danymi i pozwala go wypelnić parametrami zewnętrznymi.
-	 * 
-	 * @param pokoj1 dane pokoju 1.
-	 * @param pokoj2 dane pokoju 2.
-	 * @param pokoj3 dane pokoju 3.
-	 * @param student1 dane studenta 1.
-	 * @param student2 dane studenta 2.
-	 * @param student3 dane studenta 3.
-	 * @param student4 dane studenta 4.
-	 * @param student5 dane studenta 5.
-	 * @param student6 dane studenta 6.
-	 * 
-	 */
-	public DaneTestowe(Pokoj pokoj1, Pokoj pokoj2, Pokoj pokoj3,
-			Student student1, Student student2, Student student3,
-			Student student4, Student student5, Student student6) {
-
-		logg.trace("----->>> Dane testowe - konstruktor parametrowy");
-
-		this.pokoj1 = pokoj1;
-		this.pokoj2 = pokoj2;
-		this.pokoj3 = pokoj3;
-		this.student1 = student1;
-		this.student2 = student2;
-		this.student3 = student3;
-		this.student4 = student4;
-		this.student5 = student5;
-		this.student6 = student6;
-
-		// przestawione!
-		pokoje = new ArrayList<Pokoj>();
-		pokoje.add(pokoj3);
-		pokoje.add(pokoj1);
-		pokoje.add(pokoj2);
-
-		// po kolei
-		mieszkancy = new ArrayList<Student>();
-		mieszkancy.add(student1);
-		mieszkancy.add(student2);
-		mieszkancy.add(student3);
-		mieszkancy.add(student4);
-		mieszkancy.add(student5);
-		mieszkancy.add(student6);
-	}
 
 	/**
 	 * Wrzuca dane przekazane przez listę do tabeli w bazie określonej przez

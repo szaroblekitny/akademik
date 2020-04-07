@@ -1,6 +1,11 @@
 package org.wojtekz.akademik.namedbean;
 
+import static org.mockito.Mockito.*;
+
 import java.util.List;
+
+import javax.faces.component.UIComponent;
+import javax.faces.component.behavior.Behavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -30,11 +36,17 @@ import org.wojtekz.akademik.util.DaneTestowe;
 @WebAppConfiguration
 public class StudentBeanTest {
 	private static Logger logg = LogManager.getLogger();
+	private final static String KLAPA = "Klapaucjusz";
+	private final static String SMIESZNY = "Śmieszny";
 	
 	private transient PokojService pokojService;
 	private transient StudentBean studentBean;
 	private transient StudentService studentService;
 	private transient DaneTestowe daneTestowe;
+	private transient Messagesy komunikaty;
+	private transient UIComponent component;
+	private transient Behavior behavior;
+	private Student student;
 	
 	
 	@Autowired
@@ -61,8 +73,16 @@ public class StudentBeanTest {
 
 	@Before
 	public void setUp() throws Exception {
-		logg.debug("-------> setUp - dane do bazy");
+		logg.debug("-------> setUp");
+		komunikaty = mock(Messagesy.class);
+		component = mock(UIComponent.class);
+		behavior = mock(Behavior.class);
+		studentBean.setMessagesy(komunikaty);
 		daneTestowe.wrzucTrocheDanychDoBazy();
+		student = new Student();
+		student.setId(10);
+		student.setImie(KLAPA);
+		student.setNazwisko(SMIESZNY);
 	}
 
 	@After
@@ -73,9 +93,26 @@ public class StudentBeanTest {
 
 	@Test
 	public void testPobierzStudentow() {
+		logg.debug("-------> testPobierzStudentow");
 		List<String> stntStrList = studentBean.pobierzStudentow();
 		Assert.assertEquals(6, stntStrList.size());
 		Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA]", stntStrList.get(2));
+	}
+	
+	@Test
+	public void testOnRowEdit() {
+		logg.debug("-------> testOnRowEdit");
+		studentBean.onRowEdit(new RowEditEvent(component, behavior, student));
+		verify(komunikaty).addMessage("Edycja studenta", "Student o Id 10");
+		Student sprStudent = studentService.findById(10);
+		Assert.assertEquals(KLAPA, sprStudent.getImie());
+	}
+	
+	@Test
+	public void testOnRowCancel() {
+		logg.debug("-------> testOnRowCancel");
+		studentBean.onRowCancel(new RowEditEvent(component, behavior, student));
+		verify(komunikaty).addMessage("Edycja anulowana", "10");
 	}
 	
 	@Test
