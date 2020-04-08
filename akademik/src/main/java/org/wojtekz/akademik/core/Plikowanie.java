@@ -14,14 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.stereotype.Component;
+import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.services.PokojService;
 import org.wojtekz.akademik.services.StudentService;
 
-import com.thoughtworks.xstream.XStreamer;
 
 /**
  * Klasa do obsługi operacji plikowych.
@@ -85,10 +84,11 @@ public class Plikowanie {
 	 *         podanego typu; również gdy plik nie jest plikiem XML
 	 * @throws IOException błąd odczytu z pliku
 	 */
-	public List<?> loadObjectList(BufferedReader reader)
+	@SuppressWarnings("unchecked")
+	public List<Plikowalny> loadObjectList(BufferedReader reader)
 			throws XmlMappingException, IOException {
-		List<?> obj;
-		obj =  (List<?>) unmarshaller.unmarshal(new StreamSource(reader));
+		List<Plikowalny> obj;
+		obj =  (List<Plikowalny>) unmarshaller.unmarshal(new StreamSource(reader));
 		return obj;
 	}
 	

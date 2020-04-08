@@ -20,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
+import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
@@ -72,7 +73,6 @@ public class PlikowanieTest {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testMarszaluListy() {
 		Pokoj pok1 = new Pokoj();
@@ -88,25 +88,21 @@ public class PlikowanieTest {
 		pokoje.add(pok1);
 		pokoje.add(pok2);
 		
-		List<Pokoj> listaPokoi = new ArrayList<Pokoj>();
+		List<Plikowalny> wczytLista;
 		
 		Path plik = FileSystems.getDefault().getPath("pokoje_test.xml");
 		try {
 			BufferedWriter buWri = Files.newBufferedWriter(plik, StandardCharsets.UTF_8);
 			BufferedReader buReader = Files.newBufferedReader(plik, StandardCharsets.UTF_8);
 			plikowanie.saveObjectList(buWri, pokoje);
-			listaPokoi = (List<Pokoj>)plikowanie.loadObjectList(buReader);
+			wczytLista  = plikowanie.loadObjectList(buReader);
+			
+			Assert.assertEquals("102", ((Pokoj) (wczytLista.get(1))).getNumerPokoju());
 		} catch (Exception ex) {
 			logg.error("----- ERROR >> testWriteList: ", ex);
 			Assert.assertFalse("----->>> Mamy błąd zapisu", true);
 		}
 		
-		logg.debug("----->>> Odczytana lista pokoi:");
-		for (Pokoj pp: listaPokoi) {
-			logg.debug("----->>> " + pp.toString());
-		}
-		
-		Assert.assertEquals("102", listaPokoi.get(1).getNumerPokoju());
 	}
 
 }

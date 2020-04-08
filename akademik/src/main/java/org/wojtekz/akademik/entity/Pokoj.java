@@ -1,5 +1,7 @@
 package org.wojtekz.akademik.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,7 +19,9 @@ import javax.persistence.Id;
  *
  */
 @Entity
-public class Pokoj {
+public class Pokoj implements Serializable, Plikowalny {
+	private static final long serialVersionUID = 3208928506624425724L;
+
 	@Id
 	private long id;
 	

@@ -20,7 +20,7 @@ import javax.persistence.Id;
  *
  */
 @Entity
-public class Student implements Serializable {
+public class Student implements Serializable, Plikowalny {
 	private static final long serialVersionUID = 6073222260778454842L;
 	
 	@Id

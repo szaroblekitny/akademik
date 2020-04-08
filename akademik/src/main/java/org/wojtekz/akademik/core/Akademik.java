@@ -9,9 +9,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Kwaterunek;
+import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.services.KwaterunekService;
@@ -42,8 +42,8 @@ public class Akademik {
 			studentService.deleteAll();
 			kwaterunekService.deleteAll();
 			
-			pobierzPokoje(pokojeReader);
-			pobierzStudentow(studenciReader);
+			pobierzZPliku(pokojeReader);
+			pobierzZPliku(studenciReader);
 			boolean udaloSie = zakwateruj();
 			podajStanAkademika(outputWriter, udaloSie);
 			
@@ -62,42 +62,43 @@ public class Akademik {
  	
 	
 	/**
-	 * Pobiera listę pokoi z pliku XML i zapisuje w bazie danych.
-	 * 
-	 * @param reader BufferedReader
-	 * @throws XmlMappingException błąd mapowania pól w pliku na pola klasy Pokoje
-	 * @throws IOException błąd plikowy
+	 * Pobiera z bufora (pliku XML) listę obiektów i zapisuje je do bazy, rozpoznając
+	 * typ obiektu.
+	 *
+	 * @param reader bufor odczytu danych (z pliku)
+	 * @throws IOException jeśli jest błąd odczytu
 	 */
-	@SuppressWarnings("unchecked")
-	public void pobierzPokoje(BufferedReader reader) throws IOException {
-		logg.debug("----->>> pobierzPokoje begins");
-		List<Pokoj> pokoje;
-		pokoje = (List<Pokoj>) plikowanie.loadObjectList(reader);
-		for (Pokoj pok : pokoje) {
-			pokojService.save(pok);
-		}
-		logg.info("----->>> pokoje zapisane do bazy danych");
-	}
-	
-	/**
-	 * Pobiera listę studentów z pliku XML i zapisuje w bazie danych.
-	 * 
-	 * @param reader BufferedReader
-	 * @throws XmlMappingException błąd mapowania pól w pliku na pola klasy Studenci
-	 * @throws IOException błąd plikowy
-	 */
-	@SuppressWarnings("unchecked")
-	public void pobierzStudentow(BufferedReader reader) throws IOException {
-		logg.debug("----->>> pobierzStudentow begins");
-		List<Student> studenci;
-		studenci = (List<Student>) plikowanie.loadObjectList(reader);
+	public void pobierzZPliku(BufferedReader reader) throws IOException {
+		logg.trace("----->>> pobierzZPliku");
 		
-		logg.debug("----->>> studenci pobrani z pliku");
+		Plikowalny pp;
 		
-		for (Student student: studenci) {
-			studentService.save(student);
+		List<Plikowalny> pobrane = plikowanie.loadObjectList(reader);
+		
+		if (!pobrane.isEmpty()) {
+			pp = pobrane.get(0);
+		} else {
+			logg.warn("----->>> pobierzZPliku brak rekordów");
+			return;
 		}
-		logg.debug("----->>> studenci zapisani do bazy danych");
+		
+		if (pp instanceof Pokoj) {
+			for (Plikowalny pok : pobrane) {
+				pokojService.save((Pokoj) pok);
+			}
+			logg.debug("----->>> pokoje zapisane do bazy danych");
+			return;
+		}
+		
+		if (pp instanceof Student) {
+			for (Plikowalny stud : pobrane) {
+				studentService.save((Student) stud);
+			}
+			logg.debug("----->>> studenci zapisani do bazy danych");
+			return;
+		}
+		
+		logg.warn("----->>> pobierzZPliku - nieznany typ obiektu");
 	}
 	
 	

@@ -168,7 +168,7 @@ public class AkademikTest {
 		
 		try {
 			BufferedReader reader = Files.newBufferedReader(pathPokoi, charset);
-			akademik.pobierzPokoje(reader);
+			akademik.pobierzZPliku(reader);
 			reader.close();
 			
 			Pokoj pokZBazy = pokojService.findByNumber("102");
@@ -187,7 +187,7 @@ public class AkademikTest {
 		
 		try {
 			BufferedReader reader = Files.newBufferedReader(pathStudentow, charset);
-			akademik.pobierzStudentow(reader);
+			akademik.pobierzZPliku(reader);
 			reader.close();
 			logg.trace("----->>> studenci pobrani");
 			
