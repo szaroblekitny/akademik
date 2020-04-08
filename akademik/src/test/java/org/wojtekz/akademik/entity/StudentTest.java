@@ -6,6 +6,11 @@ import org.junit.Test;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Student;
 
+/**
+ * Najprostszy test encji Student.
+ *
+ * @author Wojciech Zaręba
+ */
 public class StudentTest {
 	private Student student;
 	
@@ -20,7 +25,7 @@ public class StudentTest {
 
 	@Test
 	public void test() {
-		Assert.assertEquals(student.getImie(), "Wojtek");
+		Assert.assertEquals("Wojtek", student.getImie());
 	}
 
 }

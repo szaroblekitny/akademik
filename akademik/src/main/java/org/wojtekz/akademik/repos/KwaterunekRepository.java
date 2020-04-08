@@ -24,7 +24,7 @@ public interface KwaterunekRepository extends JpaRepository<Kwaterunek, Long> {
 	 * @return lista obiektów Kwaterunek
 	 */
 	@Query("select kw from Kwaterunek kw where kw.student = ?1")
-	public List<Kwaterunek> findByIdStudenta(long idStudenta);
+	List<Kwaterunek> findByIdStudenta(long idStudenta);
 	
 	/**
 	 * Wyszukuje rekordy klasy Kwaterunek dla danego identyfikatora pokoju.
@@ -34,6 +34,6 @@ public interface KwaterunekRepository extends JpaRepository<Kwaterunek, Long> {
 	 * @return lista obiektów Kwaterunek o identycznym identyfikatorze pokoju
 	 */
 	@Query("select kw from Kwaterunek kw where kw.pokoj = ?1")
-	public List<Kwaterunek> findByIdPokoju(long idPokoju);
+	List<Kwaterunek> findByIdPokoju(long idPokoju);
 
 }

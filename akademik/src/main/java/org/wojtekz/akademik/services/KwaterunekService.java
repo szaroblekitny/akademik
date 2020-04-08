@@ -18,13 +18,13 @@ public interface KwaterunekService {
 	 * Zapisuje obiekt Kwaterunek do bazy.
 	 * @param kwaterunek
 	 */
-	public void save(Kwaterunek kwaterunek);
+	void save(Kwaterunek kwaterunek);
 	
 	/**
 	 * Lista wszystkich kwaterunków w bazie.
 	 * @return lista obiektów Kwaterunek
 	 */
-	public List<Kwaterunek> listAll();
+	List<Kwaterunek> listAll();
 	
 	/**
 	 * Znajduje Kwaterunek po identyfikatorze własnym.
@@ -32,7 +32,7 @@ public interface KwaterunekService {
 	 * @param id
 	 * @return obiekt Kwaterunek
 	 */
-	public Kwaterunek findById(long id);
+	Kwaterunek findById(long id);
 	
 	/**
 	 * Znajduje Kwaterunek po identyfikatorze studenta. Teoretycznie powinien być to jeden
@@ -41,7 +41,7 @@ public interface KwaterunekService {
 	 * @param idStudenta
 	 * @return lista obiektów Kwaterunek
 	 */
-	public List<Kwaterunek> findByIdStudenta(long idStudenta);
+	List<Kwaterunek> findByIdStudenta(long idStudenta);
 	
 	/**
 	 * Lista obiektów Kwaterunek o podanym identyfikatorze pokoju.
@@ -49,7 +49,7 @@ public interface KwaterunekService {
 	 * @param idPokoju
 	 * @return lista obiektów Kwaterunek
 	 */
-	public List<Kwaterunek> findByIdPokoju(long idPokoju);
+	List<Kwaterunek> findByIdPokoju(long idPokoju);
 	
 	/**
 	 * Wyszukuje studentów zamieszkałych w pokoju przez wyszukanie ich kwaterunków.
@@ -57,18 +57,18 @@ public interface KwaterunekService {
 	 * @param idPokoju
 	 * @return lista studentów
 	 */
-	public List<Student> findStudenciWPokoju(long idPokoju);
+	List<Student> findStudenciWPokoju(long idPokoju);
 	
 	
 	/**
 	 * Kasuje wszystkie obiekty Kwaterunek.
 	 */
-	public void deleteAll();
+	void deleteAll();
 	
 	/**
 	 * Kasuje wybrany Kwaterunek.
 	 * 
 	 * @param id
 	 */
-	public void deleteById(long id);
+	void deleteById(long id);
 }

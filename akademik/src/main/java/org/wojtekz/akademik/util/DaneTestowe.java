@@ -122,8 +122,7 @@ public class DaneTestowe {
 	 * danych dotychczasowe są kasowane: można używać tylko w celach testowych
 	 * lub do migracji danych.
 	 * 
-	 * @param lista - lista obiektów wrzucanych do tabeli określonym przez
-	 *                typ listy
+	 * @param lista lista obiektów wrzucanych do tabeli określonym przez typ listy
 	 */
 	public <T> void wrzucTrocheDanychDoBazy(List<T> lista) {
 		logg.trace("----->>> wrzucTrocheDanychDoBazy start ");
@@ -133,7 +132,7 @@ public class DaneTestowe {
 			String className = superClass.getSimpleName();
 
 			if (logg.isDebugEnabled()) {
-				logg.debug("----->>> wrzucTrocheDanychDoBazy className " + className);
+				logg.debug("----->>> wrzucTrocheDanychDoBazy className {}", className);
 			}
 
 			if (className.equals("Pokoj")) {
@@ -152,9 +151,7 @@ public class DaneTestowe {
 					studentService.save((Student) stud);
 				}
 			}
-
 		}
-
 	}
 
 	/**

@@ -68,7 +68,7 @@ public class Plikowanie {
 		}
 		
 		StreamResult result = new StreamResult(writer);
-		logg.debug("----->>> result: ", result);
+		logg.debug("----->>> result: {}", result);
 		marshaller.marshal(list, result);
 		
 		logg.trace("----->>> saveObjectList koniec");

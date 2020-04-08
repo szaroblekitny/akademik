@@ -24,13 +24,13 @@ public interface PokojService {
 	 * Zapisuje pokój w bazie danych.
 	 * @param pokoj Pokoj
 	 */
-	public void save(Pokoj pokoj);
+	void save(Pokoj pokoj);
 	
 	/**
 	 * Pobiera wszystkie pokoje z bazy danych.
 	 * @return lista pokoi
 	 */
-	public List<Pokoj> listAll();
+	List<Pokoj> listAll();
 	
 	/**
 	 * Wyszukuje w bazie pokój o podanym numerze.
@@ -38,25 +38,25 @@ public interface PokojService {
 	 * @param numerPokoju jako String
 	 * @return Pokoj
 	 */
-	public Pokoj findByNumber(String numerPokoju);
+	Pokoj findByNumber(String numerPokoju);
 	
 	/**
 	 * Podaje liczbę pokoi zapisanych z bazie danych.
 	 * 
 	 * @return liczba pokoi
 	 */
-	public long ilePokoi();
+	long ilePokoi();
 	
 	/**
 	 * Kasuje całą tabelę pokoi.
 	 */
-	public void deleteAll();
+	void deleteAll();
 	
 	/**
 	 * Kasuje pokój o wybranym numerze.
 	 * 
 	 * @param numerPokoju jako String (to nie jest id pokoju)
 	 */
-	public void deleteByNumber(String numerPokoju);
+	void deleteByNumber(String numerPokoju);
 
 }

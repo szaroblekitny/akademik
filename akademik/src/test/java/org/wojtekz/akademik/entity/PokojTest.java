@@ -1,10 +1,15 @@
 package org.wojtekz.akademik.entity;
 
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Najprostszy test encji Pokoj.
+ * 
+ * @author wzareba
+ *
+ */
 public class PokojTest {
 	Pokoj pokoj;
 	
@@ -18,8 +23,8 @@ public class PokojTest {
 
 	@Test
 	public void test() {
-		Assert.assertEquals(pokoj.getNumerPokoju(), "11");
-		Assert.assertEquals(pokoj.getLiczbaMiejsc(), 4);
+		Assert.assertEquals("11", pokoj.getNumerPokoju());
+		Assert.assertEquals(4, pokoj.getLiczbaMiejsc());
 	}
 
 }
