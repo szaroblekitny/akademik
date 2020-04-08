@@ -55,7 +55,7 @@ public class Plikowanie {
 	 */
 	public <T> void saveObjectList(BufferedWriter writer, List<T> list)
 			throws XmlMappingException, IOException {
-		logg.debug("----->>> saveObjectList method fired");
+		logg.trace("----->>> saveObjectList method fired");
 		
 		if (writer == null) {
 			logg.error("----->>> saveObjectList writer pusty");
@@ -68,10 +68,10 @@ public class Plikowanie {
 		}
 		
 		StreamResult result = new StreamResult(writer);
-		logg.debug("----->>> result: " + result);
+		logg.debug("----->>> result: ", result);
 		marshaller.marshal(list, result);
 		
-		logg.debug("----->>> saveObjectList koniec");
+		logg.trace("----->>> saveObjectList koniec");
 	}
 
 	

@@ -195,7 +195,6 @@ public class Akademik {
 	private void petlaPoPokojach(List<Pokoj> pokoje, Student student) {
 		logg.trace("----->>> po pokojach");
 		
-		pokojeLab:
 		for (Pokoj pokoj : pokoje) {
 			int zajeteMiejsca = kwaterunekService.findByIdPokoju(pokoj.getId()).size();
 			
@@ -204,10 +203,9 @@ public class Akademik {
 			if (pokoj.getLiczbaMiejsc() > zajeteMiejsca) {
 				kwaterujStudenta(student, pokoj);
 				// wyskakujemy z pokoi po zakwaterowaniu
-				break pokojeLab;
+				return;
 			}
 		}
-		
 	}
 	
 	
