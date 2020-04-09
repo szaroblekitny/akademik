@@ -2,20 +2,22 @@
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html"> 
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<title>Akademik</title>
+	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
 </h:head> 
 <body> 
 	<h2>Obsługa akademika</h2>
 	<h:form>
-		<h3>Studenci</h3>
-   		<h:commandButton action = "student" value = "Studenci" />
-   		<h3>Pokoje</h3>
-   		<h:commandButton action = "pokoj" value = "Pokoje" />
-   		<h3>Zakwaterowani</h3>
-   		<h:commandButton action = "zakwaterowani" value = "Zakwaterowani" />
+		<p:button outcome="student" value="Studenci" icon="pi pi-users" style="margin-right:20px;" />
+		<p:button outcome="pokoj" value="Pokoje" icon="pi pi-sign-in" style="margin-right:20px;" />
+		<p:button outcome="zakwaterowani" value="Zakwaterowani" icon="pi pi-lock" style="margin-right:20px;" />
+		<p:button outcome="import" value="Import" icon="pi pi-download" style="margin-right:20px;" />
+		<p:button outcome="eksport" value="Eksport" icon="pi pi-upload" style="margin-right:20px;" />
+		<p:button outcome="kwateruj" value="Kwaterowanie" icon="pi pi-key" style="margin-right:20px;" />
 	</h:form>
 </body> 
 </html>

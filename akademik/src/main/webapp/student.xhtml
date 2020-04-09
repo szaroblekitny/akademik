@@ -4,7 +4,7 @@
 	  xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui"> 
+      xmlns:p="http://primefaces.org/ui">
 	<h:head>
 		<title>Akademik</title>
 		<style type="text/css">
@@ -40,10 +40,12 @@
     		<p:column headerText="Płeć">
         		<h:outputText value="#{student.plec}" />
     		</p:column>
+    		
 		</p:dataTable>
 		
 		<!-- Edycja tabeli studentów  -->
 		<h:form id="form">
+			<!-- wyskakujące komunikaty -->
 			<p:growl id="msgs" showDetail="true"/>
 			
 			<p:dataTable id="studentTab" var="student" value="#{studentBean.studenci}" editable="true" style="margin-bottom:20px">
@@ -71,7 +73,23 @@
             		</p:cellEditor>
         		</p:column>
         		
-        		
+        		<!-- Płcie -->
+        		<p:column headerText="Płeć">
+        			<p:cellEditor>
+                		<f:facet name="output">
+	        			<p:selectOneRadio value="#{student.plec}" unselectable="false" disabled="true">
+	            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
+	            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
+	        			</p:selectOneRadio>
+	        			</f:facet>
+	        			<f:facet name="input">
+	        			<p:selectOneRadio value="#{student.plec}" unselectable="false" disabled="false">
+	            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
+	            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
+	        			</p:selectOneRadio>
+	        			</f:facet>
+        			</p:cellEditor>
+    			</p:column>
         		
         		<!-- guzik edycji -->
         		<p:column style="width:35px">
