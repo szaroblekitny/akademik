@@ -27,7 +27,6 @@
 		<xstream.version>1.4.11.1</xstream.version>
 		<postgresql-jdbc.version>42.2.10</postgresql-jdbc.version>
 		<atomikos.version>5.0.6</atomikos.version>
-		<querydsl.version>4.1.4</querydsl.version>
 
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
@@ -150,12 +149,6 @@
 		</dependency>
 		
 		<!-- JTA Atomikos -->
-		<dependency>
-    		<groupId>com.atomikos</groupId>
-    		<artifactId>atomikos-util</artifactId>
-    		<version>${atomikos.version}</version>
-		</dependency>
-		
 		<dependency>
     		<groupId>com.atomikos</groupId>
     		<artifactId>transactions-jta</artifactId>
