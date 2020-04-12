@@ -6,9 +6,17 @@
 
 <h:head>
 	<title>Akademik</title>
-</h:head> 
-<body> 
-	<h2>Import</h2>
-	
-</body> 
+</h:head>
+<h:body> 
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h2>Import</h2>
+		</ui:define>
+
+		<ui:define name = "content">
+			<h4>Zawartość importu</h4>
+		</ui:define> 
+
+	</ui:composition>
+</h:body>
 </html>

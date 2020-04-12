@@ -2,13 +2,22 @@
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html"> 
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<title>Akademik</title>
-</h:head> 
-<body> 
-	<h2>Eksport</h2>
-	
-</body> 
+</h:head>
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h2>Export</h2>
+		</ui:define>
+
+		<ui:define name = "content">
+			<h2>Zawartość eksportu</h2>
+		</ui:define> 
+
+	</ui:composition>
+</h:body>
 </html>
