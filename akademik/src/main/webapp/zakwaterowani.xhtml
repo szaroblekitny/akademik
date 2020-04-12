@@ -7,12 +7,21 @@
 <h:head>
 	<title>Akademik</title>
 </h:head> 
-<body> 
-	<h2>Zakwaterowani</h2>
-	<ul>
-		<ui:repeat var="kwaterunek" value="#{kwaterunekBean.pobierzKwaterunki()}">
-			<li><h:outputText value="#{kwaterunek}" /></li>
-		</ui:repeat>
-	</ul>
-</body> 
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h3>Zakwaterowani</h3>
+		</ui:define>
+
+		<ui:define name = "content">
+			<!-- zawartość -->
+			<ul>
+				<ui:repeat var="kwaterunek" value="#{kwaterunekBean.pobierzKwaterunki()}">
+					<li><h:outputText value="#{kwaterunek}" /></li>
+				</ui:repeat>
+			</ul>
+		</ui:define> 
+
+	</ui:composition>
+</h:body>
 </html>

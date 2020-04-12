@@ -5,98 +5,108 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui">
-	<h:head>
-		<title>Akademik</title>
-		<style type="text/css">
-    		.ui-row-editor .ui-row-editor-pencil {
-        		margin-left:8px;
-    		}
-		</style>
-	</h:head>
-	<h:body>
-		<h2>Studenci</h2>
-		<!-- Zwykłe wyświetlanie takstu  -->
-		<ul>
-			<ui:repeat var="student" value="#{studentBean.pobierzStudentow()}">
-				<li><h:outputText value="#{student}" /></li>
-			</ui:repeat>
-		</ul>
+<h:head>
+	<title>Akademik</title>
+	<style type="text/css">
+   		.ui-row-editor .ui-row-editor-pencil {
+       		margin-left:8px;
+   		}
+	</style>
+</h:head>
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h2>Studenci</h2>
+		</ui:define>
+
+		<ui:define name = "content">
+			<!-- Zawartość strony -->
 		
-		
-		<h3>Studenci w tabelce</h3>
-		<p:dataTable var="student" value="#{studentBean.studenci}">
-    		<p:column headerText="Id">
-        		<h:outputText value="#{student.id}" />
-    		</p:column>
- 
-    		<p:column headerText="Imie">
-        		<h:outputText value="#{student.imie}" />
-    		</p:column>
- 
-			<p:column headerText="Nazwisko">
-        		<h:outputText value="#{student.nazwisko}" />
-    		</p:column>
- 			
-    		<p:column headerText="Płeć">
-        		<h:outputText value="#{student.plec}" />
-    		</p:column>
-    		
-		</p:dataTable>
-		
-		<!-- Edycja tabeli studentów  -->
-		<h:form id="form">
-			<!-- wyskakujące komunikaty -->
-			<p:growl id="msgs" showDetail="true"/>
+			<!-- Zwykłe wyświetlanie takstu  -->
+			<ul>
+				<ui:repeat var="student" value="#{studentBean.pobierzStudentow()}">
+					<li><h:outputText value="#{student}" /></li>
+				</ui:repeat>
+			</ul>
 			
-			<p:dataTable id="studentTab" var="student" value="#{studentBean.studenci}" editable="true" style="margin-bottom:20px">
-        		<f:facet name="header">Edycja</f:facet>
- 
-        		<p:ajax event="rowEdit" listener="#{studentBean.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{studentBean.onRowCancel}" update=":form:msgs" />
- 
- 				<!-- Id tylko wyświetlane -->
-        		<p:column headerText="Id studenta">
-            		<h:outputText value="#{student.id}" />
-        		</p:column>
-        		
-        		<p:column headerText="Imie">
-            		<p:cellEditor>
-                		<f:facet name="output"><h:outputText value="#{student.imie}" /></f:facet>
-                		<f:facet name="input"><p:inputText value="#{student.imie}" style="width:100%"/></f:facet>
-            		</p:cellEditor>
-        		</p:column>
-        		
-        		<p:column headerText="Nazwisko">
-            		<p:cellEditor>
-                		<f:facet name="output"><h:outputText value="#{student.nazwisko}" /></f:facet>
-                		<f:facet name="input"><p:inputText value="#{student.nazwisko}" style="width:100%"/></f:facet>
-            		</p:cellEditor>
-        		</p:column>
-        		
-        		<!-- Płcie -->
-        		<p:column headerText="Płeć">
-        			<p:cellEditor>
-                		<f:facet name="output">
-	        			<p:selectOneRadio value="#{student.plec}" unselectable="false" disabled="true">
-	            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
-	            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
-	        			</p:selectOneRadio>
-	        			</f:facet>
-	        			<f:facet name="input">
-	        			<p:selectOneRadio value="#{student.plec}" unselectable="false" disabled="false">
-	            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
-	            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
-	        			</p:selectOneRadio>
-	        			</f:facet>
-        			</p:cellEditor>
-    			</p:column>
-        		
-        		<!-- guzik edycji -->
-        		<p:column style="width:35px">
-            		<p:rowEditor />
-        		</p:column>
-        	</p:dataTable>
-		</h:form>
-		
-	</h:body>
+			
+			<h3>Studenci w tabelce</h3>
+			<p:dataTable var="student" value="#{studentBean.studenci}">
+	    		<p:column headerText="Id">
+	        		<h:outputText value="#{student.id}" />
+	    		</p:column>
+	 
+	    		<p:column headerText="Imie">
+	        		<h:outputText value="#{student.imie}" />
+	    		</p:column>
+	 
+				<p:column headerText="Nazwisko">
+	        		<h:outputText value="#{student.nazwisko}" />
+	    		</p:column>
+	 			
+	    		<p:column headerText="Płeć">
+	        		<h:outputText value="#{student.plec}" />
+	    		</p:column>
+	    		
+			</p:dataTable>
+			
+			<!-- Edycja tabeli studentów  -->
+			<h:form id="form">
+				<!-- wyskakujące komunikaty -->
+				<p:growl id="msgs" showDetail="true"/>
+				
+				<p:dataTable id="studentTab" var="student" value="#{studentBean.studenci}" editable="true" style="margin-bottom:20px">
+	        		<f:facet name="header">Edycja</f:facet>
+	 
+	        		<p:ajax event="rowEdit" listener="#{studentBean.onRowEdit}" update=":form:msgs" />
+	        		<p:ajax event="rowEditCancel" listener="#{studentBean.onRowCancel}" update=":form:msgs" />
+	 
+	 				<!-- Id tylko wyświetlane -->
+	        		<p:column headerText="Id studenta">
+	            		<h:outputText value="#{student.id}" />
+	        		</p:column>
+	        		
+	        		<p:column headerText="Imie">
+	            		<p:cellEditor>
+	                		<f:facet name="output"><h:outputText value="#{student.imie}" /></f:facet>
+	                		<f:facet name="input"><p:inputText value="#{student.imie}" style="width:100%"/></f:facet>
+	            		</p:cellEditor>
+	        		</p:column>
+	        		
+	        		<p:column headerText="Nazwisko">
+	            		<p:cellEditor>
+	                		<f:facet name="output"><h:outputText value="#{student.nazwisko}" /></f:facet>
+	                		<f:facet name="input"><p:inputText value="#{student.nazwisko}" style="width:100%"/></f:facet>
+	            		</p:cellEditor>
+	        		</p:column>
+	        		
+	        		<!-- Płcie -->
+	        		<p:column headerText="Płeć">
+	        			<p:cellEditor>
+	                		<f:facet name="output">
+		        			<p:selectOneRadio value="#{student.plec}" unselectable="false" disabled="true">
+		            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
+		            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
+		        			</p:selectOneRadio>
+		        			</f:facet>
+		        			<f:facet name="input">
+		        			<p:selectOneRadio value="#{student.plec}" unselectable="false" disabled="false">
+		            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
+		            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
+		        			</p:selectOneRadio>
+		        			</f:facet>
+	        			</p:cellEditor>
+	    			</p:column>
+	        		
+	        		<!-- guzik edycji -->
+	        		<p:column style="width:35px">
+	            		<p:rowEditor />
+	        		</p:column>
+	        	</p:dataTable>
+			</h:form>
+		</ui:define> 
+		<!-- koniec treści strony, poniżej jest jeszcze stopka -->
+	</ui:composition>
+
+</h:body>
 </html>

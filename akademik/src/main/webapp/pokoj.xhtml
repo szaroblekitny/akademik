@@ -7,14 +7,22 @@
 <h:head>
 	<title>Akademik</title>
 </h:head> 
-<body> 
-	<h2>Pokoje</h2>
-	
-	<ul>
-		<ui:repeat var="pokoj" value="#{pokojBean.pobierzPokoje()}">
-			<li><h:outputText value="#{pokoj}" /></li>
-		</ui:repeat>
-	</ul>
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h3>Pokoje</h3>
+		</ui:define>
 
-</body> 
+		<ui:define name = "content">
+			<!-- zawartość -->
+			<ul>
+				<ui:repeat var="pokoj" value="#{pokojBean.pobierzPokoje()}">
+					<li><h:outputText value="#{pokoj}" /></li>
+				</ui:repeat>
+			</ul>
+		</ui:define> 
+
+	</ui:composition>
+</h:body>
+
 </html>

@@ -7,8 +7,16 @@
 <h:head>
 	<title>Akademik</title>
 </h:head> 
-<body> 
-	<h2>Kwateruj</h2>
-	
-</body> 
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h2>Kwaterowanie</h2>
+		</ui:define>
+
+		<ui:define name = "content">
+			<h2>Zawartość kwaterowania</h2>
+		</ui:define> 
+
+	</ui:composition>
+</h:body>
 </html>
