@@ -21,65 +21,57 @@
 
 		<ui:define name = "content">
 			<!-- Zawartość strony -->
-		
-			<!-- Zwykłe wyświetlanie takstu  -->
-			<ul>
-				<ui:repeat var="student" value="#{studentBean.pobierzStudentow()}">
-					<li><h:outputText value="#{student}" /></li>
-				</ui:repeat>
-			</ul>
-			
-			
+
 			<h3>Studenci w tabelce</h3>
 			<p:dataTable var="student" value="#{studentBean.studenci}">
 	    		<p:column headerText="Id">
 	        		<h:outputText value="#{student.id}" />
 	    		</p:column>
-	 
+
 	    		<p:column headerText="Imie">
 	        		<h:outputText value="#{student.imie}" />
 	    		</p:column>
-	 
+
 				<p:column headerText="Nazwisko">
 	        		<h:outputText value="#{student.nazwisko}" />
 	    		</p:column>
-	 			
+
 	    		<p:column headerText="Płeć">
 	        		<h:outputText value="#{student.plec}" />
 	    		</p:column>
-	    		
+
 			</p:dataTable>
-			
+
 			<!-- Edycja tabeli studentów  -->
 			<h:form id="form">
 				<!-- wyskakujące komunikaty -->
 				<p:growl id="msgs" showDetail="true"/>
-				
+
 				<p:dataTable id="studentTab" var="student" value="#{studentBean.studenci}" editable="true" style="margin-bottom:20px">
 	        		<f:facet name="header">Edycja</f:facet>
-	 
+
 	        		<p:ajax event="rowEdit" listener="#{studentBean.onRowEdit}" update=":form:msgs" />
 	        		<p:ajax event="rowEditCancel" listener="#{studentBean.onRowCancel}" update=":form:msgs" />
-	 
+
 	 				<!-- Id tylko wyświetlane -->
 	        		<p:column headerText="Id studenta">
 	            		<h:outputText value="#{student.id}" />
 	        		</p:column>
-	        		
+
 	        		<p:column headerText="Imie">
 	            		<p:cellEditor>
 	                		<f:facet name="output"><h:outputText value="#{student.imie}" /></f:facet>
 	                		<f:facet name="input"><p:inputText value="#{student.imie}" style="width:100%"/></f:facet>
 	            		</p:cellEditor>
 	        		</p:column>
-	        		
+
 	        		<p:column headerText="Nazwisko">
 	            		<p:cellEditor>
 	                		<f:facet name="output"><h:outputText value="#{student.nazwisko}" /></f:facet>
 	                		<f:facet name="input"><p:inputText value="#{student.nazwisko}" style="width:100%"/></f:facet>
 	            		</p:cellEditor>
 	        		</p:column>
-	        		
+
 	        		<!-- Płcie -->
 	        		<p:column headerText="Płeć">
 	        			<p:cellEditor>
@@ -97,7 +89,7 @@
 		        			</f:facet>
 	        			</p:cellEditor>
 	    			</p:column>
-	        		
+
 	        		<!-- guzik edycji -->
 	        		<p:column style="width:35px">
 	            		<p:rowEditor />
