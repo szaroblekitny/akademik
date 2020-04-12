@@ -9,7 +9,6 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
-import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.wojtekz.akademik.services.KwaterunekService;
 import org.wojtekz.akademik.services.KwaterunekServiceImpl;
 import org.wojtekz.akademik.services.PokojService;
@@ -65,13 +64,18 @@ public class AkademikConfiguration {
 	@Bean
 	Marshaller marshaller() {
 		logg.debug("----->>> xStreamMarshaller bean configuration");
-		return new XStreamMarshaller();
+		
+		AkademikXStream xsmarsh = new AkademikXStream();
+		
+		return xsmarsh;
 	}
 	
 	@Bean
 	Unmarshaller unmarshaller() {
 		logg.debug("----->>> xStreamMarshaller bean configuration");
-		return new XStreamMarshaller();
+		AkademikXStream xsmarsh = new AkademikXStream();
+		
+		return xsmarsh;
 	}
 	
 }
