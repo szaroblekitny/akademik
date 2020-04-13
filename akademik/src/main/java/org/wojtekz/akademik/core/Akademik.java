@@ -127,6 +127,7 @@ public class Akademik {
 		logg.debug("----->>> zakwateruj begins");
 		// czyścimy kwaterunek
 		kwaterunekService.deleteAll();
+		kwatId = 0L;
 		
 		// listy studentów i pokoi
 		List<Student> studenci = studentService.listAll();

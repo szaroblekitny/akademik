@@ -2,7 +2,8 @@
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html"> 
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<title>Akademik</title>
@@ -14,7 +15,15 @@
 		</ui:define>
 
 		<ui:define name = "content">
-			<h2>Zawartość kwaterowania</h2>
+			<div style="padding-top: 20px; padding-bottom: 20px">
+			Naciśnięcie guzika urochomi automatyczne kwaterowanie
+			</div>
+			<h:form>
+				<p:growl id="kwamsgs" showDetail="true" />
+				<p:button id="kwabut" type="button" action="#{zakwaterujBean.zakwateruj()}"
+					value="Kwaterowanie" icon="pi pi-key" ajax="false"
+					style="margin-right:20px;" />
+			</h:form>
 		</ui:define> 
 
 	</ui:composition>
