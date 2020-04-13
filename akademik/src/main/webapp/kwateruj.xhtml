@@ -20,12 +20,11 @@
 			</div>
 			<h:form>
 				<p:growl id="kwamsgs" showDetail="true" />
-				<p:button id="kwabut" type="button" action="#{zakwaterujBean.zakwateruj()}"
+				<p:commandButton id="kwabut" action="#{zakwaterujBean.zakwateruj()}"
 					value="Kwaterowanie" icon="pi pi-key" ajax="false"
 					style="margin-right:20px;" />
 			</h:form>
-		</ui:define> 
-
+		</ui:define>
 	</ui:composition>
 </h:body>
 </html>
