@@ -16,13 +16,15 @@
 
 		<ui:define name = "content">
 			<div style="padding-top: 20px; padding-bottom: 20px">
-			Naciśnięcie guzika urochomi automatyczne kwaterowanie
+			Naciśnięcie guzika urochomi automatyczne kwaterowanie. Operacja jest nieodwracalna.
 			</div>
 			<h:form>
 				<p:growl id="kwamsgs" showDetail="true" />
-				<p:commandButton id="kwabut" action="#{zakwaterujBean.zakwateruj()}"
-					value="Kwaterowanie" icon="pi pi-key" ajax="false"
-					style="margin-right:20px;" />
+				<div style="padding-top: 20px; padding-bottom: 20px">
+					<p:commandButton id="kwabut" action="#{zakwaterujBean.zakwateruj()}"
+						value="Kwaterowanie" icon="pi pi-key" ajax="false"
+						style="margin-right:20px;" />
+				</div>
 			</h:form>
 		</ui:define>
 	</ui:composition>
