@@ -2,7 +2,8 @@
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html"> 
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<title>Akademik</title>
@@ -14,7 +15,16 @@
 		</ui:define>
 
 		<ui:define name = "content">
-			<h4>Zawartość importu</h4>
+
+			<p:growl id="importmess" showDetail="true" />
+
+			Upload<br />
+			<h:form enctype="multipart/form-data">
+    			<p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
+    			<br />
+    			<p:commandButton value="Submit" ajax="false" action="#{importBean.upload}" />
+			</h:form>
+
 		</ui:define> 
 
 	</ui:composition>
