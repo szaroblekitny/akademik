@@ -34,6 +34,17 @@ public class Akademik {
 	@Autowired
 	private Plikowanie plikowanie;
 	
+	/**
+	 * Wykonuje zadania dla aplikacji wywoływanej z wiersza poleceń.
+	 * Kasuje wszystkie dane z bazy, pobiera dane z plików studentów i pokoi,
+	 * wykonuje zakwaterowanie i generuje stan akademika po zakwaterowaniu.
+	 * Dla aplikacji webowej całkowicie nieprzydatna :-).
+	 * 
+	 * @param pokojeReader odczytywacz pokoi
+	 * @param studenciReader odczytywacz studentów
+	 * @param outputWriter zapisywacz wyniku stanu akademika po zakwaterowaniu
+	 * 
+	 */
 	public void akademik(BufferedReader pokojeReader, BufferedReader studenciReader, BufferedWriter outputWriter) {
 		// ot i cała logika naszej aplikacji:
 		try {
