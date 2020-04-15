@@ -18,11 +18,13 @@
 
 			<p:growl id="importmess" showDetail="true" />
 
-			Upload<br />
 			<h:form enctype="multipart/form-data">
-    			<p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
-    			<br />
-    			<p:commandButton value="Submit" ajax="false" action="#{importBean.upload}" />
+				<div class="otoczkaBut" style="padding-top: 5px; padding-bottom: 5px; padding-left: 8px;">
+    				<p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
+    			</div>
+    			<div class="otoczkaBut" style="padding-top: 5px; padding-bottom: 5px; padding-left: 8px;">
+    				<p:commandButton value="Submit" ajax="false" action="#{importBean.upload}" />
+    			</div>
 			</h:form>
 
 		</ui:define> 

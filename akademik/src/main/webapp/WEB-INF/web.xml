@@ -29,6 +29,12 @@
     	<param-value>nova-light</param-value>
 	</context-param>
 
+	<!-- włączenie mechanizmu uploadu - importu pliku -->
+	<context-param>
+		<param-name>primefaces.UPLOADER</param-name>
+		<param-value>auto</param-value>
+	</context-param>
+
     <context-param>
     	<param-name>log4jConfigLocation</param-name>
     	<param-value>/WEB-INF/classes/log4j2.xml</param-value>
@@ -66,10 +72,19 @@
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    
+
     <welcome-file-list>
         <welcome-file>faces/akademik.xhtml</welcome-file>
     </welcome-file-list>
+
+    <filter>
+    	<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+		<servlet-name>facesServlet</servlet-name>
+	</filter-mapping>
 
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
