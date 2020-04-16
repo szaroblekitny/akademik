@@ -7,15 +7,37 @@
 
 <h:head>
 	<title>Akademik</title>
+	<script type="text/javascript">
+    //<![CDATA[
+function start() {
+    PF('statusDialog').show();
+}
+ 
+function stop() {
+    PF('statusDialog').hide();
+}
+    //]]>
+</script>
 </h:head>
 <h:body>
 	<ui:composition template = "template/template.xhtml">
     	<ui:define name = "header">
-			<h2>Export</h2>
+			<h2>Eksport</h2>
 		</ui:define>
 
 		<ui:define name = "content">
-			<h2>Zawartość eksportu</h2>
+			<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+    			<h:outputText value="Chwilka..." />
+			</p:dialog>
+
+			<h:form>
+				<div class="otoczkaBut" style="padding-top: 5px; padding-bottom: 5px; padding-left: 8px;">  
+	    			<p:commandButton value="Eksport" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="pi pi-upload">
+	        			<p:fileDownload value="#{eksportBean.content}" />
+	    			</p:commandButton>
+    			</div>
+			</h:form>
+
 		</ui:define> 
 
 	</ui:composition>
