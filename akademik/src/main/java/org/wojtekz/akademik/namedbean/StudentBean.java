@@ -63,7 +63,7 @@ public class StudentBean implements Serializable {
 	 * 
 	 * @param event zdarzenie edycji z komponentu p:cellEditor
 	 */
-	public void onRowEdit(RowEditEvent event) {
+	public void onRowEdit(RowEditEvent<?> event) {
 		Student student = (Student) event.getObject();
         komunikaty.addMessage("Edycja studenta", "Student o Id " + student.getId());
         studentServ.save(student);
@@ -74,7 +74,7 @@ public class StudentBean implements Serializable {
 	 * 
 	 * @param event zdarzenie anulowania edycji z komponentu p:cellEditor
 	 */
-    public void onRowCancel(RowEditEvent event) {
+    public void onRowCancel(RowEditEvent<?> event) {
     	komunikaty.addMessage("Edycja anulowana", String.valueOf(((Student) event.getObject()).getId()));
     }
 

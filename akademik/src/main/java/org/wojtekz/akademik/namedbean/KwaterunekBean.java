@@ -36,7 +36,7 @@ public class KwaterunekBean implements Serializable {
 	public List<String> pobierzKwaterunki() {
 		logg.debug("-----------> pobierzKwaterunki start");
 		List<String> kwaterki = new ArrayList<>();
-		List<Kwaterunek> listaKwaterunkow = new ArrayList<>();
+		List<Kwaterunek> listaKwaterunkow;
 		listaKwaterunkow = kwaterunekService.listAll();
 		
 		for (Kwaterunek ss : listaKwaterunkow) {

@@ -63,7 +63,7 @@ public class AkademikConfiguration {
 	
 	@Bean
 	Marshaller marshaller() {
-		logg.debug("----->>> xStreamMarshaller bean configuration");
+		logg.debug("----->>> marshaller bean configuration");
 		
 		AkademikXStream xsmarsh = new AkademikXStream();
 		
@@ -72,10 +72,9 @@ public class AkademikConfiguration {
 	
 	@Bean
 	Unmarshaller unmarshaller() {
-		logg.debug("----->>> xStreamMarshaller bean configuration");
-		AkademikXStream xsmarsh = new AkademikXStream();
+		logg.debug("----->>> unmarshaller bean configuration");
 		
-		return xsmarsh;
+		return (Unmarshaller) marshaller();
 	}
 	
 }

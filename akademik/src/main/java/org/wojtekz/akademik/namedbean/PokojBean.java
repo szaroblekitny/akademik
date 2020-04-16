@@ -36,8 +36,7 @@ public class PokojBean implements Serializable {
 	public List<String> pobierzPokoje() {
 		logg.trace("-----------> pobierzPokoje start");
 		List<String> pokoje = new ArrayList<>();
-		List<Pokoj> listaPokoi= new ArrayList<>();
-		listaPokoi = pokojService.listAll();
+		List<Pokoj> listaPokoi = pokojService.listAll();
 		
 		for (Pokoj ss : listaPokoi) {
 			pokoje.add(ss.toString());

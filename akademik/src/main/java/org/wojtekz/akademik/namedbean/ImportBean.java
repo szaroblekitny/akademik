@@ -27,14 +27,14 @@ import org.springframework.stereotype.Component;
 @Scope("session")
 public class ImportBean implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static String KATALOG_IMPORTU = "h:/TEMP/";
+	private static final String KATALOG_IMPORTU = "h:/TEMP/";
 	private static final String IMPORT_PLIKU = "Import pliku";
 	
 	private static Logger logg = LogManager.getLogger();
 	
 	private transient Messagesy komunikaty;
 	
-	private UploadedFile upFile;
+	private transient UploadedFile upFile;
 	
 	@Autowired
 	public void setMessagesy(Messagesy komunikaty) {

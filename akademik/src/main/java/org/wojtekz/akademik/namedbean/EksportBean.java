@@ -23,11 +23,10 @@ import org.springframework.stereotype.Component;
 @Scope("session")
 public class EksportBean implements Serializable {
 	private static final long serialVersionUID = 1L;
+	private static final String NAZWA_PLIKU = "/zyrafa3.jpg";
 	private static Logger logg = LogManager.getLogger();
 	
-	private static String NAZWA_PLIKU = "/zyrafa3.jpg";
-	
-	private StreamedContent content;
+	private transient StreamedContent content;
 
 	/**
 	 * Konstruktor, który robi wszystko, czyli eksportuje.
