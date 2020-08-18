@@ -1,5 +1,8 @@
 package org.wojtekz.akademik.entity;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -16,17 +19,17 @@ import javax.persistence.Id;
  *
  */
 @Entity
-public class Pokoj {
+public class Pokoj implements Serializable, Plikowalny {
+	private static final long serialVersionUID = 3208928506624425724L;
+
 	@Id
 	private long id;
-	private String numerPokoju;
-	private int liczbaMiejsc;
 	
-	/**
-	 * Pusty konstruktor klasy Pokoj.
-	 */
-	public Pokoj() {
-	}
+	@Column(name = "numer_pokoju")
+	private String numerPokoju;
+	
+	@Column(name="liczba_miejsc")
+	private int liczbaMiejsc;
 	
 	
 	public long getId() {

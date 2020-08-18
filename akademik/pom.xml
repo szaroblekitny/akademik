@@ -3,46 +3,128 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wojtekz</groupId>
 	<artifactId>akademik</artifactId>
-	<version>0.4-SNAPSHOT</version>
+	<version>0.13-SNAPSHOT</version>
+	<packaging>war</packaging>
+	
 	<name>Manager akademika</name>
 	<description>Manager akademika. W akademiku mamy pokoje i kwaterujemy do nich studentów. 
      Aplikacja pozwala wpisać dane pokoi, studentów, wykonać akcję "zakwateruj" i wyświetlić
      wynik w postaci listy pokoi z zakwaterowanymi studentami.</description>
      
+     
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-		<spring.version>5.2.3.RELEASE</spring.version>
+		<spring.version>5.2.5.RELEASE</spring.version>
 		<java.version>11</java.version>
 		<maven-compiler.version>3.8.1</maven-compiler.version>
-		<hibernate.version>4.3.11.Final</hibernate.version>
+		<hibernate.version>5.4.12.Final</hibernate.version>
 		<javax.persistence.version>1.0.2</javax.persistence.version>
 		<spring-data-jpa.version>1.11.22.RELEASE</spring-data-jpa.version>
-		<log4j.version>2.8.2</log4j.version>
+		<log4j.version>2.13.1</log4j.version>
 		<hsqldb.version>2.2.4</hsqldb.version>
-		<slf4j.version>1.7.30</slf4j.version>
-		<xstream.version>1.4.7</xstream.version>
+		<xstream.version>1.4.11.1</xstream.version>
+		<postgresql-jdbc.version>42.2.10</postgresql-jdbc.version>
+		<atomikos.version>5.0.6</atomikos.version>
 
 		<junit.version>4.12</junit.version>
+		<mockito.version>1.10.19</mockito.version>
+		
+		<!-- Sonar -->
+  		<sonar.java.pmd.reportPaths>${project.build.directory}/pmd.xml</sonar.java.pmd.reportPaths>
 	</properties>
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<exclusions><!-- Exclude Commons Logging in favor of log4j -->
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+		    <groupId>javax</groupId>
+		    <artifactId>javaee-web-api</artifactId>
+		    <version>7.0</version>
 		</dependency>
+		
+		<!-- implementacja twarzy -->
+		<dependency>
+    		<groupId>org.glassfish</groupId>
+    		<artifactId>javax.faces</artifactId>
+    		<version>2.2.20</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>8.0</version>
+		</dependency>
+
+		<!-- OWASP project to create simple strong security controls for every web platform -->
+		<!-- Używane przez PrimeFaces -->
+		<dependency>
+			<groupId>org.owasp.esapi</groupId>
+			<artifactId>esapi</artifactId>
+			<version>2.2.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring-data-jpa.version}</version>
+			<!-- wyłączenie starych wersji -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl-over-slf4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-tx</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-orm</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-context</artifactId>
+    		<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-orm</artifactId>
+    		<version>${spring.version}</version>
+		</dependency>
+		
+		<!-- koniec Springa -->
 		
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -62,22 +144,9 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb-j5</artifactId>
-			<version>${hsqldb.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring-data-jpa.version}</version>
-			<!-- Exclude slf4j logging in favor of log4j -->
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>jcl-over-slf4j</artifactId>
-				</exclusion>
-			</exclusions>
+    		<groupId>org.postgresql</groupId>
+    		<artifactId>postgresql</artifactId>
+    		<version>${postgresql-jdbc.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -85,14 +154,20 @@
 			<artifactId>xstream</artifactId>
 			<version>${xstream.version}</version>
 		</dependency>
-
+		
+		<!-- JTA Atomikos -->
+		<dependency>
+    		<groupId>com.atomikos</groupId>
+    		<artifactId>transactions-jta</artifactId>
+    		<version>${atomikos.version}</version>
+		</dependency>
+		
 		
 		<dependency>
     		<groupId>org.apache.logging.log4j</groupId>
     		<artifactId>log4j-slf4j-impl</artifactId>
     		<version>${log4j.version}</version>
 		</dependency>
-
 
 		<dependency>
     		<groupId>org.apache.logging.log4j</groupId>
@@ -108,17 +183,66 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>${hsqldb.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- java.util.MissingResourceException: Can't find bundle for base name
+			javax.servlet.LocalStrings, locale pl_PL -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 	
 	<build>
+	
+		<finalName>akademik</finalName>
+	
 		<plugins>
+		
+			<plugin>
+    			<artifactId>maven-clean-plugin</artifactId>
+    			<version>3.1.0</version>
+    			<configuration>
+      				<filesets>
+        				<fileset>
+          					<directory>${project.basedir}</directory>
+          					<includes>
+          						<include>target</include>
+            					<include>dependency-reduced-pom.xml</include>
+            					<include>pokoje_test.xml</include>
+            					<include>studenci_test.xml</include>
+            					<include>raport_test_appl.txt</include>
+          					</includes>
+          					<followSymlinks>false</followSymlinks>
+        				</fileset>
+      				</filesets>
+    			</configuration>
+  			</plugin>
+  
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -132,9 +256,10 @@
 			</plugin>
 			
 			<plugin>
+
         		<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-jar-plugin</artifactId>
-        		<version>3.2.0</version>
+        		<artifactId>maven-war-plugin</artifactId>
+        		<version>3.2.3</version>
         		<configuration>
           			<archive>
             			<manifestEntries>
@@ -144,35 +269,114 @@
         		</configuration>
 			</plugin>
 			
-			<!-- tworzymy manifest, żeby uruchomić plik jar z linii poleceń -->
 			<plugin>
-    			<groupId>org.apache.maven.plugins</groupId>
-    			<artifactId>maven-shade-plugin</artifactId>
-    			<version>3.2.1</version>
-    			<executions>
-      				<execution>
-        				<phase>package</phase>
-        				<goals>
-          					<goal>shade</goal>
-        				</goals>
-        				<configuration>
-          					<transformers>
-            					<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              						<mainClass>org.wojtekz.akademik.core.AkademikApplication</mainClass>
-            					</transformer>
-            					<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            		<resource>META-INF/spring.handlers</resource>
-                        		</transformer>
-                        		<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-                            		<resource>META-INF/spring.schemas</resource>
-                        		</transformer>
-          					</transformers>
-        				</configuration>
-      				</execution>
+				<groupId>org.apache.maven.plugins</groupId>
+    			<artifactId>maven-surefire-plugin</artifactId>
+    			<version>2.22.2</version>
+			</plugin>
+			
+			<!-- Sonar i raporty dla niego -->
+			<!-- mvn clean package spotbugs:spotbugs pmd:pmd checkstyle:checkstyle sonar:sonar -->
+			<!-- mvn clean package spotbugs:spotbugs jacoco:report pmd:pmd sonar:sonar -->
+			<!-- mvn clean package pmd:pmd sonar:sonar -->
+			<plugin>
+        		<groupId>org.sonarsource.scanner.maven</groupId>
+        		<artifactId>sonar-maven-plugin</artifactId>
+        		<version>3.6.0.1398</version>
+      		</plugin>
+      		
+      		<plugin>
+   				<groupId>org.apache.maven.plugins</groupId>
+   				<artifactId>maven-pmd-plugin</artifactId>
+   				<version>3.13.0</version>
+			</plugin>
+			<plugin>
+  				<groupId>com.github.spotbugs</groupId>
+  				<artifactId>spotbugs-maven-plugin</artifactId>
+  				<version>3.1.12.2</version>
+  				<dependencies>
+    				<!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+    				<dependency>
+      					<groupId>com.github.spotbugs</groupId>
+      					<artifactId>spotbugs</artifactId>
+      					<version>4.0.0</version>
+    				</dependency>
+  				</dependencies>
+			</plugin>
+			
+			<plugin>
+      			<groupId>org.jacoco</groupId>
+      			<artifactId>jacoco-maven-plugin</artifactId>
+      			<version>0.8.5</version>
+      			<configuration>
+      				<rules>
+  						<rule>
+    						<element>BUNDLE</element>
+    						<limits>
+      							<limit>
+        							<counter>INSTRUCTION</counter>
+        							<value>COVEREDRATIO</value>
+        							<minimum>0.80</minimum>
+      							</limit>
+      							<limit>
+        							<counter>CLASS</counter>
+        							<value>MISSEDCOUNT</value>
+        							<maximum>0</maximum>
+      							</limit>
+    						</limits>
+  						</rule>
+					</rules>
+					<haltOnFailure>false</haltOnFailure>
+      			</configuration>
+				<executions>
+        			<execution>
+            			<id>default-prepare-agent</id>
+            			<goals>
+                			<goal>prepare-agent</goal>
+            			</goals>
+        			</execution>
+        			<execution>
+            			<id>default-report</id>
+            			<phase>prepare-package</phase>
+            			<goals>
+                			<goal>report</goal>
+            			</goals>
+        			</execution>
+        			<execution>
+            			<id>default-check</id>
+            			<goals>
+                			<goal>check</goal>
+            			</goals>
+        			</execution>
     			</executions>
-  			</plugin>
-  			
+    		</plugin>
+			
 		</plugins>
 	</build>
+	
+	<reporting>
+	    <plugins>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-jxr-plugin</artifactId>
+	            <version>2.3</version>
+	        </plugin>
+	        
+	        <!-- pokrycie źródeł testami -->
+	        <plugin>
+        		<groupId>org.jacoco</groupId>
+        		<artifactId>jacoco-maven-plugin</artifactId>
+        		<reportSets>
+          			<reportSet>
+            			<reports>
+              				<!-- select non-aggregate reports -->
+              				<report>report</report>
+            			</reports>
+          			</reportSet>
+        		</reportSets>
+      		</plugin>
+	    </plugins>
+	    
+	</reporting>
 
 </project>

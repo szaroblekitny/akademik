@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"> 
+
+<h:head>
+	<title>Akademik</title>
+</h:head> 
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h3>Pokoje</h3>
+		</ui:define>
+
+		<ui:define name = "content">
+			<!-- zawartość -->
+			<ul>
+				<ui:repeat var="pokoj" value="#{pokojBean.pobierzPokoje()}">
+					<li><h:outputText value="#{pokoj}" /></li>
+				</ui:repeat>
+			</ul>
+		</ui:define> 
+
+	</ui:composition>
+</h:body>
+
+</html>

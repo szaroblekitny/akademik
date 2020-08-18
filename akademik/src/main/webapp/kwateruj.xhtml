@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Akademik</title>
+</h:head> 
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h2>Kwaterowanie</h2>
+		</ui:define>
+
+		<ui:define name = "content">
+			<div style="padding-top: 20px; padding-bottom: 20px">
+			Naciśnięcie guzika urochomi automatyczne kwaterowanie. Operacja jest nieodwracalna.
+			</div>
+			<h:form>
+				<p:growl id="kwamsgs" showDetail="true" />
+				<div style="padding-top: 20px; padding-bottom: 20px">
+					<p:commandButton id="kwabut" action="#{zakwaterujBean.zakwateruj()}"
+						value="Kwaterowanie" icon="pi pi-key" ajax="false"
+						style="margin-right:20px;" />
+				</div>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

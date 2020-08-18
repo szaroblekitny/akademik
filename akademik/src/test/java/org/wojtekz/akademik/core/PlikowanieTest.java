@@ -16,16 +16,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
+import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AkademikConfiguration.class})
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class PlikowanieTest {
 	private static Logger logg = LogManager.getLogger();
 	
@@ -38,9 +38,6 @@ public class PlikowanieTest {
     @Autowired
     Plikowanie plikowanie;
     
-    @Autowired
-    XStreamMarshaller xStreamMarshaller;
-    
     @Before
     public void before() {
     	logg.debug("----->>> Plikowanie test before method fired");
@@ -49,13 +46,13 @@ public class PlikowanieTest {
     	student.setId(1);
     	student.setImie("Ignacy");
     	student.setNazwisko("Patafian");
-    	student.setPlec(Plec.Mezczyzna);
+    	student.setPlec(Plec.MEZCZYZNA);
     	
     	drugiStudent = new Student();
     	drugiStudent.setId(2);
     	drugiStudent.setImie("Jan");
     	drugiStudent.setNazwisko("Kowalski");
-    	drugiStudent.setPlec(Plec.Mezczyzna);
+    	drugiStudent.setPlec(Plec.MEZCZYZNA);
     	
     	listaStudentow.add(student);
     	listaStudentow.add(drugiStudent);
@@ -66,8 +63,6 @@ public class PlikowanieTest {
 	@Test
 	public void testWriteListyStudentow() {
 		logg.debug("----->>> testWriteList");
-		plikowanie.setMarshaller(xStreamMarshaller);
-		plikowanie.setUnmarshaller(xStreamMarshaller);
 		try {
 			buffWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
 			plikowanie.saveObjectList(buffWriter, listaStudentow);
@@ -78,7 +73,6 @@ public class PlikowanieTest {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testMarszaluListy() {
 		Pokoj pok1 = new Pokoj();
@@ -94,25 +88,21 @@ public class PlikowanieTest {
 		pokoje.add(pok1);
 		pokoje.add(pok2);
 		
-		List<Pokoj> listaPokoi = new ArrayList<Pokoj>();
+		List<Plikowalny> wczytLista;
 		
 		Path plik = FileSystems.getDefault().getPath("pokoje_test.xml");
 		try {
 			BufferedWriter buWri = Files.newBufferedWriter(plik, StandardCharsets.UTF_8);
 			BufferedReader buReader = Files.newBufferedReader(plik, StandardCharsets.UTF_8);
 			plikowanie.saveObjectList(buWri, pokoje);
-			listaPokoi = (List<Pokoj>)plikowanie.loadObjectList(buReader);
+			wczytLista  = plikowanie.loadObjectList(buReader);
+			
+			Assert.assertEquals("102", ((Pokoj) (wczytLista.get(1))).getNumerPokoju());
 		} catch (Exception ex) {
 			logg.error("----- ERROR >> testWriteList: ", ex);
 			Assert.assertFalse("----->>> Mamy błąd zapisu", true);
 		}
 		
-		logg.debug("----->>> Odczytana lista pokoi:");
-		for (Pokoj pp: listaPokoi) {
-			logg.debug("----->>> " + pp.toString());
-		}
-		
-		Assert.assertEquals("102", listaPokoi.get(1).getNumerPokoju());
 	}
 
 }

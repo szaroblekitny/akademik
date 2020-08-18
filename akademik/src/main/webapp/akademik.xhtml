@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Akademik</title>
+	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
+</h:head> 
+<body> 
+	<h2>Obsługa akademika</h2>
+	<h:form>
+		<p:button outcome="student" value="Studenci" icon="pi pi-users" style="margin-right:20px;" />
+		<p:button outcome="pokoj" value="Pokoje" icon="pi pi-sign-in" style="margin-right:20px;" />
+		<p:button outcome="zakwaterowani" value="Zakwaterowani" icon="pi pi-lock" style="margin-right:20px;" />
+		<p:button outcome="import" value="Import" icon="pi pi-download" style="margin-right:20px;" />
+		<p:button outcome="eksport" value="Eksport" icon="pi pi-upload" style="margin-right:20px;" />
+		<p:button outcome="kwateruj" value="Kwaterowanie" icon="pi pi-key" style="margin-right:20px;" />
+	</h:form>
+</body> 
+</html>

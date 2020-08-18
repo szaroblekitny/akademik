@@ -1,5 +1,8 @@
 package org.wojtekz.akademik.entity;
 
+import java.io.Serializable;
+
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -17,18 +20,17 @@ import javax.persistence.Id;
  *
  */
 @Entity
-public class Student {
+public class Student implements Serializable, Plikowalny {
+	private static final long serialVersionUID = 6073222260778454842L;
+	
 	@Id
 	private long id;
 	private String imie;
 	private String nazwisko;
+	
+	@Convert( converter = KonwerterPlci.class )
 	private Plec plec;
 	
-	/**
-	 * Pusty konstruktor.
-	 */
-	public Student() {
-	}
 
 	public long getId() {
 		return id;

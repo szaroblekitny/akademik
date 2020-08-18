@@ -11,11 +11,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.wojtekz.akademik.conf.AkademikConfiguration;
+import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repos.StudentRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AkademikConfiguration.class})
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class StudentRepositoryTest {
 	private static Logger logg = LogManager.getLogger();
 	private Student student;
@@ -31,9 +32,9 @@ public class StudentRepositoryTest {
 	}
 
 	/**
-	 * Metoda testuje tylko, czy zwracany obiekt nie jest nulem. Właściwie służy
+	 * Metoda testuje tylko, czy zwracany obiekt nie jest nulem. Wśaściwie służy
 	 * do przetestowania całego ciągu persystencji dla klasy Student. W tym teście
-	 * żadnymi danymi się nie przejmujemy. Tak napradwdę sprawdzane jest, czy cokolwiek
+	 * zadnymi danymi się nie przejmujemy. Tak napradwdą sprawdzane jest, czy cokolwiek
 	 * jest zwracane po przejściu wszystkich stopni połączenia z bazą danych. 
 	 */
 	@Test
@@ -53,7 +54,6 @@ public class StudentRepositoryTest {
 		logg.debug("----->>> zapiszIOdczytay method fired");
 		studentRep.deleteAll();
 		logg.debug("----->>> zapiszIOdczytay po deleteAll");
-		// public <S extends Student> S save(S entity) {
 		studentRep.save(student);
 		logg.debug("----->>> zapiszIOdczytay po save student");
 		listaStudentow = studentRep.findAll();

@@ -5,16 +5,16 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.oxm.xstream.XStreamMarshaller;
-import org.wojtekz.akademik.core.AkademikApplication;
-import org.wojtekz.akademik.core.KwaterunekService;
-import org.wojtekz.akademik.core.KwaterunekServiceImpl;
-import org.wojtekz.akademik.core.Plikowanie;
-import org.wojtekz.akademik.core.PokojService;
-import org.wojtekz.akademik.core.PokojServiceImpl;
-import org.wojtekz.akademik.core.StudentService;
-import org.wojtekz.akademik.core.StudentServiceImpl;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
+import org.wojtekz.akademik.services.KwaterunekService;
+import org.wojtekz.akademik.services.KwaterunekServiceImpl;
+import org.wojtekz.akademik.services.PokojService;
+import org.wojtekz.akademik.services.PokojServiceImpl;
+import org.wojtekz.akademik.services.StudentService;
+import org.wojtekz.akademik.services.StudentServiceImpl;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
@@ -26,10 +26,16 @@ import org.wojtekz.akademik.util.DaneTestowe;
  *
  */
 @Configuration
-@ComponentScan(basePackages={"org.wojtekz.akademik.core"})
-@ImportResource("classpath:config_dao.xml")
+@ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.namedbean"})
+@EnableJpaRepositories("org.wojtekz.akademik.repos")
 public class AkademikConfiguration {
 	private static Logger logg = LogManager.getLogger();
+	
+	@Bean
+	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+		logg.debug("----->>> PersistenceExceptionTranslationPostProcessor bean configuration");
+		return new PersistenceExceptionTranslationPostProcessor();
+	}
 	
 	@Bean
 	PokojService pokojService() {
@@ -50,31 +56,25 @@ public class AkademikConfiguration {
 	}
 	
 	@Bean
-	Plikowanie plikowanie() {
-		logg.debug("----->>> plikowanie bean configuration");
-		Plikowanie plikowanie = new Plikowanie();
-		plikowanie.setMarshaller(xStreamMarshaller());
-		plikowanie.setUnmarshaller(xStreamMarshaller());
-		return plikowanie;
-	}
-	
-	@Bean
-	XStreamMarshaller xStreamMarshaller() {
-		logg.debug("----->>> xStreamMarshaller bean configuration");
-		// XStreamMarshaller xsm = new XStreamMarshaller();
-		// xsm.
-		return new XStreamMarshaller();
-	}
-	
-	@Bean
-	AkademikApplication akademikApplication() {
-		logg.debug("----->>> akademikApplication bean configuration");
-		return new AkademikApplication();
-	}
-	
-	@Bean
 	DaneTestowe daneTestowe() {
 		logg.debug("----->>> daneTestowe bean configuration");
 		return new DaneTestowe();
 	}
+	
+	@Bean
+	Marshaller marshaller() {
+		logg.debug("----->>> marshaller bean configuration");
+		
+		AkademikXStream xsmarsh = new AkademikXStream();
+		
+		return xsmarsh;
+	}
+	
+	@Bean
+	Unmarshaller unmarshaller() {
+		logg.debug("----->>> unmarshaller bean configuration");
+		
+		return (Unmarshaller) marshaller();
+	}
+	
 }

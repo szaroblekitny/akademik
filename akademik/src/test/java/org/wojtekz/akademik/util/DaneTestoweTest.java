@@ -1,6 +1,5 @@
 package org.wojtekz.akademik.util;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
@@ -10,11 +9,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.wojtekz.akademik.conf.AkademikConfiguration;
-import org.wojtekz.akademik.core.PokojService;
-import org.wojtekz.akademik.core.StudentService;
+import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.services.PokojService;
+import org.wojtekz.akademik.services.StudentService;
 
 /**
  * Test danych testowych. Konieczny ze wzgledu na konieczność rozpoznawania
@@ -24,7 +23,7 @@ import org.wojtekz.akademik.entity.Student;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AkademikConfiguration.class})
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class DaneTestoweTest {
 	private static Logger logg = LogManager.getLogger();
 	
