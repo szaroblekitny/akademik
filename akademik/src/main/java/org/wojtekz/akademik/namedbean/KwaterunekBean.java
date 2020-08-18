@@ -40,6 +40,7 @@ public class KwaterunekBean implements Serializable {
 		listaKwaterunkow = kwaterunekService.listAll();
 		
 		for (Kwaterunek ss : listaKwaterunkow) {
+			logg.debug("-----------> Pobrany {}", ss);
 			kwaterki.add(ss.toString());
 		}
 		

@@ -71,4 +71,11 @@ public interface KwaterunekService {
 	 * @param id
 	 */
 	void deleteById(long id);
+	
+	/**
+	 * Zlicza rekordy w tabeli.
+	 * 
+	 * @return liczba wszystkich rekordów w bazie
+	 */
+	long count();
 }

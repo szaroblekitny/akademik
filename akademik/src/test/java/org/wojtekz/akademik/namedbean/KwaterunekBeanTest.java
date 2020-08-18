@@ -50,8 +50,13 @@ private static Logger logg = LogManager.getLogger();
 		kwt2.setPokoj(3);
 		kwt2.setStudent(15);
 		
+		logg.debug("----->>> przed skasowaniem {}", kwatService.count());
+		
+		kwatService.deleteAll();
+		logg.debug("----->>> po skasowaniu {}", kwatService.count());
 		kwatService.save(kwt1);
 		kwatService.save(kwt2);
+		logg.debug("----->>> po zapisaniu do bazy {}", kwatService.count());
 		logg.debug("----->>> setupik koniec setupiku");
 	}
 

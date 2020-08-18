@@ -39,9 +39,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Override
 	public List<Kwaterunek> listAll() {
 		logg.trace("-----> listAll");
-		List<Kwaterunek> lista;
-		lista = kwaterunekRep.findAll();
-		return lista;
+		return kwaterunekRep.findAll();
 	}
 
 	@Override
@@ -98,6 +96,12 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 		logg.trace("----->>> deleteById");
 		kwaterunekRep.deleteById(id);
 
+	}
+	
+	@Override
+	public long count() {
+		logg.trace("----->>> count");
+		return kwaterunekRep.count();
 	}
 
 }
