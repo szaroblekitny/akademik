@@ -47,7 +47,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Override
 	public Kwaterunek findById(long id) {
 		logg.trace("-----> findById");
-		return kwaterunekRep.findOne(id);
+		return kwaterunekRep.findById(id).get();
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Transactional
 	public void deleteById(long id) {
 		logg.trace("----->>> deleteById");
-		kwaterunekRep.delete(id);
+		kwaterunekRep.deleteById(id);
 
 	}
 

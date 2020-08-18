@@ -43,7 +43,7 @@ public class StudentServiceImpl implements StudentService {
 	@Transactional(readOnly = true)
 	public Student findById(long idStudenta) {
 		logg.trace("----->>> findById dla studenta {}", idStudenta);
-		return studentRep.findOne(idStudenta);
+		return studentRep.findById(idStudenta).get();
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class StudentServiceImpl implements StudentService {
 	public void deleteById(long idStudenta) {
 		logg.trace("----->>> deleteById Student {}", idStudenta);
 		
-		studentRep.delete(idStudenta);
+		studentRep.deleteById(idStudenta);
 	}
 
 
