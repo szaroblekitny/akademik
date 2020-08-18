@@ -65,6 +65,8 @@ public class ImportBean implements Serializable {
         		OutputStream output = new FileOutputStream(new File(KATALOG_IMPORTU, filename));
 
                 IOUtils.copy(input, output);
+                input.close();
+                output.close();
 
 			} catch (Exception ee) {
 				logg.error("Błąd zapisu " + upFile.getFileName(), ee);
