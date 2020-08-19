@@ -18,6 +18,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class TestConfiguration {
 	private static Logger logg = LogManager.getLogger();
 	
+	/**
+	 * Testowe zródło danych: baza HSQL w pamięci operacyjnej.
+	 * 
+	 * @return JDBCDataSource - baza testowa o nazwie app-db
+	 */
 	@Bean
 	JDBCDataSource hsqldbDataSource() {
 		logg.debug("----->>> hsqldbDataSource TEST configuration");
@@ -28,6 +33,12 @@ public class TestConfiguration {
 		return source;
 	}
 	
+	/**
+	 * Faktory zarządzania danymi. Skanuje pakiet org.wojtekz.akademik.entity.
+	 * 
+	 * @return LocalContainerEntityManagerFactoryBean dla zródła hsqldbDataSource
+	 *          i adaptera Hibernate
+	 */
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		logg.debug("----->>> LocalContainerEntityManagerFactoryBean TEST configuration");
@@ -40,6 +51,13 @@ public class TestConfiguration {
 		return em;
 	}
 	
+	/**
+	 * Adapter JPA dostawcy Hibernate. Dialekt dla bazy HSQL.
+	 * Automatyczna generacja struktur danych na podstawie definicji klas
+	 * w pakiecie org.wojtekz.akademik.entity.
+	 * 
+	 * @return HibernateJpaVendorAdapter
+	 */
 	@Bean
 	public HibernateJpaVendorAdapter hibJpaVendorAdapter() {
 		logg.debug("----->>> HibernateJpaVendorAdapter TEST configuration");
@@ -50,6 +68,11 @@ public class TestConfiguration {
 		return adapt;
 	}
 	
+	/**
+	 * Standardowy manager transakcji JPA dla testów.
+	 * 
+	 * @return JpaTransactionManager
+	 */
 	@Bean
 	public PlatformTransactionManager transactionManager() {
 		logg.debug("----->>> PlatformTransactionManager TEST configuration");
