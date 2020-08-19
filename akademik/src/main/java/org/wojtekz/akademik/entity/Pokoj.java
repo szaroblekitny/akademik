@@ -35,18 +35,23 @@ public class Pokoj implements Serializable, Plikowalny {
 	public long getId() {
 		return id;
 	}
+	
 	public void setId(long id) {
 		this.id = id;
 	}
+	
 	public String getNumerPokoju() {
 		return numerPokoju;
 	}
+	
 	public void setNumerPokoju(String numerPokoju) {
 		this.numerPokoju = numerPokoju;
 	}
+	
 	public int getLiczbaMiejsc() {
 		return liczbaMiejsc;
 	}
+	
 	public void setLiczbaMiejsc(int liczbaMiejsc) {
 		this.liczbaMiejsc = liczbaMiejsc;
 	}

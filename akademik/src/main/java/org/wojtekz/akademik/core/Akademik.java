@@ -135,7 +135,7 @@ public class Akademik {
 	 * 
 	 */
 	public boolean zakwateruj() {
-		logg.debug("----->>> zakwateruj begins");
+		logg.info("------------------>>> KWATERUNEK <<<-------------------");
 		// czyścimy kwaterunek
 		kwaterunekService.deleteAll();
 		kwatId = 0L;
@@ -164,7 +164,7 @@ public class Akademik {
 				iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 				if (iluZakwater == 0) {
 					logg.warn("----->>> Nie można zakwaterować studenta {}", student);
-					logg.error("----->>> Przepełnienie!");
+					logg.error("------->>> Przepełnienie Akademika <<<-------");
 					return false;
 				}
 				
