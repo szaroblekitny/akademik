@@ -44,6 +44,7 @@ public class AkademikTest {
 	private final String PLIK_POKOI = "pokoje_test_appl.xml";
 	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
 	private final String PLIK_RAPORTU = "raport_test_appl.txt";
+	
 	private static Logger logg = LogManager.getLogger();
 	private static Path pathPokoi;
 	private static Path pathStudentow;
@@ -73,7 +74,7 @@ public class AkademikTest {
 	
 	@Before
 	public void przedTest() throws Exception {
-		logg.debug("----->>> przedTest starts");
+		logg.debug("-----+> przedTest starts");
 		
 		if (!pokoje.isEmpty()) {
 			for(Pokoj pok : pokoje) {
@@ -137,25 +138,25 @@ public class AkademikTest {
 		studenci.add(malinowski2);
 		
 		
-		logg.trace("----->>> Przygotowanie plików");
+		logg.trace("-----> Przygotowanie plików");
 		pathPokoi = FileSystems.getDefault().getPath(PLIK_POKOI);
 		pathStudentow = FileSystems.getDefault().getPath(PLIK_STUDENTOW);
 		pathRaportu = FileSystems.getDefault().getPath(PLIK_RAPORTU);
 		BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
-		logg.debug("----->>> Pokoje: {}", pokoje);
+		logg.debug("-----> Pokoje: {}", pokoje);
 		if (bufWriter == null) {
-			throw new IOException("======>>> bufWriter jest nullem");
+			throw new IOException("----->>> bufWriter jest nullem");
 		}
 		plikowanie.saveObjectList(bufWriter, pokoje);
 		bufWriter.close();
 			
 		bufWriter = Files.newBufferedWriter(pathStudentow, charset);
-		logg.debug("----->>> Studenci: {}", studenci);
+		logg.debug("-----> Studenci: {}", studenci);
 		plikowanie.saveObjectList(bufWriter, studenci);
 		bufWriter.close();
 		
 		usunDane();
-		logg.debug("----->>> przedTest koniec");
+		logg.debug("-----+> przedTest koniec");
 		
 	}
 
@@ -164,7 +165,7 @@ public class AkademikTest {
 	 */
 	@Test
 	public void testPobierzPokoje() {
-		logg.debug("----->>> testPobierzPokoje starts");
+		logg.debug("=============>>> testPobierzPokoje starts");
 		
 		try {
 			BufferedReader reader = Files.newBufferedReader(pathPokoi, charset);
@@ -183,13 +184,13 @@ public class AkademikTest {
 	
 	@Test
 	public void testPobierzStudentow () {
-		logg.debug("----->>> testPobierzStudentow starts");
+		logg.debug("=============>>> testPobierzStudentow starts");
 		
 		try {
 			BufferedReader reader = Files.newBufferedReader(pathStudentow, charset);
 			akademik.pobierzZPliku(reader);
 			reader.close();
-			logg.trace("----->>> studenci pobrani");
+			logg.trace("-----> studenci pobrani");
 			
 			List<Student> malinowscyZBazy = studentService.findByName("Malinowski");
 			Assert.assertEquals(3, malinowscyZBazy.get(0).getId());
@@ -206,7 +207,7 @@ public class AkademikTest {
 	
 	@Test
 	public void testKwaterunku() {
-		logg.debug("----->>> testKwaterunku starts");
+		logg.debug("=============>>> testKwaterunku starts");
 		zapelnijDanymi();
 		Assert.assertEquals(2, pokojService.ilePokoi());
 		Assert.assertEquals(5, studentService.iluStudentow());
@@ -223,7 +224,7 @@ public class AkademikTest {
 	 */
 	@Test
 	public void testAkademika() {
-		logg.debug("----->>> testAkademika starts");
+		logg.debug("=============>>> testAkademika starts");
 		try (
 			BufferedReader pokojeReader = Files.newBufferedReader(pathPokoi, charset);
 			BufferedReader studenciReader = Files.newBufferedReader(pathStudentow, charset);
@@ -239,20 +240,20 @@ public class AkademikTest {
 		} catch (IOException ie) {
 			logg.error("----->>> testAkademika - problemy plikowe", ie);
 			Assert.fail("Exception: " + ie.getMessage());
-		} finally {
-			usunDane();
 		}
+		
+		usunDane();
 	}
 	
 	
 	@Test
 	public void testStanuAkademika() {
-		logg.debug("----->>> testStanuAkademika starts");
+		logg.debug("=============>>> testStanuAkademika starts");
 		
 		daneTestowe.wrzucTrocheDanychDoBazy();
-		logg.trace("----->>> przed zakwateruj");
+		logg.trace("-----> przed zakwateruj");
 		akademik.zakwateruj();
-		logg.trace("----->>> po zakwateruj");
+		logg.trace("-----> po zakwateruj");
 		
 		try {
 			BufferedWriter outputWriter = Files.newBufferedWriter(pathRaportu, charset);
@@ -262,17 +263,17 @@ public class AkademikTest {
 			int ileLinii = wszyskieLinie.size();
 			Assert.assertEquals("===================", wszyskieLinie.get(ileLinii - 1));
 		} catch (IOException ee) {
-			logg.error("----->>> testStanuAkademika Błąd bufora ", ee);
+			logg.error("-----> testStanuAkademika Błąd bufora ", ee);
 			Assert.fail("Exception: " + ee.getMessage());
-		} finally {
-			usunDane();
 		}
+		
+		usunDane();
 		
 	}
 	
 	@After
 	public void poTescie() throws Exception {
-		logg.debug("----->>> poTescie");
+		logg.debug("-----+> poTescie");
 		usunPlik(pathPokoi);
 		usunPlik(pathStudentow);
 		
@@ -280,33 +281,38 @@ public class AkademikTest {
 		if (Files.exists(pathRaportu)) {
 			usunPlik(pathRaportu);
 		}
+		
+		logg.debug("-------------------+> i po tescie");
 	}
 	
 	/**
 	 * wstawia pokoje i studentów do bazy
 	 */
 	private void zapelnijDanymi() {
-		logg.debug("----->>> zapelnijDanymi starts");
+		logg.debug("-----+> zapelnijDanymi starts");
 		for (Pokoj pokoj : pokoje) {
 			pokojService.save(pokoj);
 		}
 		for (Student student : studenci) {
 			studentService.save(student);
 		}
+		logg.debug("-----+> pakoje i studenci zapisani");
 	}
 	
 	/**
 	 * usuwa dane z bazy
 	 */
 	private void usunDane() {
-		logg.trace("----->>> usunDane starts");
+		logg.trace("-----+> usunDane starts");
 		pokojService.deleteAll();
 		studentService.deleteAll();
 		kwaterunekService.deleteAll();
+		logg.trace("-----+> dane usunięte");
+		
 	}
 	
 	private void usunPlik(Path plik) throws IOException {
-		logg.trace("----->>> kasowanie pliku " + plik.getFileName());
+		logg.trace("-----+> kasowanie pliku " + plik.getFileName());
 		Files.delete(plik);
 	}
 

@@ -145,6 +145,7 @@ public class Akademik {
 		List<Pokoj> pokoje = pokojService.listAll();
 		if (logg.isDebugEnabled()) {
 			logg.debug("----->>> mamy pokoi {}", pokoje.size());
+			logg.debug("----->>> mamy studentów {}", studenci.size());
 		}
 		
 		int iluZakwater;
@@ -172,6 +173,7 @@ public class Akademik {
 			
 		}  // dla każdego studenta
 		
+		logg.info("------------------>>> Kwaterunek zakończony <<<-------------------");
 		return true;
 	}
 	
