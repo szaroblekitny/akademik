@@ -39,6 +39,7 @@ public class DaneTestoweTest {
 	
 	@After
 	public void setDown() throws Exception {
+		logg.debug("----->>> Kasowanie danych po teście");
 		studServ.deleteAll();
 		pokService.deleteAll();
 	}
@@ -47,7 +48,7 @@ public class DaneTestoweTest {
 	public void testWrzucTrocheDanychDoBazyListOfT() {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfT");
 		daneDane.wrzucTrocheDanychDoBazy(daneDane.getMieszkancy());
-		logg.debug("----->>> Dane wrzucone, ale czy na pewno?");
+		logg.debug("----->>> Dane wrzucone, sprawdzam");
 		Student stt = studServ.findById(3);
 		Assert.assertEquals("Malinowski", stt.getNazwisko());
 	}
