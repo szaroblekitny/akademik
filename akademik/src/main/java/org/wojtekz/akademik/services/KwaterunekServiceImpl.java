@@ -2,6 +2,7 @@ package org.wojtekz.akademik.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +16,7 @@ import org.wojtekz.akademik.repos.KwaterunekRepository;
 /**
  * Implementacja obsługi tabelki kwaterunek.
  * 
- * @author Wojtek
+ * @author Wojciech Zaręba
  *
  */
 @Repository
@@ -45,7 +46,8 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Override
 	public Kwaterunek findById(long id) {
 		logg.trace("-----> findById");
-		return kwaterunekRep.findById(id).get();
+		Optional<Kwaterunek> kwaterka = kwaterunekRep.findById(id);
+		return (kwaterka.isPresent() ? kwaterka.get() : null);
 	}
 
 	@Override

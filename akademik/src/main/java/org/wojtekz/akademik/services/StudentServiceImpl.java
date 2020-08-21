@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +44,8 @@ public class StudentServiceImpl implements StudentService {
 	@Transactional(readOnly = true)
 	public Student findById(long idStudenta) {
 		logg.trace("----->>> findById dla studenta {}", idStudenta);
-		return studentRep.findById(idStudenta).get();
+		Optional<Student> studenciak = studentRep.findById(idStudenta);
+		return studenciak.isPresent() ? studenciak.get() : null;
 	}
 
 	@Override
