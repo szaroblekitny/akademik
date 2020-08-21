@@ -88,7 +88,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	@Transactional
 	public void deleteAll() {
 		logg.trace("----->>> deleteAll");
-		kwaterunekRep.deleteAll();
+		kwaterunekRep.deleteAllInBatch();
 
 	}
 
