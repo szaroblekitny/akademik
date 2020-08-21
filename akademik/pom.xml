@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wojtekz</groupId>
 	<artifactId>akademik</artifactId>
-	<version>0.16-SNAPSHOT</version>
+	<version>0.17-SNAPSHOT</version>
 	<packaging>war</packaging>
 	
 	<name>Manager akademika</name>
@@ -20,7 +20,7 @@
 		<maven-compiler.version>3.8.1</maven-compiler.version>
 		<hibernate.version>5.4.20.Final</hibernate.version>
 		<javax.persistence.version>1.0.2</javax.persistence.version>
-		<spring-data-jpa.version>2.1.9.RELEASE</spring-data-jpa.version>
+		<spring-data-jpa.version>2.3.3.RELEASE</spring-data-jpa.version>
 		<log4j.version>2.13.3</log4j.version>
 		<hsqldb.version>2.5.1</hsqldb.version>
 		<xstream.version>1.4.11.1</xstream.version>
