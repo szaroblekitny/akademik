@@ -28,9 +28,11 @@ public class AkademikXStream extends XStreamMarshaller {
 	}
 	
 	/**
-	 * Towrzenie XStreama z włączeniem security dla naszych klas.
+	 * Towrzenie XStreama z włączeniem security. Dozwolone jest przetwarzanie
+	 * wymienionych explicite naszych klas {@link org.wojtekz.akademik.entity.Pokoj}
+	 * i {@link org.wojtekz.akademik.entity.Student}.
 	 * 
-	 * @return skonfigurowany XStream z włączonym security
+	 * @return skonfigurowany XStream ze skonfigurowanymi regułami security
 	 */
 	@Override
 	protected XStream buildXStream() {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Dodaje komunikat do kontekstu serwletu JSF.
- * Bardzo sprytne rozwiązanie, które ma umożliwić testowane beanów JSF.
+ * Bardzo sprytne rozwiązanie skądś ściągnięte, które ma umożliwić testowane beanów JSF.
  *
  * @author Wojciech Zaręba
  *

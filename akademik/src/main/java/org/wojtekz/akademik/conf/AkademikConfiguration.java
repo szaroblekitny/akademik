@@ -19,8 +19,8 @@ import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
  * Klasa konfiguracyjna aplikacji. Zawiera definicje beanów springa w formie klasy,
- * co oznacza, że nie jest konieczny plik konfiguracyjny xml. W plikach są konfiguracje
- * persystencji, dostępu do danych i logowania log4j.
+ * co oznacza, że nie jest konieczny plik konfiguracyjny xml do definiowania beanów Springa.
+ * <p>W plikach są konfiguracje persystencji, dostępu do danych i logowania log4j.
  * 
  * @author Wojtek Zaręba
  *
@@ -38,31 +38,31 @@ public class AkademikConfiguration {
 	}
 	
 	@Bean
-	PokojService pokojService() {
+	public PokojService pokojService() {
 		logg.debug("----->>> pokojService bean configuration");
 		return new PokojServiceImpl();
 	}
 	
 	@Bean
-	StudentService studentService() {
+	public StudentService studentService() {
 		logg.debug("----->>> studentService bean configuration");
 		return new StudentServiceImpl();
 	}
 	
 	@Bean
-	KwaterunekService kwaterunekService() {
+	public KwaterunekService kwaterunekService() {
 		logg.debug("----->>> kwaterunekService bean configuration");
 		return new KwaterunekServiceImpl();
 	}
 	
 	@Bean
-	DaneTestowe daneTestowe() {
+	public DaneTestowe daneTestowe() {
 		logg.debug("----->>> daneTestowe bean configuration");
 		return new DaneTestowe();
 	}
 	
 	@Bean
-	Marshaller marshaller() {
+	public Marshaller marshaller() {
 		logg.debug("----->>> marshaller bean configuration");
 		
 		AkademikXStream xsmarsh = new AkademikXStream();
@@ -71,7 +71,7 @@ public class AkademikConfiguration {
 	}
 	
 	@Bean
-	Unmarshaller unmarshaller() {
+	public Unmarshaller unmarshaller() {
 		logg.debug("----->>> unmarshaller bean configuration");
 		
 		return (Unmarshaller) marshaller();

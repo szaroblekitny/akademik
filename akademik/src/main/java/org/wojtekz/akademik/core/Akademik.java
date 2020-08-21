@@ -20,6 +20,14 @@ import org.wojtekz.akademik.services.StudentService;
 
 import com.thoughtworks.xstream.io.StreamException;
 
+/**
+ * Centralna klasa realizująca logikę obsługi Akademika. Pobiera dane z plików konfiguracyjnych,
+ * wykonuje metodę {@link #zakwateruj()} i wyświetla rezultat. W wersji aplikacji webowej
+ * jest wykonywana tylko metoda zakwateruj().
+ * 
+ * @author wojciech Zaręba
+ *
+ */
 @Component
 public class Akademik {
 	private static Logger logg = LogManager.getLogger();
@@ -73,7 +81,7 @@ public class Akademik {
  	
 	
 	/**
-	 * Pobiera z bufora (pliku XML) listę obiektów i zapisuje je do bazy, rozpoznając
+	 * Pobiera z bufora (pliku XML) listę obiektów i zapisuje do bazy, rozpoznając
 	 * typ obiektu.
 	 *
 	 * @param reader bufor odczytu danych (z pliku)
@@ -116,18 +124,12 @@ public class Akademik {
 	/**
 	 * Tworzy wpsiy w tabeli pośredniej Kwaterunek, która zapisuje łączniki studentów
 	 * z pokojami.
-	 * <p>Najprostszy jest algorytm: dla każdego studenta wybiera pokój, dla którego zajętość
-	 * jest mniejsza od pojemność, tworzy wpis w tabeli kwaterunku i zwiększa zajętość
-	 * pokoju o jeden. Wymaga: znacznika stopnia zajętości pokoju i czyszczenia tych
-	 * znaczników przed rozpoczęciem kwaterunku.</p>
 	 * 
 	 * <p>Tu został zastosowany algorytm oparty na bazie danych: dla każdego studenta sprawdza,
 	 * czy student nie ma wpisu w tabeli kwaterunek. Jeśli nie, dla każdego pokoju sprawdza liczbę wpisów
 	 * dla tego pokoju. Jeśli liczba jest mniejsza od pojemności, dodaje wpis
-	 * łączący pokój ze studentem. Na oko trochę kosztowniejszy od poprzedniego, ale
-	 * nie wymaga żadnych dodatkowych pól, a przed kwaterunkiem wystarczy tylko
-	 * wyczyszczenie tablicy kwaterunek. Kosztowny ze względu na ciągłe
-	 * manipulacje w bazie danych.</p>
+	 * łączący pokój ze studentem. Przed kwaterunkiem jest czyszczona tabela kwaterunek.
+	 * Algorytm jest kosztowny ze względu na ciągłe manipulacje w bazie danych.</p>
 	 * 
 	 * <p>Na razie bez uwzględniania płci.
 	 * 
@@ -224,12 +226,12 @@ public class Akademik {
 	
 	
 	/**
-	 * Wypisuje stan kwaterunku akademika. Podaje listę pokoi z nazwiskami
+	 * Wypisuje do bufora stan kwaterunku akademika w formie raportu tekstowego. Podaje listę pokoi z nazwiskami
 	 * zakwaterowanych studentów.
 	 * 
-	 * @param writer BufferedWriter
-	 * @param udaloSie true, jeśli wszyscy studenci zostali zakwaterowani
-	 * @throws IOException błąd zapisu do pliku
+	 * @param writer BufferedWriter - tam zapiywany jest raport
+	 * @param udaloSie jeśli false, dodaje komunikat, że nie wszyscy studenci zostali zakwaterowani
+	 * @throws IOException błąd zapisu
 	 */
 	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {
 		List<Pokoj> spisPokoi = pokojService.listAll();

@@ -3,8 +3,6 @@ package org.wojtekz.akademik.entity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.wojtekz.akademik.entity.Plec;
-import org.wojtekz.akademik.entity.Student;
 
 /**
  * Najprostszy test encji Student.

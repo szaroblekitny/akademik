@@ -22,7 +22,7 @@ public interface StudentService {
 	/**
 	 * Zwraca listę wszystkich studentów.
 	 * 
-	 * @return List<Student>
+	 * @return List&lt;Student&gt;
 	 */
 	List<Student> listAll();
 	

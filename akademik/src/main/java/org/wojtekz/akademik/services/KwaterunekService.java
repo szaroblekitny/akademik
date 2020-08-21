@@ -16,7 +16,7 @@ public interface KwaterunekService {
 	
 	/**
 	 * Zapisuje obiekt Kwaterunek do bazy.
-	 * @param kwaterunek
+	 * @param kwaterunek zapisywany obiekt
 	 */
 	void save(Kwaterunek kwaterunek);
 	
@@ -29,7 +29,7 @@ public interface KwaterunekService {
 	/**
 	 * Znajduje Kwaterunek po identyfikatorze własnym.
 	 * 
-	 * @param id
+	 * @param id identyfikator
 	 * @return obiekt Kwaterunek
 	 */
 	Kwaterunek findById(long id);
@@ -38,7 +38,7 @@ public interface KwaterunekService {
 	 * Znajduje Kwaterunek po identyfikatorze studenta. Teoretycznie powinien być to jeden
 	 * rekord (?).
 	 * 
-	 * @param idStudenta
+	 * @param idStudenta identyfikator studenta przypisanego do powiązanego pokoju
 	 * @return lista obiektów Kwaterunek
 	 */
 	List<Kwaterunek> findByIdStudenta(long idStudenta);
@@ -46,7 +46,7 @@ public interface KwaterunekService {
 	/**
 	 * Lista obiektów Kwaterunek o podanym identyfikatorze pokoju.
 	 * 
-	 * @param idPokoju
+	 * @param idPokoju identyfikator pokoju, w którym kwateruje powiązany student
 	 * @return lista obiektów Kwaterunek
 	 */
 	List<Kwaterunek> findByIdPokoju(long idPokoju);
@@ -54,7 +54,7 @@ public interface KwaterunekService {
 	/**
 	 * Wyszukuje studentów zamieszkałych w pokoju przez wyszukanie ich kwaterunków.
 	 * 
-	 * @param idPokoju
+	 * @param idPokoju identyfikator pokoju, w którym mieszkają sobie studenci
 	 * @return lista studentów
 	 */
 	List<Student> findStudenciWPokoju(long idPokoju);
@@ -68,14 +68,14 @@ public interface KwaterunekService {
 	/**
 	 * Kasuje wybrany Kwaterunek.
 	 * 
-	 * @param id
+	 * @param id identyfikator kasowanego kwaterunku
 	 */
 	void deleteById(long id);
 	
 	/**
 	 * Zlicza rekordy w tabeli.
 	 * 
-	 * @return liczba wszystkich rekordów w bazie
+	 * @return liczba wszystkich rekordów kwaterunków w bazie
 	 */
 	long count();
 }

@@ -29,7 +29,7 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 
 /**
  * Ta klasa konfiguruje "produkcyjne" (nietestowe) połączenie z bazą danych.
- * Do testów konfiguracja będzie brana z TestConfiguration.
+ * Do testów konfiguracja jest brana z TestConfiguration.
  * 
  * @author Wojciech Zaręba
  *
@@ -145,7 +145,7 @@ public class MainConfiguration {
 	}
 	
 	/**
-	 * JTA UserTransaction Atomikosa. Błąd przechwytywany, może to błąd?
+	 * JTA UserTransaction Atomikosa. Błąd jest przechwytywany, ale może to błąd?
 	 * 
 	 * @return UserTransaction
 	 */

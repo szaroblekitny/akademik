@@ -1,7 +1,7 @@
 /**
- * Teoria mówi, ze repozytoria są w osobnym pakiecie
+ * Teoria mówi, ze repozytoria są w osobnym pakiecie.
  * 
- * @author wojtek
+ * @author Wojciech Zaręba
  *
  */
 package org.wojtekz.akademik.repos;
