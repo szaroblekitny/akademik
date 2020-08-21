@@ -47,7 +47,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 	public Kwaterunek findById(long id) {
 		logg.trace("-----> findById");
 		Optional<Kwaterunek> kwaterka = kwaterunekRep.findById(id);
-		return (kwaterka.isPresent() ? kwaterka.get() : null);
+		return kwaterka.isPresent() ? kwaterka.get() : null;
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class KwaterunekServiceImpl implements KwaterunekService {
 			logg.trace("-----> findStudenciWPokoju {}", idPokoju);
 		}
 		List<Kwaterunek> zakwaterowani;
-		List<Student> studenci = new ArrayList<Student>(); 
+		List<Student> studenci = new ArrayList<>();
 		zakwaterowani = kwaterunekRep.findByIdPokoju(idPokoju);
 		
 		logg.debug("----->>> Szukam zakwaterowanych");

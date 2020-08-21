@@ -2,7 +2,6 @@ package org.wojtekz.akademik.core;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.SpringVersion;
@@ -26,7 +25,7 @@ public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
 	 * Jako dodatkowy bonus: wersja Javy (JDK) i Springa.
 	 */
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) throws BeansException {
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) {
 		logg.info("-------> Wersja JDK {}", System.getProperty("java.version"));
 		logg.info("-------> Wersja Springa {}", SpringVersion.getVersion());
 		

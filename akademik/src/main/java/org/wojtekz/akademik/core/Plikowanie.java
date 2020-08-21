@@ -54,7 +54,7 @@ public class Plikowanie {
 	 * @throws IOException
 	 */
 	public <T> void saveObjectList(BufferedWriter writer, List<T> list)
-			throws XmlMappingException, IOException {
+			throws IOException {
 		logg.trace("----->>> saveObjectList method fired");
 		
 		if (writer == null) {
@@ -86,7 +86,7 @@ public class Plikowanie {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Plikowalny> loadObjectList(BufferedReader reader)
-			throws XmlMappingException, IOException {
+			throws IOException {
 		List<Plikowalny> obj;
 		obj =  (List<Plikowalny>) unmarshaller.unmarshal(new StreamSource(reader));
 		return obj;
@@ -100,7 +100,7 @@ public class Plikowanie {
 	 * @throws IOException 
 	 * @throws XmlMappingException 
 	 */
-	public void zapiszPokojeDoBufora(BufferedWriter writer) throws XmlMappingException, IOException {
+	public void zapiszPokojeDoBufora(BufferedWriter writer) throws IOException {
 		List<Pokoj> listaPokoi = pokojService.listAll();
 		saveObjectList(writer, listaPokoi);
 	}
@@ -112,7 +112,7 @@ public class Plikowanie {
 	 * @throws IOException 
 	 * @throws XmlMappingException 
 	 */
-	public void zapiszStudentowDoBufora(BufferedWriter writer) throws XmlMappingException, IOException {
+	public void zapiszStudentowDoBufora(BufferedWriter writer) throws IOException {
 		List<Student> listaStudentow = studentService.listAll();
 		saveObjectList(writer, listaStudentow);
 	}

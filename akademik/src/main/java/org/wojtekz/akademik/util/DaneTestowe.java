@@ -61,7 +61,7 @@ public class DaneTestowe {
 		pokoj3.setLiczbaMiejsc(4);
 		pokoj3.setNumerPokoju("103");
 
-		pokoje = new ArrayList<Pokoj>();
+		pokoje = new ArrayList<>();
 		pokoje.add(pokoj1);
 		pokoje.add(pokoj2);
 		pokoje.add(pokoj3);
@@ -104,7 +104,7 @@ public class DaneTestowe {
 		student6.setPlec(Plec.MEZCZYZNA);
 
 		// przestawiona kolejność
-		mieszkancy = new ArrayList<Student>();
+		mieszkancy = new ArrayList<>();
 		mieszkancy.add(student2);
 		mieszkancy.add(student1);
 		mieszkancy.add(student4);
@@ -126,8 +126,9 @@ public class DaneTestowe {
 	 */
 	public <T> void wrzucTrocheDanychDoBazy(List<T> lista) {
 		logg.trace("----->>> wrzucTrocheDanychDoBazy start ");
-
-		if (lista.size() > 0) {
+		
+		// jeśli lista nie jest pusta, mamy co wrzucać
+		if (!lista.isEmpty()) {
 			Class<? extends Object> superClass = lista.get(0).getClass();
 			String className = superClass.getSimpleName();
 
