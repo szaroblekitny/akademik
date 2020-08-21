@@ -19,9 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.services.KwaterunekService;
-import org.wojtekz.akademik.services.PokojService;
-import org.wojtekz.akademik.services.StudentService;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -131,6 +128,7 @@ public class KwaterunekServiceImplTest {
 	public void testDeleteById() {
 		logg.debug("----->>> testDeleteById");
 		kwatService.deleteById(1);
+		Assert.assertEquals(1, kwatService.count());
 		Assert.assertEquals(1, kwatService.listAll().size());
 	}
 
