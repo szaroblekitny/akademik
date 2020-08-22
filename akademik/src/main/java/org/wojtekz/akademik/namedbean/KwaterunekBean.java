@@ -34,13 +34,15 @@ public class KwaterunekBean implements Serializable {
 	 * @return lista Stringów zwracanych przez Kwaterunek.toString()
 	 */
 	public List<String> pobierzKwaterunki() {
-		logg.debug("-----------> pobierzKwaterunki start");
+		logg.trace("-----------> pobierzKwaterunki start");
 		List<String> kwaterki = new ArrayList<>();
 		List<Kwaterunek> listaKwaterunkow;
 		listaKwaterunkow = kwaterunekService.listAll();
 		
 		for (Kwaterunek ss : listaKwaterunkow) {
-			logg.debug("-----------> Pobrany {}", ss);
+			if (logg.isTraceEnabled()) {
+				logg.trace("-----------> Pobrany {}", ss);
+			}
 			kwaterki.add(ss.toString());
 		}
 		
