@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
@@ -7,23 +7,24 @@
 
 <h:head>
 	<title>Akademik</title>
+	<link rel="stylesheet" type="text/css" href="akademik.css"/>
 </h:head> 
 <h:body>
 	<ui:composition template = "template/template.xhtml">
     	<ui:define name = "header">
-			<h2>Kwaterowanie</h2>
+			<h3>Kwaterowanie</h3>
 		</ui:define>
 
 		<ui:define name = "content">
-			<div style="padding-top: 20px; padding-bottom: 20px">
+			<div class="wolnewokolo">
 			Naciśnięcie guzika urochomi automatyczne kwaterowanie. Operacja jest nieodwracalna.
 			</div>
 			<h:form>
 				<p:growl id="kwamsgs" showDetail="true" />
-				<div style="padding-top: 20px; padding-bottom: 20px">
+				<div class="wolnewokolo">
 					<p:commandButton id="kwabut" action="#{zakwaterujBean.zakwateruj()}"
 						value="Kwaterowanie" icon="pi pi-key" ajax="false"
-						style="margin-right:20px;" />
+						class="prawymargines" />
 				</div>
 			</h:form>
 		</ui:define>

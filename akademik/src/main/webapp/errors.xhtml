@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
@@ -6,19 +6,12 @@
 
 	<h:head>
 		<title>Akademik</title>
-		<style type="text/css">
-    		#komunikat {
-				color: red;
-				padding: 40px;
-				font-size: 1.1em;
-				font-weight: bold;
-			} 
-		</style>
+		<link rel="stylesheet" type="text/css" href="akademik.css"/>
 	</h:head> 
 	<body> 
 		<h2>Błędny błąd</h2>
 		<p><h:outputText value="#{pfExceptionHandler.formattedTimestamp}" /></p>
-		<p><h:outputText id="komunikat" value="Message:#{pfExceptionHandler.message}" /></p>
+		<p><h:outputText class="czerwonyblad" value="Message:#{pfExceptionHandler.message}" /></p>
 		<p><h:outputText value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /></p>
 		
 	</body> 

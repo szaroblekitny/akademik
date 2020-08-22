@@ -1,0 +1,57 @@
+@charset "UTF-8";
+
+.naglowek {
+	border-width:2px;
+	border-color:green;
+	border-style:solid;
+}
+
+.zawartosc {
+	border-width:2px;
+	border-color:black;
+	border-style:solid;
+}
+
+.dolek {
+	border-width:2px;
+	border-color:red;
+	border-style:solid;
+}
+
+.otoczkaBut {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 8px;
+}
+
+.wolnewokolo {
+	padding-top: 20px;
+	padding-bottom: 20px
+}
+
+.prawymargines {
+	margin-right:20px;
+}
+
+.dolnymargines {
+	margin-bottom:20px;
+}
+
+.szerokosc100procent {
+	width:100%;
+}
+
+.kolumnaedycji {
+	width:35px;
+}
+
+.ui-row-editor .ui-row-editor-pencil {
+	margin-left:8px;
+}
+
+.czerwonyblad {
+	color: red;
+	padding: 40px;
+	font-size: 1.1em;
+	font-weight: bold;
+}

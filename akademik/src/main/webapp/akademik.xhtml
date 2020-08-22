@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
@@ -8,16 +8,34 @@
 <h:head>
 	<title>Akademik</title>
 	<h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
+	<link rel="stylesheet" type="text/css" href="akademik.css"/>
 </h:head> 
-<body> 
-	<h2>Obsługa akademika</h2>
-	<h:form>
-		<p:button outcome="student" value="Studenci" icon="pi pi-users" style="margin-right:20px;" />
-		<p:button outcome="pokoj" value="Pokoje" icon="pi pi-sign-in" style="margin-right:20px;" />
-		<p:button outcome="zakwaterowani" value="Zakwaterowani" icon="pi pi-lock" style="margin-right:20px;" />
-		<p:button outcome="import" value="Import" icon="pi pi-download" style="margin-right:20px;" />
-		<p:button outcome="eksport" value="Eksport" icon="pi pi-upload" style="margin-right:20px;" />
-		<p:button outcome="kwateruj" value="Kwaterowanie" icon="pi pi-key" style="margin-right:20px;" />
-	</h:form>
-</body> 
+<h:body>
+	<ui:composition template = "template/template.xhtml">
+    	<ui:define name = "header">
+			<h2>Obsługa akademika</h2>
+		</ui:define>
+
+		<ui:define name = "content">
+ 
+			<h:form>
+				<p:button outcome="student" value="Studenci" icon="pi pi-users" class="prawymargines" />
+				<p:button outcome="pokoj" value="Pokoje" icon="pi pi-sign-in" class="prawymargines" />
+				<p:button outcome="zakwaterowani" value="Zakwaterowani" icon="pi pi-lock" class="prawymargines" />
+				<p:button outcome="import" value="Import" icon="pi pi-download" class="prawymargines" />
+				<p:button outcome="eksport" value="Eksport" icon="pi pi-upload" class="prawymargines" />
+				<p:button outcome="kwateruj" value="Kwaterowanie" icon="pi pi-key" class="prawymargines" />
+			</h:form>
+			<div>
+				<ul>
+					<ui:repeat var="kwaterunek" value="#{kwaterunekBean.pobierzKwaterunki()}">
+						<li><h:outputText value="#{kwaterunek}" /></li>
+					</ui:repeat>
+				</ul>
+			</div>
+		</ui:define>
+		<!-- pusty footer, zachowuje tylko css -->
+		<ui:define name = "footer"/>
+	</ui:composition>
+</h:body>
 </html>

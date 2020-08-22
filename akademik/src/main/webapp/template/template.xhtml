@@ -6,23 +6,26 @@
       xmlns:p="http://primefaces.org/ui">
 
 	<!-- szablon -->
-	<h:head><title>Akademik</title></h:head>
+	<h:head>
+		<title>Akademik</title>
+		<link rel="stylesheet" type="text/css" href="akademik.css"/>
+	</h:head>
 	<h:body>
-		<div style = "border-width:2px; border-color:green; border-style:solid;">
+		<div class="naglowek">
 			<ui:insert name="header" >
 				<ui:include src="header.xhtml" />
 			</ui:insert>
 		</div>
 		<br/>
 
-		<div style = "border-width:2px; border-color:black; border-style:solid;">
+		<div class="zawartosc">
 			<ui:insert name="content" >
 				<ui:include src="contents.xhtml" />
 			</ui:insert>
 		</div>
 		<br/>
 
-		<div style = "border-width:2px; border-color:red; border-style:solid;">
+		<div class="dolek">
 			<ui:insert name="footer" >
 				<ui:include src="footer.xhtml" />
 			</ui:insert>

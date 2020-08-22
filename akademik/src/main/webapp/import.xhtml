@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
@@ -7,11 +7,12 @@
 
 <h:head>
 	<title>Akademik</title>
+	<link rel="stylesheet" type="text/css" href="akademik.css"/>
 </h:head>
 <h:body> 
 	<ui:composition template = "template/template.xhtml">
     	<ui:define name = "header">
-			<h2>Import</h2>
+			<h3>Import</h3>
 		</ui:define>
 
 		<ui:define name = "content">
@@ -19,10 +20,10 @@
 			<p:growl id="importmess" showDetail="true" />
 
 			<h:form enctype="multipart/form-data">
-				<div class="otoczkaBut" style="padding-top: 5px; padding-bottom: 5px; padding-left: 8px;">
+				<div class="otoczkaBut">
     				<p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
     			</div>
-    			<div class="otoczkaBut" style="padding-top: 5px; padding-bottom: 5px; padding-left: 8px;">
+    			<div class="otoczkaBut">
     				<p:commandButton value="Submit" ajax="false" action="#{importBean.upload}" />
     			</div>
 			</h:form>
