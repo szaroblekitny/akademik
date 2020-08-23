@@ -12,11 +12,11 @@
 </h:head> 
 <h:body>
 	<ui:composition template = "template/template.xhtml">
-    	<ui:define name = "header">
+    	<ui:define name="header">
 			<h2>Obsługa akademika</h2>
 		</ui:define>
 
-		<ui:define name = "content">
+		<ui:define name="content">
  
 			<h:form class="gornymargines">
 				<span class="otoczkaBut">
@@ -25,9 +25,7 @@
 				<span class="otoczkaBut">
 					<p:button outcome="pokoj" value="Pokoje" icon="pi pi-sign-in" />
 				</span>
-				<span class="otoczkaBut">
-					<p:button outcome="zakwaterowani" value="Zakwaterowani" icon="pi pi-lock" />
-				</span>
+
 				<span class="otoczkaBut">
 					<p:button outcome="import" value="Import" icon="pi pi-download" />
 				</span>
@@ -38,16 +36,27 @@
 					<p:button outcome="kwateruj" value="Kwaterowanie" icon="pi pi-key" />
 				</span>
 			</h:form>
-			<div>
-				<ul>
-					<ui:repeat var="kwaterunek" value="#{kwaterunekBean.pobierzKwaterunki()}">
-						<li><h:outputText value="#{kwaterunek}" /></li>
-					</ui:repeat>
-				</ul>
+			
+			<!-- tabela kwaterunków -->
+			<div class="wolnewokolo">
+				<p:dataTable var="kwaterunek" value="#{kwaterunekBean.listaKwaterunkow}">
+		    		<p:column headerText="Kwaterunek">
+		        		<h:outputText value="#{kwaterunek.id}" />
+		    		</p:column>
+	
+		    		<p:column headerText="Pokój">
+		        		<h:outputText value="#{kwaterunek.pokoj}" />
+		    		</p:column>
+	
+					<p:column headerText="Student">
+		        		<h:outputText value="#{kwaterunek.student}" />
+		    		</p:column>
+				</p:dataTable>
 			</div>
+
 		</ui:define>
 		<!-- pusty footer, zachowuje tylko css -->
-		<ui:define name = "footer"/>
+		<ui:define name="footer"/>
 	</ui:composition>
 </h:body>
 </html>

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Kwaterunek;
+import org.wojtekz.akademik.entity.Zakwaterowani;
 import org.wojtekz.akademik.services.KwaterunekService;
 
 /**
@@ -24,10 +25,45 @@ import org.wojtekz.akademik.services.KwaterunekService;
 public class KwaterunekBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static Logger logg = LogManager.getLogger();
+	private final transient KwaterunekService kwaterService;
+	private List<Kwaterunek> listaKwaterunkow;
 	
+	/**
+	 * Konstruktor pobierający serwis kwaterowania i wypełniający
+	 * listę kwaterunków z bazy.
+	 * 
+	 * @param kwaterunekService serwis pobrany z kontenera Springa
+	 */
 	@Autowired
-	private transient KwaterunekService kwaterunekService;
+	public KwaterunekBean(KwaterunekService kwaterunekService) {
+		logg.debug("-----> konstruktor KwaterunekBean");
+		this.kwaterService = kwaterunekService;
+		listaKwaterunkow = kwaterService.listAll();
+	}
 	
+	/**
+	 * Lista kwaterunków pobrana z bazy.
+	 * 
+	 * @return lista kwaterunków
+	 */
+	public List<Kwaterunek> getListaKwaterunkow() {
+		return listaKwaterunkow;
+	}
+	
+	/**
+	 * Wystawia listę studentów przypisanych do pokoi. Wykonuje selecta z joinem
+	 * po kwaterunkach, pokojach i studentach, żeby zwrócić zestawienie
+	 * listę pokoi z nazwiskami zakwaterowanych studentów.
+	 *  
+	 * @return lista obiektów Zakwaterowani
+	 */
+	public List<Zakwaterowani> pobierzZakwaterowanych() {
+		List<Zakwaterowani> zakwaterowani = null;
+		
+		return zakwaterowani;
+	}
+
+
 	/**
 	 * Pobiera dane z tabeli kwaterunek i wystawia w formie listy String.
 	 * 
@@ -36,8 +72,7 @@ public class KwaterunekBean implements Serializable {
 	public List<String> pobierzKwaterunki() {
 		logg.trace("-----------> pobierzKwaterunki start");
 		List<String> kwaterki = new ArrayList<>();
-		List<Kwaterunek> listaKwaterunkow;
-		listaKwaterunkow = kwaterunekService.listAll();
+		listaKwaterunkow = kwaterService.listAll();
 		
 		for (Kwaterunek ss : listaKwaterunkow) {
 			if (logg.isTraceEnabled()) {
@@ -50,5 +85,4 @@ public class KwaterunekBean implements Serializable {
 		return kwaterki;
 	}
 	
-
 }
