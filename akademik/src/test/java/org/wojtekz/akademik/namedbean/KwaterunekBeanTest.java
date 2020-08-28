@@ -28,16 +28,23 @@ import org.wojtekz.akademik.services.KwaterunekService;
 @ContextConfiguration(classes = {TestConfiguration.class})
 @WebAppConfiguration
 public class KwaterunekBeanTest {
-private static Logger logg = LogManager.getLogger();
+	private static Logger logg = LogManager.getLogger();
+	private transient KwaterunekService kwatService;
+	private transient KwaterunekBean kwaterBean;
 	
 	private Kwaterunek kwt1 = new Kwaterunek();
 	private Kwaterunek kwt2 = new Kwaterunek();
 	
-	@Autowired
-	private KwaterunekService kwatService;
 	
 	@Autowired
-	private KwaterunekBean kwtBean;
+	public void setKwaterBean(KwaterunekBean kwaterunekBean) {
+		this.kwaterBean = kwaterunekBean;
+	}
+	
+	@Autowired
+	public void setKwatService(KwaterunekService kwaterunekService) {
+		this.kwatService = kwaterunekService;
+	}
 	
 	@Before
 	public void setUp() throws Exception {
@@ -62,7 +69,7 @@ private static Logger logg = LogManager.getLogger();
 
 	@Test
 	public void testPobierzKwaterunki() {
-		List<String> lisKwa = kwtBean.pobierzKwaterunki();
+		List<String> lisKwa = kwaterBean.pobierzKwaterunki();
 		Assert.assertEquals(2, lisKwa.size());
 		Assert.assertEquals("Kwaterunek [id=1, student=2, pokoj=1]", lisKwa.get(0));
 	}
