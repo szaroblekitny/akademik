@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Kwaterunek;
-import org.wojtekz.akademik.entity.Zakwaterowani;
 import org.wojtekz.akademik.services.KwaterunekService;
 
 /**
@@ -50,19 +49,6 @@ public class KwaterunekBean implements Serializable {
 		return listaKwaterunkow;
 	}
 	
-	/**
-	 * Wystawia listę studentów przypisanych do pokoi. Wykonuje selecta z joinem
-	 * po kwaterunkach, pokojach i studentach, żeby zwrócić zestawienie
-	 * listę pokoi z nazwiskami zakwaterowanych studentów.
-	 *  
-	 * @return lista obiektów Zakwaterowani
-	 */
-	public List<Zakwaterowani> pobierzZakwaterowanych() {
-		List<Zakwaterowani> zakwaterowani = null;
-		
-		return zakwaterowani;
-	}
-
 
 	/**
 	 * Pobiera dane z tabeli kwaterunek i wystawia w formie listy String.
