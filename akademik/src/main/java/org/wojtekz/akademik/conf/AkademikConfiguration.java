@@ -9,8 +9,6 @@ import org.springframework.dao.annotation.PersistenceExceptionTranslationPostPro
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
-import org.wojtekz.akademik.services.KwaterunekService;
-import org.wojtekz.akademik.services.KwaterunekServiceImpl;
 import org.wojtekz.akademik.services.PokojService;
 import org.wojtekz.akademik.services.PokojServiceImpl;
 import org.wojtekz.akademik.services.StudentService;
@@ -47,12 +45,6 @@ public class AkademikConfiguration {
 	public StudentService studentService() {
 		logg.debug("----->>> studentService bean configuration");
 		return new StudentServiceImpl();
-	}
-	
-	@Bean
-	public KwaterunekService kwaterunekService() {
-		logg.debug("----->>> kwaterunekService bean configuration");
-		return new KwaterunekServiceImpl();
 	}
 	
 	@Bean

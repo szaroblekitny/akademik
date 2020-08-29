@@ -23,11 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.TestConfiguration;
-import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.services.KwaterunekService;
 import org.wojtekz.akademik.services.PokojService;
 import org.wojtekz.akademik.services.StudentService;
 import org.wojtekz.akademik.util.DaneTestowe;
@@ -62,9 +60,6 @@ public class AkademikTest {
 	
 	@Autowired
 	private StudentService studentService;
-	
-	@Autowired
-	private KwaterunekService kwaterunekService;
 	
 	@Autowired
 	private DaneTestowe daneTestowe;
@@ -205,20 +200,6 @@ public class AkademikTest {
 	}
 	
 	
-	@Test
-	public void testKwaterunku() {
-		logg.debug("=============>>> testKwaterunku starts");
-		zapelnijDanymi();
-		Assert.assertEquals(2, pokojService.ilePokoi());
-		Assert.assertEquals(5, studentService.iluStudentow());
-		
-		akademik.zakwateruj();
-		List<Kwaterunek> powiazania = kwaterunekService.listAll();
-		Assert.assertEquals(5, powiazania.size());
-		
-		usunDane();
-	}
-	
 	/**
 	 * Test głównej aplikacji plikowej.
 	 */
@@ -286,27 +267,12 @@ public class AkademikTest {
 	}
 	
 	/**
-	 * wstawia pokoje i studentów do bazy
-	 */
-	private void zapelnijDanymi() {
-		logg.debug("-----+> zapelnijDanymi starts");
-		for (Pokoj pokoj : pokoje) {
-			pokojService.save(pokoj);
-		}
-		for (Student student : studenci) {
-			studentService.save(student);
-		}
-		logg.debug("-----+> pakoje i studenci zapisani");
-	}
-	
-	/**
 	 * usuwa dane z bazy
 	 */
 	private void usunDane() {
 		logg.trace("-----+> usunDane starts");
 		pokojService.deleteAll();
 		studentService.deleteAll();
-		kwaterunekService.deleteAll();
 		logg.trace("-----+> dane usunięte");
 		
 	}

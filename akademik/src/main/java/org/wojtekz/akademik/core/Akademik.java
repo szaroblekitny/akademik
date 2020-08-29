@@ -4,17 +4,16 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.wojtekz.akademik.entity.Kwaterunek;
 import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.services.KwaterunekService;
 import org.wojtekz.akademik.services.PokojService;
 import org.wojtekz.akademik.services.StudentService;
 
@@ -38,8 +37,6 @@ public class Akademik {
 	@Autowired
 	private StudentService studentService;
 	@Autowired
-	private KwaterunekService kwaterunekService;
-	@Autowired
 	private Plikowanie plikowanie;
 	
 	/**
@@ -59,7 +56,6 @@ public class Akademik {
 			
 			pokojService.deleteAll();
 			studentService.deleteAll();
-			kwaterunekService.deleteAll();
 			
 			pobierzZPliku(pokojeReader);
 			pobierzZPliku(studenciReader);
@@ -139,7 +135,6 @@ public class Akademik {
 	public boolean zakwateruj() {
 		logg.info("------------------>>> KWATERUNEK <<<-------------------");
 		// czyścimy kwaterunek
-		kwaterunekService.deleteAll();
 		kwatId = 0L;
 		
 		// listy studentów i pokoi
@@ -154,7 +149,7 @@ public class Akademik {
 		
 		// dla każdego studenta
 		for (Student student : studenci) {
-			iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
+			/*
 			if (logg.isDebugEnabled()) {
 				logg.debug("----->>> student {} ma przydziałów: {}", student.getId(), iluZakwater);
 			}
@@ -164,7 +159,6 @@ public class Akademik {
 				
 				// na koniec sprawdzamy, czy student został zakwaterowany,
 				// jeśli nie, mamy przepełnienie
-				iluZakwater = kwaterunekService.findByIdStudenta(student.getId()).size();
 				if (iluZakwater == 0) {
 					logg.warn("----->>> Nie można zakwaterować studenta {}", student);
 					logg.error("------->>> Przepełnienie Akademika <<<-------");
@@ -172,6 +166,7 @@ public class Akademik {
 				}
 				
 			}
+			*/
 			
 		}  // dla każdego studenta
 		
@@ -180,26 +175,6 @@ public class Akademik {
 	}
 	
 
-	/**
-	 * Kwateruje studenta w pokoju dodając wpis do tabeli kwaterunek.
-	 * 
-	 * @param student kwaterowany student
-	 * @param pokoj pokój dla studenta
-	 */
-	private void kwaterujStudenta(Student student, Pokoj pokoj) {
-		if (logg.isDebugEnabled()) {
-			logg.debug("----->>> Nowy kwaterunek {} student {} pokój {}", kwatId, student.getId(), pokoj.getId());
-		}
-
-		Kwaterunek nowyKwaterunek = new Kwaterunek();
-		nowyKwaterunek.setId(kwatId);
-		nowyKwaterunek.setStudent(student.getId());
-		nowyKwaterunek.setPokoj(pokoj.getId());
-		kwaterunekService.save(nowyKwaterunek);
-		
-		kwatId++;
-	}
-	
 	
 	/**
 	 * Przelatuje po pokojach usiłując wepchnąć tam studenta.
@@ -212,15 +187,7 @@ public class Akademik {
 		logg.trace("----->>> po pokojach");
 		
 		for (Pokoj pokoj : pokoje) {
-			int zajeteMiejsca = kwaterunekService.findByIdPokoju(pokoj.getId()).size();
-			
-			logg.debug("----->>> dla pokoju {} miejsc: {}, zajętych {}", pokoj.getId(), pokoj.getLiczbaMiejsc(), zajeteMiejsca);
-			
-			if (pokoj.getLiczbaMiejsc() > zajeteMiejsca) {
-				kwaterujStudenta(student, pokoj);
-				// wyskakujemy z pokoi po zakwaterowaniu
-				return;
-			}
+			// TO DO do całkowitego przerobienia
 		}
 	}
 	
@@ -238,7 +205,8 @@ public class Akademik {
 		for(Pokoj pokoj : spisPokoi) {
 			writer.write(pokoj.toString());
 			writer.newLine();
-			List<Student> mieszkancy = kwaterunekService.findStudenciWPokoju(pokoj.getId());
+			// TO DO chwilowa zaślepka
+			List<Student> mieszkancy = new ArrayList<>();
 			for (Student mieszka : mieszkancy) {
 				writer.write(mieszka.toString());
 				writer.newLine();

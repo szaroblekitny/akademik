@@ -31,6 +31,8 @@ public class Pokoj implements Serializable, Plikowalny {
 	@Column(name="liczba_miejsc")
 	private int liczbaMiejsc;
 	
+	// TODO do dodania pole lista studentów jako join
+	// Spore zmiany w aplikacji. Java jest jednak popieprzona...
 	
 	public long getId() {
 		return id;
