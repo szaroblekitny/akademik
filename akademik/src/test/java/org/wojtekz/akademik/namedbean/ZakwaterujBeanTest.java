@@ -15,7 +15,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.repo.PokojRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
+
+@Ignore
 
 /**
  * Test beana JSF Zakwateruj.
@@ -32,6 +36,18 @@ public class ZakwaterujBeanTest {
 	private transient ZakwaterujBean zakwaterujBean;
 	private transient DaneTestowe daneTestowe;
 	private transient Messagesy komunikaty;
+	private StudentRepository studentRepo;
+	private PokojRepository pokojRepo;
+	
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+
+	@Autowired
+	public void setPokojRepo(PokojRepository pokojRepo) {
+		this.pokojRepo = pokojRepo;
+	}
 	
 	@Autowired
 	public void setZakwaterujBean(ZakwaterujBean zakwaterujBean) {
@@ -44,17 +60,6 @@ public class ZakwaterujBeanTest {
 		this.daneTestowe = daneTestowe;
 	}
 	
-	/*
-	@Autowired
-	public void setPokojService(PokojService pokojService) {
-		this.pokojService = pokojService;
-	}
-	
-	@Autowired
-	public void setStudentService(StudentService studentService) {
-		this.studentService = studentService;
-	}
-	*/
 	
 	@Before
 	public void setUp() throws Exception {
@@ -66,15 +71,14 @@ public class ZakwaterujBeanTest {
 
 	@After
 	public void tearDown() throws Exception {
-		// TO DO pokojService.deleteAll();
-		// TO DO studentService.deleteAll();
+		pokojRepo.deleteAll();
+		studentRepo.deleteAll();
 	}
 
 	/**
 	 * Test funkcji kwaterowania.
 	 * 
 	 */
-	@Ignore
 	@Test
 	public void testZakwateruj() {
 		logg.debug("-------> testZakwateruj");

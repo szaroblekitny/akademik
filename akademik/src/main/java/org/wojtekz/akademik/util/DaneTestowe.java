@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repo.PokojRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 
 /**
  * Klasa przygotowująca dane testowe: 3 pokoje i 6 studentów.
@@ -31,6 +33,9 @@ public class DaneTestowe {
 
 	private List<Pokoj> pokoje;
 	private List<Student> mieszkancy;
+	
+	private StudentRepository studentRepo;
+	private PokojRepository pokojRepo;
 
 	/**
 	 * Wypełnia pola przykładowymi danymi testowymi zdefiniowanymi w tym konstruktorze.
@@ -107,6 +112,16 @@ public class DaneTestowe {
 		logg.debug("----->>> Dane testowe - koniec konstruktora");
 	}
 
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+
+	@Autowired
+	public void setPokojRepo(PokojRepository pokojRepo) {
+		this.pokojRepo = pokojRepo;
+	}
+
 
 	/**
 	 * Wrzuca dane przekazane przez listę do tabeli w bazie określonej przez
@@ -131,17 +146,17 @@ public class DaneTestowe {
 			if (className.equals("Pokoj")) {
 				logg.debug("----->>> wrzucam dane pokoi");
 
-				// TO DO pokojService.deleteAll();
+				pokojRepo.deleteAll();
 				for (T pok : lista) {
-					// pokojService.save((Pokoj) pok);
+					pokojRepo.save((Pokoj) pok);
 				}
 			}
 
 			if (className.equals("Student")) {
 				logg.debug("----->>> wrzucam dane studentów");
-				// TO DO studentService.deleteAll();
+				studentRepo.deleteAll();
 				for (T stud : lista) {
-					// TO DO 	studentService.save((Student) stud);
+					studentRepo.save((Student) stud);
 				}
 			}
 		}

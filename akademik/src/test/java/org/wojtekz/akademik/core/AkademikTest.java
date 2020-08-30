@@ -17,6 +17,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,11 @@ import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repo.PokojRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
+
+@Ignore
 
 /**
  * Główny test głównej klasy naszego Akademika.
@@ -50,15 +55,37 @@ public class AkademikTest {
 	private List<Pokoj> pokoje = new ArrayList<Pokoj>();
 	private List<Student> studenci = new ArrayList<Student>();
 
-	@Autowired
 	private Akademik akademik;
-	
-	@Autowired
 	private DaneTestowe daneTestowe;
+	private Plikowanie plikowanie;
+	private StudentRepository studentRepo;
+	private PokojRepository pokojRepo;
 	
 	@Autowired
-	private Plikowanie plikowanie;
+	public void setAkademik(Akademik akademik) {
+		this.akademik = akademik;
+	}
+
+	@Autowired
+	public void setDaneTestowe(DaneTestowe daneTestowe) {
+		this.daneTestowe = daneTestowe;
+	}
+
+	@Autowired
+	public void setPlikowanie(Plikowanie plikowanie) {
+		this.plikowanie = plikowanie;
+	}
 	
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+
+	@Autowired
+	public void setPokojRepo(PokojRepository pokojRepo) {
+		this.pokojRepo = pokojRepo;
+	}
+
 	@Before
 	public void przedTest() throws Exception {
 		logg.debug("-----+> przedTest starts");
@@ -75,6 +102,7 @@ public class AkademikTest {
 			}
 		}
 		
+		// Pokoje
 		Pokoj pok1 = new Pokoj();
 		pok1.setId(1);
 		pok1.setLiczbaMiejsc(2);
@@ -159,8 +187,8 @@ public class AkademikTest {
 			akademik.pobierzZPliku(reader);
 			reader.close();
 			
-			// TO DO Pokoj pokZBazy = pokojService.findByNumber("102");
-			// TO DO Assert.assertEquals(3, pokZBazy.getLiczbaMiejsc());
+			Pokoj pokZBazy = pokojRepo.findByNumerPokoju("102");
+			Assert.assertEquals(3, pokZBazy.getLiczbaMiejsc());
 			
 		} catch (IOException ee) {
 			logg.error("----->>> testPobierzPokoje: Błąd odczytu pliku z pokojami", ee);
@@ -179,10 +207,10 @@ public class AkademikTest {
 			reader.close();
 			logg.trace("-----> studenci pobrani");
 			
-			// TO DO List<Student> malinowscyZBazy = studentService.findByName("Malinowski");
-			// Assert.assertEquals(3, malinowscyZBazy.get(0).getId());
-			// Assert.assertEquals("Adam", malinowscyZBazy.get(0).getImie());
-			// Assert.assertEquals("Jerzy", malinowscyZBazy.get(1).getImie());
+			List<Student> malinowscyZBazy = studentRepo.findByName("Malinowski");
+			Assert.assertEquals(3, malinowscyZBazy.get(0).getId());
+			Assert.assertEquals("Adam", malinowscyZBazy.get(0).getImie());
+			Assert.assertEquals("Jerzy", malinowscyZBazy.get(1).getImie());
 			
 		} catch (IOException ee) {
 			logg.error("----- ERROR >> Błąd odczytu pliku ze studentami");
@@ -263,8 +291,8 @@ public class AkademikTest {
 	 */
 	private void usunDane() {
 		logg.trace("-----+> usunDane starts");
-		// TO DO pokojService.deleteAll();
-		// TO DO studentService.deleteAll();
+		pokojRepo.deleteAll();
+		studentRepo.deleteAll();
 		logg.trace("-----+> dane usunięte");
 		
 	}

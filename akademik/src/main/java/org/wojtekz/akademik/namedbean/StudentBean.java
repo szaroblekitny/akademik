@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repo.StudentRepository;
 
 /**
  * Obsługa studentów od strony aplikacji JSF.
@@ -26,10 +27,17 @@ public class StudentBean implements Serializable {
 
 	private List<Student> studenci;
 	private transient Messagesy komunikaty;
+	private StudentRepository studentRepo;
 	
 	@Autowired
 	public void setMessagesy(Messagesy komunikaty) {
 		this.komunikaty = komunikaty;
+	}
+	
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+		this.studenci = studentRepo.findAll();
 	}
 	
 	
@@ -52,7 +60,7 @@ public class StudentBean implements Serializable {
 	public void onRowEdit(RowEditEvent<?> event) {
 		Student student = (Student) event.getObject();
         komunikaty.addMessage("Edycja studenta", "Student o Id " + student.getId());
-     // TO DO  studentServ.save(student);
+        studentRepo.save(student);
     }
     
 	/**
@@ -72,13 +80,11 @@ public class StudentBean implements Serializable {
 	public List<String> pobierzStudentow() {
 		logg.trace("-----------> pobierzStudentow start");
 		List<String> studList = new ArrayList<>();
-		// TO DO List<Student> listaStudentow = studentServ.listAll();
+		List<Student> listaStudentow = studentRepo.findAll();
 		
-		/*
 		for (Student ss : listaStudentow) {
 			studList.add(ss.toString());
 		}
-		*/
 		
 		logg.debug("-----------> mamy studentów dla stronki");
 		return studList;

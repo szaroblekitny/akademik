@@ -3,6 +3,7 @@ package org.wojtekz.akademik.namedbean;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.behavior.Behavior;
@@ -21,6 +22,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repo.PokojRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
@@ -39,11 +42,23 @@ public class StudentBeanTest {
 	
 	private transient StudentBean studentBean;
 	private transient DaneTestowe daneTestowe;
+	private StudentRepository studentRepo;
+	private PokojRepository pokojRepo;
+	
 	private transient Messagesy komunikaty;
 	private transient UIComponent component;
 	private transient Behavior behavior;
 	private Student student;
 	
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+
+	@Autowired
+	public void setPokojRepo(PokojRepository pokojRepo) {
+		this.pokojRepo = pokojRepo;
+	}
 	
 	@Autowired
 	public void setStudentBean(StudentBean studentBean) {
@@ -73,8 +88,8 @@ public class StudentBeanTest {
 
 	@After
 	public void tearDown() throws Exception {
-		// TO DO pokojService.deleteAll();
-		// TO DO studentService.deleteAll();
+		pokojRepo.deleteAll();
+		studentRepo.deleteAll();
 	}
 
 	@Test
@@ -90,8 +105,9 @@ public class StudentBeanTest {
 		logg.debug("-------> testOnRowEdit");
 		studentBean.onRowEdit(new RowEditEvent(component, behavior, student));
 		verify(komunikaty).addMessage("Edycja studenta", "Student o Id 10");
-		// TO DO Student sprStudent = studentService.findById(10);
-		// TO DO Assert.assertEquals(KLAPA, sprStudent.getImie());
+		Optional<Student> sprStudent = studentRepo.findById(10L);
+		Assert.assertTrue(sprStudent.isPresent());
+		Assert.assertEquals(KLAPA, sprStudent.get().getImie());
 	}
 	
 	@Test
@@ -104,10 +120,12 @@ public class StudentBeanTest {
 	@Test
 	public void testGetStudenci() {
 		logg.debug("-------> testGetStudenci");
-		// TO DO Assert.assertEquals(6, studentService.listAll().size());
-		// TO DO StudentBean bean = new StudentBean(studentService);
-		// TO DO List<Student> stLi = bean.getStudenci();
-		// TO DO Assert.assertEquals(6, stLi.size());
+		Assert.assertEquals(6, studentRepo.findAll().size());
+		StudentBean bean = new StudentBean();
+		Assert.assertNotNull(bean);
+		bean.setStudentRepo(studentRepo);
+		List<Student> stLi = bean.getStudenci();
+		Assert.assertEquals(6, stLi.size());
 	}
  
 }

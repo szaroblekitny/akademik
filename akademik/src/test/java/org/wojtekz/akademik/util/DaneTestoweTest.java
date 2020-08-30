@@ -1,5 +1,7 @@
 package org.wojtekz.akademik.util;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
@@ -12,6 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repo.PokojRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 
 /**
  * Test danych testowych. Konieczny ze wzgledu na konieczność rozpoznawania
@@ -25,14 +29,30 @@ import org.wojtekz.akademik.entity.Student;
 public class DaneTestoweTest {
 	private static Logger logg = LogManager.getLogger();
 	
-	@Autowired
-	DaneTestowe daneDane;
+	private DaneTestowe daneDane;
+	private StudentRepository studentRepo;
+	private PokojRepository pokojRepo;
 	
+	@Autowired
+	public void setDaneDane(DaneTestowe daneDane) {
+		this.daneDane = daneDane;
+	}
+
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+
+	@Autowired
+	public void setPokojRepo(PokojRepository pokojRepo) {
+		this.pokojRepo = pokojRepo;
+	}
+
 	@After
 	public void setDown() throws Exception {
 		logg.debug("----->>> Kasowanie danych po teście");
-		// TO DO studServ.deleteAll();
-		// TO DO pokService.deleteAll();
+		studentRepo.deleteAll();
+		pokojRepo.deleteAll();
 	}
 
 	@Test
@@ -40,16 +60,17 @@ public class DaneTestoweTest {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfT");
 		daneDane.wrzucTrocheDanychDoBazy(daneDane.getMieszkancy());
 		logg.debug("----->>> Dane wrzucone, sprawdzam");
-		// TO DO Student stt = studServ.findById(3);
-		// TO DO Assert.assertEquals("Malinowski", stt.getNazwisko());
+		Optional<Student> stt = studentRepo.findById(3L);
+		Assert.assertFalse(stt.isEmpty());
+		Assert.assertEquals("Malinowski", stt.get().getNazwisko());
 	}
 
 	@Test
 	public void testWrzucTrocheDanychDoBazyListOfPokojListOfStudent() {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfPokojListOfStudent start");
 		daneDane.wrzucTrocheDanychDoBazy(daneDane.getPokoje(), daneDane.getMieszkancy());
-		// TO DO Pokoj pok = pokService.findByNumber("102");
-		// TO DO Assert.assertEquals(3, pok.getLiczbaMiejsc());
+		Pokoj pok = pokojRepo.findByNumerPokoju("102");
+		Assert.assertEquals(3, pok.getLiczbaMiejsc());
 	}
 
 	
@@ -57,11 +78,9 @@ public class DaneTestoweTest {
 	public void testWrzucTrocheDanychDoBazy() {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazy start");
 		daneDane.wrzucTrocheDanychDoBazy();
-		/* TO DO
-		long ilePokoi = pokService.ilePokoi();
+		long ilePokoi = pokojRepo.count();
 		Assert.assertEquals("Liczba pokoi niezgodna", 3, ilePokoi);
-		long ileStudentow = studServ.iluStudentow();
+		long ileStudentow = studentRepo.count();
 		Assert.assertEquals("Liczba studnetow niezgodna", 6, ileStudentow);
-		*/
 	}
 }

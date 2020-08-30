@@ -12,6 +12,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.repo.PokojRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
@@ -25,12 +27,33 @@ import org.wojtekz.akademik.util.DaneTestowe;
 @ContextConfiguration(classes = {TestConfiguration.class})
 @WebAppConfiguration
 public class PokojBeanTest {
-	
-	@Autowired
 	private transient PokojBean pokBean;
+	private PokojRepository pokojRepository;
+	private StudentRepository studentRepo;
+	private DaneTestowe daneTestowe;
 	
 	@Autowired
-	private transient DaneTestowe daneTestowe;
+	public void setPokBean(PokojBean pokBean) {
+		this.pokBean = pokBean;
+	}
+
+	@Autowired
+	public void setPokojRepository(PokojRepository pokojRepository) {
+		this.pokojRepository = pokojRepository;
+	}
+	
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+
+	//  TO DO !!! -- tu jest drugie wywołanie bazy -- !!!
+	
+	
+	@Autowired
+	public void setDaneTestowe(DaneTestowe daneTestowe) {
+		this.daneTestowe = daneTestowe;
+	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -39,12 +62,13 @@ public class PokojBeanTest {
 
 	@After
 	public void tearDown() throws Exception {
-		// TO DO pokojService.deleteAll();
-		// TO DO studentService.deleteAll();
+		pokojRepository.deleteAll();
+		studentRepo.deleteAll();
 	}
 
 	@Test
 	public void testPobierzPokoje() {
+		Assert.assertEquals(3, pokojRepository.count());
 		List<String> pokStrList = pokBean.pobierzPokoje();
 		Assert.assertEquals(3, pokStrList.size());
 		Assert.assertEquals("Pokoj [id=3, numerPokoju=103, liczbaMiejsc=4]", pokStrList.get(2));

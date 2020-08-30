@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,8 +36,8 @@ public class Pokoj implements Serializable, Plikowalny {
 	@Column(name="liczba_miejsc")
 	private int liczbaMiejsc;
 	
-	@OneToMany(mappedBy="pokoj_id")
-	private List<Student> zakwaterowani;
+	@OneToMany(mappedBy="pokoj")
+	private List<Student> zakwaterowani = new ArrayList<>();
 	
 	/**
 	 * Przypisywanie studenta do pokoju.
