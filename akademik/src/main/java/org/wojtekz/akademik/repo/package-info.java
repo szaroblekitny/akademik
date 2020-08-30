@@ -4,4 +4,4 @@
  * @author Wojciech Zaręba
  *
  */
-package org.wojtekz.akademik.repos;
+package org.wojtekz.akademik.repo;

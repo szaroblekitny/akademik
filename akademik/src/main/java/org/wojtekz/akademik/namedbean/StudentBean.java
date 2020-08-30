@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.services.StudentService;
 
 /**
  * Obsługa studentów od strony aplikacji JSF.
@@ -26,20 +25,7 @@ public class StudentBean implements Serializable {
 	private static Logger logg = LogManager.getLogger();
 
 	private List<Student> studenci;
-	private final transient StudentService studentServ;
 	private transient Messagesy komunikaty;
-	
-	/**
-	 * Kostruktor, który pobiera listę wszystkich studentów (odważnie).
-	 * 
-	 * @param studentService usługa studencka
-	 */
-	@Autowired
-	public StudentBean(StudentService studentService) {
-		logg.debug("-----> konstruktor StudentBean");
-		this.studentServ = studentService;
-		studenci = studentServ.listAll();
-	}
 	
 	@Autowired
 	public void setMessagesy(Messagesy komunikaty) {
@@ -66,7 +52,7 @@ public class StudentBean implements Serializable {
 	public void onRowEdit(RowEditEvent<?> event) {
 		Student student = (Student) event.getObject();
         komunikaty.addMessage("Edycja studenta", "Student o Id " + student.getId());
-        studentServ.save(student);
+     // TO DO  studentServ.save(student);
     }
     
 	/**
@@ -86,11 +72,13 @@ public class StudentBean implements Serializable {
 	public List<String> pobierzStudentow() {
 		logg.trace("-----------> pobierzStudentow start");
 		List<String> studList = new ArrayList<>();
-		List<Student> listaStudentow = studentServ.listAll();
+		// TO DO List<Student> listaStudentow = studentServ.listAll();
 		
+		/*
 		for (Student ss : listaStudentow) {
 			studList.add(ss.toString());
 		}
+		*/
 		
 		logg.debug("-----------> mamy studentów dla stronki");
 		return studList;

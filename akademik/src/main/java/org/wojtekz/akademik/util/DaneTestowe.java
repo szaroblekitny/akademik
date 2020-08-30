@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.services.PokojService;
-import org.wojtekz.akademik.services.StudentService;
 
 /**
  * Klasa przygotowująca dane testowe: 3 pokoje i 6 studentów.
@@ -33,12 +31,6 @@ public class DaneTestowe {
 
 	private List<Pokoj> pokoje;
 	private List<Student> mieszkancy;
-
-	@Autowired
-	private StudentService studentService;
-	
-	@Autowired
-	private PokojService pokojService;
 
 	/**
 	 * Wypełnia pola przykładowymi danymi testowymi zdefiniowanymi w tym konstruktorze.
@@ -139,17 +131,17 @@ public class DaneTestowe {
 			if (className.equals("Pokoj")) {
 				logg.debug("----->>> wrzucam dane pokoi");
 
-				pokojService.deleteAll();
+				// TO DO pokojService.deleteAll();
 				for (T pok : lista) {
-					pokojService.save((Pokoj) pok);
+					// pokojService.save((Pokoj) pok);
 				}
 			}
 
 			if (className.equals("Student")) {
 				logg.debug("----->>> wrzucam dane studentów");
-				studentService.deleteAll();
+				// TO DO studentService.deleteAll();
 				for (T stud : lista) {
-					studentService.save((Student) stud);
+					// TO DO 	studentService.save((Student) stud);
 				}
 			}
 		}

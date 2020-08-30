@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.services.PokojService;
-import org.wojtekz.akademik.services.StudentService;
 
 import com.thoughtworks.xstream.io.StreamException;
 
@@ -32,10 +30,6 @@ public class Akademik {
 	private static Logger logg = LogManager.getLogger();
 	private long kwatId;
 	
-	@Autowired
-	private PokojService pokojService;
-	@Autowired
-	private StudentService studentService;
 	@Autowired
 	private Plikowanie plikowanie;
 	
@@ -54,8 +48,10 @@ public class Akademik {
 		// ot i cała logika naszej aplikacji:
 		try {
 			
+			/*  TO DO
 			pokojService.deleteAll();
 			studentService.deleteAll();
+			*/
 			
 			pobierzZPliku(pokojeReader);
 			pobierzZPliku(studenciReader);
@@ -97,6 +93,7 @@ public class Akademik {
 			return;
 		}
 		
+		/*  TO DO
 		if (pp instanceof Pokoj) {
 			for (Plikowalny pok : pobrane) {
 				pokojService.save((Pokoj) pok);
@@ -112,6 +109,7 @@ public class Akademik {
 			logg.debug("----->>> studenci zapisani do bazy danych");
 			return;
 		}
+		*/
 		
 		logg.warn("----->>> pobierzZPliku - nieznany typ obiektu");
 	}
@@ -138,12 +136,15 @@ public class Akademik {
 		kwatId = 0L;
 		
 		// listy studentów i pokoi
+		List<Student> studenci = new ArrayList<>();
+		/* TO DO
 		List<Student> studenci = studentService.listAll();
 		List<Pokoj> pokoje = pokojService.listAll();
 		if (logg.isDebugEnabled()) {
 			logg.debug("----->>> mamy pokoi {}", pokoje.size());
 			logg.debug("----->>> mamy studentów {}", studenci.size());
 		}
+		*/
 		
 		int iluZakwater;
 		
@@ -201,7 +202,8 @@ public class Akademik {
 	 * @throws IOException błąd zapisu
 	 */
 	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {
-		List<Pokoj> spisPokoi = pokojService.listAll();
+		// TO DO List<Pokoj> spisPokoi = pokojService.listAll();
+		List<Pokoj> spisPokoi = new ArrayList<>();
 		for(Pokoj pokoj : spisPokoi) {
 			writer.write(pokoj.toString());
 			writer.newLine();

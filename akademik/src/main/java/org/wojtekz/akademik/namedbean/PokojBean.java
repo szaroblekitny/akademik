@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Pokoj;
-import org.wojtekz.akademik.services.PokojService;
 
 /**
  * Obsługa strony pokoi w JSF.
@@ -24,9 +23,6 @@ public class PokojBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static Logger logg = LogManager.getLogger();
 	
-	@Autowired
-	private transient PokojService pokojService;
-	
 	/**
 	 * Zwraca listę pokoi jako linie metody Pokoj.toString().
 	 * 
@@ -36,11 +32,13 @@ public class PokojBean implements Serializable {
 	public List<String> pobierzPokoje() {
 		logg.trace("-----------> pobierzPokoje start");
 		List<String> pokoje = new ArrayList<>();
-		List<Pokoj> listaPokoi = pokojService.listAll();
+		// TO DO List<Pokoj> listaPokoi = pokojService.listAll();
 		
+		/* TO DO
 		for (Pokoj ss : listaPokoi) {
 			pokoje.add(ss.toString());
 		}
+		*/
 		
 		logg.debug("-----------> mamy pokoje dla stronki");
 		return pokoje;

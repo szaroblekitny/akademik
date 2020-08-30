@@ -1,4 +1,4 @@
-package org.wojtekz.akademik.dao;
+package org.wojtekz.akademik.repo;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.repos.StudentRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class})

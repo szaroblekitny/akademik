@@ -18,8 +18,6 @@ import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
-import org.wojtekz.akademik.services.PokojService;
-import org.wojtekz.akademik.services.StudentService;
 
 
 /**
@@ -38,13 +36,6 @@ public class Plikowanie {
 	@Autowired
 	private Unmarshaller unmarshaller;
 	
-	@Autowired
-	private PokojService pokojService;
-	
-	@Autowired
-	private StudentService studentService;
-	
-
 	/**
 	 * Zapisuje listę obiektów do pliku XML.
 	 * 
@@ -101,8 +92,8 @@ public class Plikowanie {
 	 * @throws XmlMappingException 
 	 */
 	public void zapiszPokojeDoBufora(BufferedWriter writer) throws IOException {
-		List<Pokoj> listaPokoi = pokojService.listAll();
-		saveObjectList(writer, listaPokoi);
+		// TO DO List<Pokoj> listaPokoi = pokojService.listAll();
+		// saveObjectList(writer, listaPokoi);
 	}
 
 	/**
@@ -113,8 +104,9 @@ public class Plikowanie {
 	 * @throws XmlMappingException 
 	 */
 	public void zapiszStudentowDoBufora(BufferedWriter writer) throws IOException {
-		List<Student> listaStudentow = studentService.listAll();
-		saveObjectList(writer, listaStudentow);
+		// TO DO
+		// List<Student> listaStudentow = studentService.listAll();
+		// saveObjectList(writer, listaStudentow);
 	}
 
 }

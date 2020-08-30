@@ -1,4 +1,4 @@
-package org.wojtekz.akademik.repos;
+package org.wojtekz.akademik.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,8 +21,9 @@ public interface PokojRepository extends JpaRepository<Pokoj, Long> {
 	 * @param numerPokoju numer pokoju, nie jest tożsamy z identyfikatorem, np. może być numer "103A"
 	 * @return obiekt Pokoj
 	 */
-	@Query("select pp from Pokoj pp where pp.numerPokoju = ?1")
-	Pokoj findByNumber(String numerPokoju);
+	Pokoj findByNumerPokoju(String numerPokoju);
+	
+
 	
 	/**
 	 * Kasowanie pokoju o podanym numerze. Ponieważ rekordy są zmieniane,

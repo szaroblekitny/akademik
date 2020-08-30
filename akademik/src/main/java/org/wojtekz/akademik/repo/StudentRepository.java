@@ -1,4 +1,4 @@
-package org.wojtekz.akademik.repos;
+package org.wojtekz.akademik.repo;
 
 import java.util.List;
 

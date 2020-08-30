@@ -1,4 +1,4 @@
-package org.wojtekz.akademik.dao;
+package org.wojtekz.akademik.repo;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
-import org.wojtekz.akademik.repos.PokojRepository;
+import org.wojtekz.akademik.repo.PokojRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
