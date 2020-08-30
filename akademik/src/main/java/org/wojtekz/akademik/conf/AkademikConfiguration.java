@@ -21,7 +21,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  */
 @Configuration
 @ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.namedbean"})
-@EnableJpaRepositories("org.wojtekz.akademik.repos")
+@EnableJpaRepositories("org.wojtekz.akademik.repo")
 public class AkademikConfiguration {
 	private static Logger logg = LogManager.getLogger();
 	
