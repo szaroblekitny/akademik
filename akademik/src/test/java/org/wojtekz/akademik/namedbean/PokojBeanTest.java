@@ -12,8 +12,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
-import org.wojtekz.akademik.services.PokojService;
-import org.wojtekz.akademik.services.StudentService;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
@@ -29,13 +27,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class PokojBeanTest {
 	
 	@Autowired
-	private transient PokojService pokojService;
-	
-	@Autowired
 	private transient PokojBean pokBean;
-	
-	@Autowired
-	private transient StudentService studentService;
 	
 	@Autowired
 	private transient DaneTestowe daneTestowe;
@@ -47,8 +39,8 @@ public class PokojBeanTest {
 
 	@After
 	public void tearDown() throws Exception {
-		pokojService.deleteAll();
-		studentService.deleteAll();
+		// TO DO pokojService.deleteAll();
+		// TO DO studentService.deleteAll();
 	}
 
 	@Test
