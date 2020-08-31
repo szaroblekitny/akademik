@@ -44,8 +44,7 @@ public class Plikowanie {
 	 * @throws XmlMappingException
 	 * @throws IOException
 	 */
-	public <T> void saveObjectList(BufferedWriter writer, List<T> list)
-			throws IOException {
+	public <T> void saveObjectList(BufferedWriter writer, List<T> list) throws IOException {
 		logg.trace("----->>> saveObjectList method fired");
 		
 		if (writer == null) {

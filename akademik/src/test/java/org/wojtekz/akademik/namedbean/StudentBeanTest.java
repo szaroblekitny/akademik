@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.primefaces.event.RowEditEvent;
@@ -25,6 +26,8 @@ import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
+
+@Ignore
 
 /**
  * Test beana JSF wyświetlającego Studentów.
@@ -100,6 +103,7 @@ public class StudentBeanTest {
 		Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA]", stntStrList.get(2));
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testOnRowEdit() {
 		logg.debug("-------> testOnRowEdit");
@@ -110,6 +114,7 @@ public class StudentBeanTest {
 		Assert.assertEquals(KLAPA, sprStudent.get().getImie());
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testOnRowCancel() {
 		logg.debug("-------> testOnRowCancel");

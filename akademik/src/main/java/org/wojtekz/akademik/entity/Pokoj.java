@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
@@ -36,7 +37,7 @@ public class Pokoj implements Serializable, Plikowalny {
 	@Column(name="liczba_miejsc")
 	private int liczbaMiejsc;
 	
-	@OneToMany(mappedBy="pokoj")
+	@OneToMany(mappedBy="pokoj", fetch=FetchType.EAGER, targetEntity=org.wojtekz.akademik.entity.Student.class)
 	private List<Student> zakwaterowani = new ArrayList<>();
 	
 	/**

@@ -143,6 +143,15 @@ public class DaneTestowe {
 				logg.debug("----->>> wrzucTrocheDanychDoBazy className {}", className);
 			}
 
+			// najpierw studenci, zmiana poprzedniej kolejności - ze względu na foreign key
+			if (className.equals("Student")) {
+				logg.debug("----->>> wrzucam dane studentów");
+				studentRepo.deleteAll();
+				for (T stud : lista) {
+					studentRepo.save((Student) stud);
+				}
+			}
+			
 			if (className.equals("Pokoj")) {
 				logg.debug("----->>> wrzucam dane pokoi");
 
@@ -151,15 +160,8 @@ public class DaneTestowe {
 					pokojRepo.save((Pokoj) pok);
 				}
 			}
-
-			if (className.equals("Student")) {
-				logg.debug("----->>> wrzucam dane studentów");
-				studentRepo.deleteAll();
-				for (T stud : lista) {
-					studentRepo.save((Student) stud);
-				}
-			}
 		}
+		logg.trace("----->>> wrzucTrocheDanychDoBazy koniec ");
 	}
 
 	/**

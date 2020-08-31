@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.repo.PokojRepository;
+import org.wojtekz.akademik.repo.StudentRepository;
 
 import com.thoughtworks.xstream.io.StreamException;
 
@@ -28,11 +31,27 @@ import com.thoughtworks.xstream.io.StreamException;
 @Component
 public class Akademik {
 	private static Logger logg = LogManager.getLogger();
-	private long kwatId;
+	
+	private Plikowanie plikowanie;
+	private StudentRepository studentRepo;
+	private PokojRepository pokojRepo;
 	
 	@Autowired
-	private Plikowanie plikowanie;
-	
+	public void setPlikowanie(Plikowanie plikowanie) {
+		this.plikowanie = plikowanie;
+	}
+
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+
+	@Autowired
+	public void setPokojRepo(PokojRepository pokojRepo) {
+		this.pokojRepo = pokojRepo;
+	}
+
+
 	/**
 	 * Wykonuje zadania dla aplikacji wywoływanej z wiersza poleceń.
 	 * Kasuje wszystkie dane z bazy, pobiera dane z plików studentów i pokoi,
@@ -45,13 +64,12 @@ public class Akademik {
 	 * 
 	 */
 	public void akademik(BufferedReader pokojeReader, BufferedReader studenciReader, BufferedWriter outputWriter) {
-		// ot i cała logika naszej aplikacji:
+		// ot i cała logika naszej tekstowej aplikacji:
 		try {
 			
-			/*  TO DO
-			pokojService.deleteAll();
-			studentService.deleteAll();
-			*/
+			// kasowanie wszystkiego, bo ładujemy wszystkie dane z plików
+			pokojRepo.deleteAll();
+			studentRepo.deleteAll();
 			
 			pobierzZPliku(pokojeReader);
 			pobierzZPliku(studenciReader);
@@ -93,10 +111,9 @@ public class Akademik {
 			return;
 		}
 		
-		/*  TO DO
 		if (pp instanceof Pokoj) {
 			for (Plikowalny pok : pobrane) {
-				pokojService.save((Pokoj) pok);
+				pokojRepo.save((Pokoj) pok);
 			}
 			logg.debug("----->>> pokoje zapisane do bazy danych");
 			return;
@@ -104,92 +121,75 @@ public class Akademik {
 		
 		if (pp instanceof Student) {
 			for (Plikowalny stud : pobrane) {
-				studentService.save((Student) stud);
+				studentRepo.save((Student) stud);
 			}
 			logg.debug("----->>> studenci zapisani do bazy danych");
 			return;
 		}
-		*/
 		
 		logg.warn("----->>> pobierzZPliku - nieznany typ obiektu");
 	}
 	
 	
 	/**
-	 * Tworzy wpsiy w tabeli pośredniej Kwaterunek, która zapisuje łączniki studentów
-	 * z pokojami.
+	 * Kwaterowanie studentów w pokojach. Praktycznie wykonywany
+	 * jest zapis numeru pokoju w rekordzie studenta. Rekord pokoju
+	 * nie jest zmieniany.
 	 * 
-	 * <p>Tu został zastosowany algorytm oparty na bazie danych: dla każdego studenta sprawdza,
-	 * czy student nie ma wpisu w tabeli kwaterunek. Jeśli nie, dla każdego pokoju sprawdza liczbę wpisów
-	 * dla tego pokoju. Jeśli liczba jest mniejsza od pojemności, dodaje wpis
-	 * łączący pokój ze studentem. Przed kwaterunkiem jest czyszczona tabela kwaterunek.
-	 * Algorytm jest kosztowny ze względu na ciągłe manipulacje w bazie danych.</p>
+	 * <p>Metoda pobiera pokoje i studentów z bazy jako dwie listy.
+	 * Następnie dla każdego pokoju wykonuje pętlę tyle razy, ile jest
+	 * miejsc w pokoju, przypisując nr pokoju kolejnemu studentowi.
 	 * 
 	 * <p>Na razie bez uwzględniania płci.
 	 * 
-	 * @return true, jeśli wszyscy studenci zostali zakwaterowani
+	 * @return true, jeśli wszystkim studentom przypisano numer pokoju
 	 * 
 	 */
 	public boolean zakwateruj() {
 		logg.info("------------------>>> KWATERUNEK <<<-------------------");
-		// czyścimy kwaterunek
-		kwatId = 0L;
 		
 		// listy studentów i pokoi
-		List<Student> studenci = new ArrayList<>();
-		/* TO DO
-		List<Student> studenci = studentService.listAll();
-		List<Pokoj> pokoje = pokojService.listAll();
+		List<Student> studenci = studentRepo.findAll();
+		List<Pokoj> pokoje = pokojRepo.findAll();
 		if (logg.isDebugEnabled()) {
 			logg.debug("----->>> mamy pokoi {}", pokoje.size());
 			logg.debug("----->>> mamy studentów {}", studenci.size());
 		}
-		*/
 		
-		int iluZakwater;
-		
-		// dla każdego studenta
-		for (Student student : studenci) {
-			/*
-			if (logg.isDebugEnabled()) {
-				logg.debug("----->>> student {} ma przydziałów: {}", student.getId(), iluZakwater);
-			}
-			
-			if (iluZakwater == 0) {
-				petlaPoPokojach(pokoje, student);
+		// dla każdego pokoju lecimy z pętlą tyle razy, ile jest pojemność pokoju
+		// i robimy akcję zakwaterowania, czyli metodę zakwateruj()
+		Iterator<Student> iter = studenci.iterator();
+		Student kwatStudent = iter.next();
+		for (Pokoj pokoj : pokoje) {
+			for (int ii = 1 ; ii <= pokoj.getLiczbaMiejsc() ; ii++ ) {
 				
-				// na koniec sprawdzamy, czy student został zakwaterowany,
-				// jeśli nie, mamy przepełnienie
-				if (iluZakwater == 0) {
-					logg.warn("----->>> Nie można zakwaterować studenta {}", student);
-					logg.error("------->>> Przepełnienie Akademika <<<-------");
-					return false;
+				if (logg.isTraceEnabled()) {
+					logg.trace("-----*> student {}, pokoj {}", kwatStudent, pokoj);
 				}
 				
+				pokoj.zakwateruj(kwatStudent);
+				
+				studentRepo.save(kwatStudent);
+				
+				if (logg.isTraceEnabled()) {
+					logg.trace("-----*> student zapisany");
+				}
+				
+				if (!iter.hasNext()) {
+					// jeśli nie ma już więcej studentów mamy pozytywny koniec kwaterunku
+					logg.info("------------------>>> ZAKWATEROWANI <<<-------------------");
+					return true;
+				} else {
+					kwatStudent = iter.next();
+				}
 			}
-			*/
-			
-		}  // dla każdego studenta
-		
-		logg.info("------------------>>> Kwaterunek zakończony <<<-------------------");
-		return true;
-	}
-	
-
-	
-	/**
-	 * Przelatuje po pokojach usiłując wepchnąć tam studenta.
-	 * 
-	 * @param pokoje lista pokoi
-	 * @param student delikwent do zakwaterowania
-	 * 
-	 */
-	private void petlaPoPokojach(List<Pokoj> pokoje, Student student) {
-		logg.trace("----->>> po pokojach");
-		
-		for (Pokoj pokoj : pokoje) {
-			// TO DO do całkowitego przerobienia
 		}
+		
+		// zabrakło miejsc
+		logg.info("----->>> Nie można zakwaterować studenta {}", kwatStudent);
+		logg.error("------->>> Przepełnienie Akademika <<<-------");
+		return false;
+		
 	}
 	
 	
@@ -202,13 +202,12 @@ public class Akademik {
 	 * @throws IOException błąd zapisu
 	 */
 	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {
-		// TO DO List<Pokoj> spisPokoi = pokojService.listAll();
-		List<Pokoj> spisPokoi = new ArrayList<>();
+		List<Pokoj> spisPokoi = pokojRepo.findAll();
 		for(Pokoj pokoj : spisPokoi) {
 			writer.write(pokoj.toString());
 			writer.newLine();
-			// TO DO chwilowa zaślepka
-			List<Student> mieszkancy = new ArrayList<>();
+			// TO DO trzeba wyświetlić wszystkich studentów z pokoju
+			List<Student> mieszkancy = new ArrayList<>();   // TO DO
 			for (Student mieszka : mieszkancy) {
 				writer.write(mieszka.toString());
 				writer.newLine();

@@ -31,8 +31,6 @@ import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
 
-@Ignore
-
 /**
  * Główny test głównej klasy naszego Akademika.
  * 
@@ -170,8 +168,10 @@ public class AkademikTest {
 		plikowanie.saveObjectList(bufWriter, studenci);
 		bufWriter.close();
 		
+		// usuwa dane o studentch i pokojach z bazy
+		logg.trace("-----> przed usunDane");
 		usunDane();
-		logg.debug("-----+> przedTest koniec");
+		logg.debug("-------+> @Before przedTest koniec");
 		
 	}
 
@@ -219,10 +219,23 @@ public class AkademikTest {
 		
 	}
 	
+	@Test
+	public void testKwaterowania() {
+		logg.debug("=============>>> testKwaterowania starts");
+		pokojRepo.saveAll(pokoje);
+		Assert.assertEquals(2, pokojRepo.findAll().size());
+		studentRepo.saveAll(studenci);
+		Assert.assertEquals(5, studentRepo.findAll().size());
+		logg.trace("-----> pokoje i studenci w bazie");
+		akademik.zakwateruj();
+		Assert.assertNotEquals(studentRepo.findAll(), studenci);
+		Assert.assertEquals(pokojRepo.findAll(), pokoje);
+	}
 	
 	/**
 	 * Test głównej aplikacji plikowej.
 	 */
+	@Ignore
 	@Test
 	public void testAkademika() {
 		logg.debug("=============>>> testAkademika starts");
@@ -243,10 +256,9 @@ public class AkademikTest {
 			Assert.fail("Exception: " + ie.getMessage());
 		}
 		
-		usunDane();
 	}
 	
-	
+	@Ignore
 	@Test
 	public void testStanuAkademika() {
 		logg.debug("=============>>> testStanuAkademika starts");
@@ -268,8 +280,6 @@ public class AkademikTest {
 			Assert.fail("Exception: " + ee.getMessage());
 		}
 		
-		usunDane();
-		
 	}
 	
 	@After
@@ -283,17 +293,17 @@ public class AkademikTest {
 			usunPlik(pathRaportu);
 		}
 		
-		logg.debug("-------------------+> i po tescie");
+		logg.debug("-------------------+> usunięte pliki po tescie");
 	}
 	
 	/**
 	 * usuwa dane z bazy
 	 */
 	private void usunDane() {
-		logg.trace("-----+> usunDane starts");
-		pokojRepo.deleteAll();
 		studentRepo.deleteAll();
-		logg.trace("-----+> dane usunięte");
+		logg.trace("-----+> studenci usunięci");
+		pokojRepo.deleteAll();
+		logg.trace("-----+> pokoje usunięte");
 		
 	}
 	

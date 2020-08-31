@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -50,7 +51,7 @@ public class Student implements Serializable, Plikowalny {
 	/**
 	 * Pokój przydzielony studentowi podaczas kwaterunku.
 	 */
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="pokoj_id", nullable=true)
 	private Pokoj pokoj;
 	
@@ -99,7 +100,8 @@ public class Student implements Serializable, Plikowalny {
 	@Override
 	public String toString() {
 		return "Student [id=" + id + ", imie=" + imie + ", nazwisko="
-				+ nazwisko + ", plec=" + plec + "]";
+				+ nazwisko + ", plec=" + plec + ", nr pokoju="
+				+ (pokoj != null ? pokoj.getNumerPokoju() : "niezakw.") + "]";
 	}
 
 	@Override
