@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
@@ -66,6 +67,7 @@ public class PokojBeanTest {
 		studentRepo.deleteAll();
 	}
 
+	@Ignore
 	@Test
 	public void testPobierzPokoje() {
 		Assert.assertEquals(3, pokojRepository.count());

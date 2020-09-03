@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -161,14 +160,14 @@ public class Akademik {
 		Iterator<Student> iter = studenci.iterator();
 		Student kwatStudent = iter.next();
 		for (Pokoj pokoj : pokoje) {
+			
+			logg.trace("-----*> pokoj {}", pokoj);
 			for (int ii = 1 ; ii <= pokoj.getLiczbaMiejsc() ; ii++ ) {
 				
-				if (logg.isTraceEnabled()) {
-					logg.trace("-----*> student {}, pokoj {}", kwatStudent, pokoj);
-				}
-				
+				logg.trace("-----*> student {}", kwatStudent);
 				pokoj.zakwateruj(kwatStudent);
-				
+				logg.trace("-----*> student zakwaterowany {}", kwatStudent);
+
 				studentRepo.save(kwatStudent);
 				
 				if (logg.isTraceEnabled()) {
@@ -206,12 +205,14 @@ public class Akademik {
 		for(Pokoj pokoj : spisPokoi) {
 			writer.write(pokoj.toString());
 			writer.newLine();
-			// TO DO trzeba wyświetlić wszystkich studentów z pokoju
-			List<Student> mieszkancy = new ArrayList<>();   // TO DO
+			// Wyświetlamy studentów z pokoju
+			List<Student> mieszkancy = pokoj.getZakwaterowani();
+			
 			for (Student mieszka : mieszkancy) {
 				writer.write(mieszka.toString());
 				writer.newLine();
 			}
+			 
 			writer.newLine();
 		}
 		

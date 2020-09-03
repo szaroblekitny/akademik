@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,14 @@ public class PokojRepositoryTest {
 		pokoj.setId(1);
 	}
 
+	@Ignore
 	@Test
 	public void findAllTest() {
 		logg.debug("----->>> Pokoj findAllTest method fired");
 		Assert.assertNotNull(pokojRep.findAll());
 	}
 	
+	@Ignore
 	@Test
 	public void zapiszIOdczyt() {
 		List<Pokoj> listaPokoi;

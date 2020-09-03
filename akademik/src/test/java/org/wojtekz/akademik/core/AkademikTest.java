@@ -12,6 +12,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -235,7 +236,6 @@ public class AkademikTest {
 	/**
 	 * Test głównej aplikacji plikowej.
 	 */
-	@Ignore
 	@Test
 	public void testAkademika() {
 		logg.debug("=============>>> testAkademika starts");
@@ -247,9 +247,13 @@ public class AkademikTest {
 			akademik.akademik(pokojeReader, studenciReader, outputWriter);
 			
 			List<String> wszyskieLinie = Files.readAllLines(pathRaportu, charset);
-			int ileLinii = wszyskieLinie.size();
+			if (logg.isTraceEnabled()) {
+				logg.trace("wszyskieLinie =====>>> {}", Arrays.toString(wszyskieLinie.toArray()));
+			}
 			
-			Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA]", wszyskieLinie.get(ileLinii - 5));
+			int ileLinii = wszyskieLinie.size();
+			Assert.assertEquals("Pokoj [id=1, numerPokoju=101, liczbaMiejsc=2]", wszyskieLinie.get(0));
+			Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA, nr pokoju=102]", wszyskieLinie.get(ileLinii - 5));
 			
 		} catch (IOException ie) {
 			logg.error("----->>> testAkademika - problemy plikowe", ie);
