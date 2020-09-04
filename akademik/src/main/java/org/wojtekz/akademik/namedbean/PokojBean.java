@@ -24,7 +24,7 @@ public class PokojBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static Logger logg = LogManager.getLogger();
 	
-	private PokojRepository pokojRepository;
+	private transient PokojRepository pokojRepository;
 	
 	@Autowired
 	public void setPokojRepository(PokojRepository pokojRepository) {

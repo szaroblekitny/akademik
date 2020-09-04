@@ -27,7 +27,7 @@ public class StudentBean implements Serializable {
 
 	private List<Student> studenci;
 	private transient Messagesy komunikaty;
-	private StudentRepository studentRepo;
+	private transient StudentRepository studentRepo;
 	
 	@Autowired
 	public void setMessagesy(Messagesy komunikaty) {

@@ -83,29 +83,4 @@ public class Plikowanie {
 	}
 	
 	
-	/**
-	 * Metoda pomocnicza służąca do zapisania pokojów z bazy danych do pliku.
-	 * 
-	 * @param writer BufferedWriter
-	 * @throws IOException 
-	 * @throws XmlMappingException 
-	 */
-	public void zapiszPokojeDoBufora(BufferedWriter writer) throws IOException {
-		// TO DO List<Pokoj> listaPokoi = pokojService.listAll();
-		// saveObjectList(writer, listaPokoi);
-	}
-
-	/**
-	 * Metoda pomocnicza służąca do zapisania studentów z bazy danych do pliku.
-	 * 
-	 * @param writer BufferedWriter
-	 * @throws IOException 
-	 * @throws XmlMappingException 
-	 */
-	public void zapiszStudentowDoBufora(BufferedWriter writer) throws IOException {
-		// TO DO
-		// List<Student> listaStudentow = studentService.listAll();
-		// saveObjectList(writer, listaStudentow);
-	}
-
 }
