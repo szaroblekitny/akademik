@@ -1,61 +1,90 @@
 package org.wojtekz.akademik.repo;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfiguration.class})
-@EnableTransactionManagement
-@Transactional
 public class PokojRepositoryTest {
 	private static Logger logg = LogManager.getLogger();
 	
-	Pokoj pokoj;
+	private PokojRepository pokojRep;
+	private StudentRepository studenciaki;
+	private Pokoj pokoj;
 	
 	@Autowired
-	PokojRepository pokojRep;
-	
-	@Before
-	public void before() {
-		logg.debug("----->>> Pokoj before method fired");
-		pokoj = new Pokoj();
-		pokoj.setId(1);
+	public void setPokojRep(PokojRepository pokojRep) {
+		this.pokojRep = pokojRep;
 	}
 
-	@Ignore
+	@Autowired
+	public void setStudenciaki(StudentRepository studenciaki) {
+		this.studenciaki = studenciaki;
+	}
+
+
+	/**
+	 * Wykonuje czynności przygotowawcze przed każdym testem.
+	 * Haczyk jest w tym, że nie można skasować pokoi zanim nie skasuje się
+	 * studentów, czyli najpierw liczy pokoje w bazie i jeśli są, kasuje
+	 * studentów i pokoje - w tej kolejności.
+	 * Potem tworzy jeden pokój testowy wypełniając tylko pole ID
+	 * i zapisuje go w bazie.
+	 * 
+	 */
+	@Before
+	public void before() {
+		logg.debug("-----+> Pokoj before początek");
+		List<Pokoj> pokoje;
+		
+		long ile = pokojRep.count();
+		if (ile > 0L) {
+			pokoje = pokojRep.findAll();
+			logg.trace("Mamy pokoje =====>>> {}", Arrays.toString(pokoje.toArray()));
+			studenciaki.deleteAll();
+			pokojRep.deleteAll();
+		}
+		
+		pokoj = new Pokoj();
+		pokoj.setId(1);
+		pokojRep.save(pokoj);
+		logg.debug("-----+> Pokoj before koniec");
+	}
+
+
 	@Test
 	public void findAllTest() {
-		logg.debug("----->>> Pokoj findAllTest method fired");
+		logg.debug("--------> Pokoj findAllTest method fired");
+		
+		// test początkowy, czy mamy połączenie z bazą - to nie jest oczywiste :-)
 		Assert.assertNotNull(pokojRep.findAll());
+		
+		Assert.assertEquals(1L, pokojRep.findAll().get(0).getId());
+		// czyszczenie przed kolejnym testem
+		pokojRep.deleteAll();
 	}
 	
-	@Ignore
 	@Test
 	public void zapiszIOdczyt() {
 		List<Pokoj> listaPokoi;
 		logg.debug("----->>> zapiszIOdczyt pokoj method fired");
-		pokojRep.deleteAll();
-		logg.debug("----->>> zapiszIOdczyt po deleteAll");
 		pokojRep.save(pokoj);
-		logg.debug("----->>> zapiszIOdczyt po save pokoj");
+		logg.trace("----->>> zapiszIOdczyt po save pokoj");
 		listaPokoi = pokojRep.findAll();
-		logg.debug("----->>> zapiszIOdczyt po findAll");
 		Assert.assertEquals(1, listaPokoi.size());
-		
+		pokojRep.deleteAll();
 	}
 
 }

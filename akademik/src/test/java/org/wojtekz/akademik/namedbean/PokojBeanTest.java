@@ -1,10 +1,12 @@
 package org.wojtekz.akademik.namedbean;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
@@ -13,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
@@ -28,6 +31,8 @@ import org.wojtekz.akademik.util.DaneTestowe;
 @ContextConfiguration(classes = {TestConfiguration.class})
 @WebAppConfiguration
 public class PokojBeanTest {
+	private static Logger logg = LogManager.getLogger();
+	
 	private transient PokojBean pokBean;
 	private PokojRepository pokojRepository;
 	private StudentRepository studentRepo;
@@ -58,6 +63,18 @@ public class PokojBeanTest {
 
 	@Before
 	public void setUp() throws Exception {
+		List<Pokoj> pokoje;
+
+		// sprawdzenie, czy nie zostały pokoje z poprzedniego testu
+		// i ewentualne kasowanie
+		long ile = pokojRepository.count();
+		if (ile > 0L) {
+			pokoje = pokojRepository.findAll();
+			logg.trace("Mamy pokoje ---------+> {}", Arrays.toString(pokoje.toArray()));
+			studentRepo.deleteAll();
+			pokojRepository.deleteAll();
+		}
+		
 		daneTestowe.wrzucTrocheDanychDoBazy();
 	}
 
@@ -67,7 +84,6 @@ public class PokojBeanTest {
 		studentRepo.deleteAll();
 	}
 
-	@Ignore
 	@Test
 	public void testPobierzPokoje() {
 		Assert.assertEquals(3, pokojRepository.count());

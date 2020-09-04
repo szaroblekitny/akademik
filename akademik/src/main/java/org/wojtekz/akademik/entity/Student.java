@@ -52,7 +52,7 @@ public class Student implements Serializable, Plikowalny {
 	 * Pokój przydzielony studentowi podaczas kwaterunku.
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="pokoj_id", nullable=true)
+	@JoinColumn(name="zakwaterowani", nullable=true)
 	private Pokoj pokoj;
 	
 

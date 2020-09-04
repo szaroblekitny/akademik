@@ -64,7 +64,8 @@ public class TestConfiguration {
 		HibernateJpaVendorAdapter adapt = new HibernateJpaVendorAdapter();
 		adapt.setDatabasePlatform("org.hibernate.dialect.HSQLDialect");
 		adapt.setGenerateDdl(true);
-		
+		adapt.setShowSql(false);
+		adapt.setPrepareConnection(true);
 		return adapt;
 	}
 	

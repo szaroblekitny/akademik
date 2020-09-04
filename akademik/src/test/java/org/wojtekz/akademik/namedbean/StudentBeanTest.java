@@ -2,6 +2,7 @@ package org.wojtekz.akademik.namedbean;
 
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.primefaces.event.RowEditEvent;
@@ -22,12 +22,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.util.DaneTestowe;
 
-@Ignore
 
 /**
  * Test beana JSF wyświetlającego Studentów.
@@ -77,22 +77,38 @@ public class StudentBeanTest {
 
 	@Before
 	public void setUp() throws Exception {
-		logg.debug("-------> setUp");
+		logg.debug("------+> setUp");
+		
+		// sprawdzenie, czy nie zostały pokoje z poprzedniego testu
+		// i ewentualne kasowanie
+		List<Pokoj> pokoje;
+		long ile = pokojRepo.count();
+		if (ile > 0L) {
+			pokoje = pokojRepo.findAll();
+			logg.trace("Mamy pokoje ---------+> {}", Arrays.toString(pokoje.toArray()));
+			studentRepo.deleteAll();
+			pokojRepo.deleteAll();
+		}
+		
 		komunikaty = mock(Messagesy.class);
 		component = mock(UIComponent.class);
 		behavior = mock(Behavior.class);
 		studentBean.setMessagesy(komunikaty);
+		
 		daneTestowe.wrzucTrocheDanychDoBazy();
+		
 		student = new Student();
 		student.setId(10);
 		student.setImie(KLAPA);
 		student.setNazwisko(SMIESZNY);
+		logg.debug("------+> koniec setUp");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		pokojRepo.deleteAll();
 		studentRepo.deleteAll();
+		pokojRepo.deleteAll();
+		
 	}
 
 	@Test
@@ -100,7 +116,7 @@ public class StudentBeanTest {
 		logg.debug("-------> testPobierzStudentow");
 		List<String> stntStrList = studentBean.pobierzStudentow();
 		Assert.assertEquals(6, stntStrList.size());
-		Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA]", stntStrList.get(2));
+		Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA, nr pokoju=niezakw.]", stntStrList.get(2));
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

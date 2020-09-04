@@ -37,7 +37,7 @@ public class Pokoj implements Serializable, Plikowalny {
 	@Column(name="liczba_miejsc")
 	private int liczbaMiejsc;
 	
-	@OneToMany(mappedBy="pokoj", fetch=FetchType.EAGER, targetEntity=org.wojtekz.akademik.entity.Student.class)
+	@OneToMany(mappedBy="pokoj", fetch=FetchType.EAGER)
 	private List<Student> zakwaterowani = new ArrayList<>();
 	
 	/**

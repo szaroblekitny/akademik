@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Student;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -19,19 +20,24 @@ import org.wojtekz.akademik.entity.Student;
 public class StudentRepositoryTest {
 	private static Logger logg = LogManager.getLogger();
 	private Student student;
+	private final static String KOWALSKA = "Kowalska";
+	private final static String KASIA = "Kasia";
 	
 	@Autowired
 	private StudentRepository studentRep;
 	
 	@Before
 	public void before() {
-		logg.debug("----->>> before method fired");
+		logg.debug("----->>> StudentRepository before method fired");
 		student = new Student();
 		student.setId(1);
+		student.setImie(KASIA);
+		student.setNazwisko(KOWALSKA);
+		student.setPlec(Plec.KOBIETA);
 	}
 
 	/**
-	 * Metoda testuje tylko, czy zwracany obiekt nie jest nulem. Wśaściwie służy
+	 * Metoda testuje tylko, czy zwracany obiekt nie jest nulem. Wśaściwie służy jedynie
 	 * do przetestowania całego ciągu persystencji dla klasy Student. W tym teście
 	 * zadnymi danymi się nie przejmujemy. Tak napradwdą sprawdzane jest, czy cokolwiek
 	 * jest zwracane po przejściu wszystkich stopni połączenia z bazą danych. 
@@ -49,16 +55,24 @@ public class StudentRepositoryTest {
 	 */
 	@Test
 	public void zapiszIOdczytay() {
-		List<Student> listaStudentow;
 		logg.debug("----->>> zapiszIOdczytay method fired");
-		studentRep.deleteAll();
-		logg.debug("----->>> zapiszIOdczytay po deleteAll");
-		studentRep.save(student);
-		logg.debug("----->>> zapiszIOdczytay po save student");
-		listaStudentow = studentRep.findAll();
-		logg.debug("----->>> zapiszIOdczytay po findAll");
-		Assert.assertEquals(1, listaStudentow.size());
 		
+		studentRep.deleteAll();
+		logg.trace("----->>> zapiszIOdczytay po deleteAll");
+		studentRep.save(student);
+		logg.trace("----->>> zapiszIOdczytay po save student");
+		List<Student> listaStudentow = studentRep.findAll();
+		logg.trace("----->>> zapiszIOdczytay po findAll");
+		Assert.assertEquals(1, listaStudentow.size());
+		Assert.assertEquals(KASIA, listaStudentow.get(0).getImie());
+		Assert.assertEquals(Plec.KOBIETA, listaStudentow.get(0).getPlec());
+	}
+	
+	@Test
+	public void testFindByName() {
+		studentRep.save(student);
+		List<Student> listaStudentow = studentRep.findByName(KOWALSKA);
+		Assert.assertEquals(KASIA, listaStudentow.get(0).getImie());
 	}
 
 }
