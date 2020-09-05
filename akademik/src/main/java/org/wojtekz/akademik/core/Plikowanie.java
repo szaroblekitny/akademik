@@ -16,9 +16,6 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Plikowalny;
-import org.wojtekz.akademik.entity.Pokoj;
-import org.wojtekz.akademik.entity.Student;
-
 
 /**
  * Klasa do obsługi operacji plikowych.
