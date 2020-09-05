@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+/* całość z deczko mniejszymi czcionkami */
+body {
+	font-family: Lato, Verdana, Arial, Helvetica, sans-serif;
+}
+
 /* nagłówki mają odrobinę miejsca z przodu */
 h2, h3 {
 	margin-left: 5px;

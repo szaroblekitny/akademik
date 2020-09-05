@@ -27,7 +27,7 @@ public class StudentBean implements Serializable {
 
 	private List<Student> studenci;
 	private transient Messagesy komunikaty;
-	private transient StudentRepository studentRepo;
+	private transient StudentRepository studentRepository;
 	
 	@Autowired
 	public void setMessagesy(Messagesy komunikaty) {
@@ -36,10 +36,8 @@ public class StudentBean implements Serializable {
 	
 	@Autowired
 	public void setStudentRepo(StudentRepository studentRepo) {
-		this.studentRepo = studentRepo;
-		this.studenci = studentRepo.findAll();
+		this.studentRepository = studentRepo;
 	}
-	
 	
 	/**
 	 * Lista studentów dla PrimeFaces (jest deczko prościej).
@@ -47,6 +45,8 @@ public class StudentBean implements Serializable {
 	 * @return po prostu wszyscy studenci jako lista
 	 */
 	public List<Student> getStudenci() {
+		logg.debug("-----------> pobieram studentów do wyświetlenia");
+		this.studenci = studentRepository.findAll();
 		return studenci;
 	}
 	
@@ -60,7 +60,7 @@ public class StudentBean implements Serializable {
 	public void onRowEdit(RowEditEvent<?> event) {
 		Student student = (Student) event.getObject();
         komunikaty.addMessage("Edycja studenta", "Student o Id " + student.getId());
-        studentRepo.save(student);
+        studentRepository.save(student);
     }
     
 	/**
@@ -80,7 +80,7 @@ public class StudentBean implements Serializable {
 	public List<String> pobierzStudentow() {
 		logg.trace("-----------> pobierzStudentow start");
 		List<String> studList = new ArrayList<>();
-		List<Student> listaStudentow = studentRepo.findAll();
+		List<Student> listaStudentow = studentRepository.findAll();
 		
 		for (Student ss : listaStudentow) {
 			studList.add(ss.toString());

@@ -17,7 +17,7 @@
 		</ui:define>
 
 		<ui:define name="content">
- 
+ 			<!-- obsługa przycisków -->
 			<h:form class="gornymargines">
 				<span class="otoczkaBut">
 					<p:button outcome="student" value="Studenci" icon="pi pi-users" />
@@ -39,18 +39,23 @@
 			
 			<!-- tabela kwaterunków -->
 			<div class="wolnewokolo">
-				<p:dataTable var="kwaterunek" value="#{kwaterunekBean.listaKwaterunkow}">
-		    		<p:column headerText="Kwaterunek">
-		        		<h:outputText value="#{kwaterunek.id}" />
+				<p:dataTable var="student" value="#{studentBean.studenci}">
+		    		<p:column headerText="Pokoj">
+		        		<h:outputText value="#{student.pokoj.numerPokoju}" />
 		    		</p:column>
-	
-		    		<p:column headerText="Pokój">
-		        		<h:outputText value="#{kwaterunek.pokoj}" />
+
+		    		<p:column headerText="Imie">
+		        		<h:outputText value="#{student.imie}" />
 		    		</p:column>
-	
-					<p:column headerText="Student">
-		        		<h:outputText value="#{kwaterunek.student}" />
+
+					<p:column headerText="Nazwisko">
+		        		<h:outputText value="#{student.nazwisko}" />
 		    		</p:column>
+
+		    		<p:column headerText="Płeć">
+		        		<h:outputText value="#{student.plec}" />
+		    		</p:column>
+
 				</p:dataTable>
 			</div>
 
