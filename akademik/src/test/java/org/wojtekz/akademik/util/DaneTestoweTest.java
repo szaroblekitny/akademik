@@ -1,5 +1,6 @@
 package org.wojtekz.akademik.util;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -69,8 +70,8 @@ public class DaneTestoweTest {
 	public void testWrzucTrocheDanychDoBazyListOfPokojListOfStudent() {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfPokojListOfStudent start");
 		daneDane.wrzucTrocheDanychDoBazy(daneDane.getPokoje(), daneDane.getMieszkancy());
-		Pokoj pok = pokojRepo.findByNumerPokoju("102");
-		Assert.assertEquals(3, pok.getLiczbaMiejsc());
+		List<Pokoj> pokList = pokojRepo.findByNumerPokoju("102");
+		Assert.assertEquals(3, pokList.get(0).getLiczbaMiejsc());
 	}
 
 	

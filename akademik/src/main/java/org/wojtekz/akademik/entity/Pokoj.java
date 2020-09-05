@@ -3,7 +3,6 @@ package org.wojtekz.akademik.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ import javax.persistence.OneToMany;
  *
  */
 @Entity
-public class Pokoj implements Serializable, Plikowalny {
+public class Pokoj implements Serializable, Plikowalny, Comparable<Pokoj> {
 	private static final long serialVersionUID = 3208928506624425725L;
 
 	@Id
@@ -100,27 +99,16 @@ public class Pokoj implements Serializable, Plikowalny {
 				+ ", liczbaMiejsc=" + liczbaMiejsc + "]";
 	}
 
+	/**
+	 * Porównuje ten obiekt z określonym obiektem w celu posortowania.
+	 * W przypadku klasy Pokoj całkowicie wystarczające jest porównanie
+	 * po identyfikatorze.
+	 * 
+	 * @param innyPokoj porównywany Pokój
+	 */
 	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (obj == null) {
-			return false;
-		}
-
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		
-		Pokoj other = (Pokoj) obj;
-		return id == other.id;
+	public int compareTo(Pokoj innyPokoj) {
+		return (int) (innyPokoj.getId() - this.getId());
 	}
 	
 }

@@ -43,5 +43,12 @@ public class PokojTest {
 		Assert.assertEquals(1, pokoik.getZakwaterowani().size());
 		Assert.assertNull(testowanyStudent.getPokoj());
 	}
+	
+	@Test
+	public void testPorownania() {
+		Pokoj pokoj1 = dane.getPokoj1();
+		Pokoj pokoj2 = dane.getPokoj2();
+		Assert.assertEquals(1, pokoj1.compareTo(pokoj2));
+	}
 
 }

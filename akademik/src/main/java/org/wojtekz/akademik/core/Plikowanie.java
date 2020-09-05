@@ -41,8 +41,8 @@ public class Plikowanie {
 	 * 
 	 * @param writer BufferedWriter
 	 * @param list lista obiektów podanego typu
-	 * @throws XmlMappingException
-	 * @throws IOException
+	 * @throws XmlMappingException javax.naming.NamingException
+	 * @throws IOException błąd wejścia-wyjścia
 	 */
 	public <T> void saveObjectList(BufferedWriter writer, List<T> list) throws IOException {
 		logg.trace("----->>> saveObjectList method fired");

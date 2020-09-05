@@ -1,5 +1,7 @@
 package org.wojtekz.akademik.repo;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,15 +17,14 @@ import org.wojtekz.akademik.entity.Pokoj;
 public interface PokojRepository extends JpaRepository<Pokoj, Long> {
 	
 	/**
-	 * Wyszukiwanie pokoju po jego numerze. Tu jest niejawne założenie, że istnieje
-	 * tylko jeden pokój o podanym numerze.
+	 * Wyszukiwanie pokoju po jego numerze.
+	 * Teoretycznie może być kilka pokoi o tym samym numerze, chociaż nie powinno,
+	 * ale życie jest bogate.
 	 * 
 	 * @param numerPokoju numer pokoju, nie jest tożsamy z identyfikatorem, np. może być numer "103A"
 	 * @return obiekt Pokoj
 	 */
-	Pokoj findByNumerPokoju(String numerPokoju);
-	
-
+	List<Pokoj> findByNumerPokoju(String numerPokoju);
 	
 	/**
 	 * Kasowanie pokoju o podanym numerze. Ponieważ rekordy są zmieniane,

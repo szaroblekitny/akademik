@@ -1,7 +1,6 @@
 package org.wojtekz.akademik.entity;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ import javax.persistence.ManyToOne;
  *
  */
 @Entity
-public class Student implements Serializable, Plikowalny {
+public class Student implements Serializable, Plikowalny, Comparable<Student> {
 	private static final long serialVersionUID = 6073222260778454843L;
 	
 	@Id
@@ -104,27 +103,21 @@ public class Student implements Serializable, Plikowalny {
 				+ (pokoj != null ? pokoj.getNumerPokoju() : "niezakw.") + "]";
 	}
 
+	/**
+	 * Porównuje ten obiekt z określonym obiektem do posortowania.
+	 * Zwraca ujemną liczbę całkowitą, zero lub dodatnią liczbę całkowitą,
+	 * ponieważ ten obiekt jest mniejszy, równy lub większy niż porównywany obiekt.
+	 * Zgłasza ClassCastException, jeśli określony typ obiektu
+	 * uniemożliwia porównanie go z obiektem podanym w parametrze.
+	 * 
+	 * <p>W przypadku klasy Student całkowicie wystarczające jest porównanie
+	 * po identyfikatorze.
+	 * 
+	 * @param innyStudent prównywany student
+	 */
 	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		
-		if (obj == null) {
-			return false;
-		}
-		
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		
-		Student other = (Student) obj;
-		return id == other.id;
+	public int compareTo(Student innyStudent) {
+		return (int) (innyStudent.getId() - this.getId());
 	}
 	
 	

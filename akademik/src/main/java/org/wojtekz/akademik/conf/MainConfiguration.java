@@ -44,7 +44,7 @@ public class MainConfiguration {
      * DataSource. Pobiera JNDI dla naszej aplikacji.
      * 
      * @return DataSource brane z zasobu określonego przez JNDI
-     * @throws NamingException
+     * @throws NamingException javax.naming.NamingException
      */
     @Bean
     public DataSource dataSource() throws NamingException {

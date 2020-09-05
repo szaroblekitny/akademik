@@ -187,8 +187,8 @@ public class AkademikTest {
 			akademik.pobierzZPliku(reader);
 			reader.close();
 			
-			Pokoj pokZBazy = pokojRepo.findByNumerPokoju("102");
-			Assert.assertEquals(3, pokZBazy.getLiczbaMiejsc());
+			List<Pokoj> pokZBazy = pokojRepo.findByNumerPokoju("102");
+			Assert.assertEquals(3, pokZBazy.get(0).getLiczbaMiejsc());
 			
 		} catch (IOException ee) {
 			logg.error("----->>> testPobierzPokoje: Błąd odczytu pliku z pokojami", ee);
@@ -229,7 +229,12 @@ public class AkademikTest {
 		logg.trace("-----> pokoje i studenci w bazie");
 		akademik.zakwateruj();
 		Assert.assertNotEquals(studentRepo.findAll(), studenci);
-		Assert.assertEquals(pokojRepo.findAll(), pokoje);
+		List<Pokoj> wszystkiePokBaza = pokojRepo.findAll();
+		long ileBaza = pokojRepo.count();
+		long ilePoko = pokoje.size();
+		Assert.assertEquals(ilePoko, ileBaza);
+		Assert.assertEquals(pokoje.get(0).getNumerPokoju(), wszystkiePokBaza.get(0).getNumerPokoju());
+		Assert.assertEquals(pokoje.get(1).getNumerPokoju(), wszystkiePokBaza.get(1).getNumerPokoju());
 	}
 	
 	/**

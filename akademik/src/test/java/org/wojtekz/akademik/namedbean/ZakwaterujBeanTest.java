@@ -100,7 +100,7 @@ public class ZakwaterujBeanTest {
 		testStudent = studentRepo.findById(PIERSZY).get();
 		
 		Assert.assertNotNull(testStudent.getPokoj());
-		Assert.assertEquals(testStudent.getPokoj().getId(), PIERSZY);
+		Assert.assertEquals(PIERSZY, testStudent.getPokoj().getId());
 	}
 
 }
