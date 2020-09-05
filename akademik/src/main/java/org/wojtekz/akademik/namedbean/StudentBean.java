@@ -25,7 +25,6 @@ public class StudentBean implements Serializable {
 	private static final long serialVersionUID = 297092190215801549L;
 	private static Logger logg = LogManager.getLogger();
 
-	private List<Student> studenci;
 	private transient Messagesy komunikaty;
 	private transient StudentRepository studentRepository;
 	
@@ -46,7 +45,7 @@ public class StudentBean implements Serializable {
 	 */
 	public List<Student> getStudenci() {
 		logg.debug("-----------> pobieram studentów do wyświetlenia");
-		this.studenci = studentRepository.findAll();
+		List<Student> studenci = studentRepository.findAll();
 		return studenci;
 	}
 	
