@@ -8,9 +8,19 @@
 		<title>Akademik</title>
 		<link rel="stylesheet" type="text/css" href="akademik.css"/>
 	</h:head> 
-	<body> 
-		<h2>Strona przeterminowana</h2>
-		<h:outputText class="czerwonyblad" value="Message: #{pfExceptionHandler.message}" />
-		<h:outputText value="#{pfExceptionHandler.formattedTimestamp}" />
-	</body> 
+	<h:body>
+		<ui:composition template = "template/template.xhtml">
+			<ui:define name="header">
+				<h2>Strona przeterminowana</h2>
+			</ui:define>
+			<ui:define name = "content">
+				<div class="marginwokolo">
+					<p><h:outputText class="czerwonyblad" value="Message: #{pfExceptionHandler.message}" /></p>
+					<p><h:outputText value="#{pfExceptionHandler.formattedTimestamp}" /></p>
+				</div>
+			</ui:define>
+			<!-- pusty footer, zachowuje tylko css -->
+			<ui:define name="footer"/>
+		</ui:composition>
+	</h:body>
 </html>

@@ -8,11 +8,20 @@
 		<title>Akademik</title>
 		<link rel="stylesheet" type="text/css" href="akademik.css"/>
 	</h:head> 
-	<body> 
-		<h2>Błędny błąd</h2>
-		<p><h:outputText value="#{pfExceptionHandler.formattedTimestamp}" /></p>
-		<p><h:outputText class="czerwonyblad" value="Błąd: #{pfExceptionHandler.message}" /></p>
-		<p><h:outputText class="szczegolybledu" value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /></p>
-		
-	</body> 
+	<h:body>
+		<ui:composition template = "template/template.xhtml">
+			<ui:define name="header">
+				<h2>Błędny błąd</h2>
+			</ui:define>
+			<ui:define name="content">
+				<div class="marginwokolo">
+					<p><h:outputText value="#{pfExceptionHandler.formattedTimestamp}" /></p>
+					<p><h:outputText class="czerwonyblad" value="Błąd: #{pfExceptionHandler.message}" /></p>
+					<p><h:outputText class="szczegolybledu" value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /></p>
+				</div>
+			</ui:define>
+			<!-- pusty footer, zachowuje tylko css -->
+			<ui:define name="footer"/>
+		</ui:composition>
+	</h:body>
 </html>
