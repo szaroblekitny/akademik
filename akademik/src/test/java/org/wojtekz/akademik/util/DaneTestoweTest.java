@@ -51,16 +51,18 @@ public class DaneTestoweTest {
 
 	@After
 	public void setDown() throws Exception {
-		logg.debug("----->>> Kasowanie danych po teście");
+		logg.debug("------+> Kasowanie danych po teście");
 		studentRepo.deleteAll();
+		logg.trace("------+> Studenci skasowani");
 		pokojRepo.deleteAll();
+		logg.trace("------+> Pokoje skasowane");
 	}
 
 	@Test
 	public void testWrzucTrocheDanychDoBazyListOfT() {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfT");
 		daneDane.wrzucTrocheDanychDoBazy(daneDane.getMieszkancy());
-		logg.debug("----->>> Dane wrzucone, sprawdzam");
+		logg.trace("----->>> Dane wrzucone, sprawdzam");
 		Optional<Student> stt = studentRepo.findById(3L);
 		Assert.assertFalse(stt.isEmpty());
 		Assert.assertEquals("Malinowski", stt.get().getNazwisko());
@@ -70,7 +72,9 @@ public class DaneTestoweTest {
 	public void testWrzucTrocheDanychDoBazyListOfPokojListOfStudent() {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazyListOfPokojListOfStudent start");
 		daneDane.wrzucTrocheDanychDoBazy(daneDane.getPokoje(), daneDane.getMieszkancy());
+		logg.trace("----->>> dane wrzucone do bazy");
 		List<Pokoj> pokList = pokojRepo.findByNumerPokoju("102");
+		logg.trace("----->>> lista pokoi pobrana");
 		Assert.assertEquals(3, pokList.get(0).getLiczbaMiejsc());
 	}
 
@@ -79,6 +83,7 @@ public class DaneTestoweTest {
 	public void testWrzucTrocheDanychDoBazy() {
 		logg.debug("----->>> testWrzucTrocheDanychDoBazy start");
 		daneDane.wrzucTrocheDanychDoBazy();
+		logg.trace("-------+> dane wrzucone");
 		long ilePokoi = pokojRepo.count();
 		Assert.assertEquals("Liczba pokoi niezgodna", 3, ilePokoi);
 		long ileStudentow = studentRepo.count();

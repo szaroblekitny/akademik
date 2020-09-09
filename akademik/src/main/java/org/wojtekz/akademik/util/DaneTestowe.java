@@ -174,9 +174,12 @@ public class DaneTestowe {
 	public void wrzucTrocheDanychDoBazy(List<Pokoj> pokoje,
 			List<Student> studenci) {
 		logg.debug("----->>> wrzucTrocheDanychDoBazy pokoje i studenci");
+		studentRepo.deleteAll();
+		pokojRepo.deleteAll();
+		logg.trace("------+> dane skasowane");
 		wrzucTrocheDanychDoBazy(pokoje);
 		wrzucTrocheDanychDoBazy(studenci);
-
+		logg.trace("------+> dane wrzucone");
 	}
 
 	/**
