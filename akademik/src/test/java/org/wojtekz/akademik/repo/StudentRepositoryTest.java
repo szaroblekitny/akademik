@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
+import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -20,12 +21,21 @@ import org.wojtekz.akademik.entity.Student;
 public class StudentRepositoryTest {
 	private static Logger logg = LogManager.getLogger();
 	private Student student;
+	private StudentRepository studentRep;
+	private PokojRepository pokojRep;
 	private final static String KOWALSKA = "Kowalska";
 	private final static String KASIA = "Kasia";
 	
 	@Autowired
-	private StudentRepository studentRep;
-	
+	public void setStudentRep(StudentRepository studentRep) {
+		this.studentRep = studentRep;
+	}
+
+	@Autowired
+	public void setPokojRep(PokojRepository pokojRep) {
+		this.pokojRep = pokojRep;
+	}
+
 	@Before
 	public void before() {
 		logg.debug("----->>> StudentRepository before method fired");
@@ -73,6 +83,22 @@ public class StudentRepositoryTest {
 		studentRep.save(student);
 		List<Student> listaStudentow = studentRep.findByName(KOWALSKA);
 		Assert.assertEquals(KASIA, listaStudentow.get(0).getImie());
+	}
+	
+	/**
+	 * Test wyszukiwania po numerze pokoju.
+	 */
+	@Test
+	public void testFindByPokoj () {
+		Pokoj zamieszkaly = new Pokoj();
+		zamieszkaly.setId(1L);
+		zamieszkaly.setLiczbaMiejsc(2);
+		zamieszkaly.setNumerPokoju("101");
+		zamieszkaly.zakwateruj(student);
+		pokojRep.save(zamieszkaly);
+		studentRep.save(student);
+		List<Student> ciZPokoju = studentRep.findByPokoj(zamieszkaly);
+		Assert.assertEquals(KASIA, ciZPokoju.get(0).getImie());
 	}
 
 }
