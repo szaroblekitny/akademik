@@ -171,8 +171,7 @@ public class DaneTestowe {
 	 * @param studenci - lista z danymi o strudentach
 	 * 
 	 */
-	public void wrzucTrocheDanychDoBazy(List<Pokoj> pokoje,
-			List<Student> studenci) {
+	public void wrzucTrocheDanychDoBazy(List<Pokoj> pokoje, List<Student> studenci) {
 		logg.debug("----->>> wrzucTrocheDanychDoBazy pokoje i studenci");
 		studentRepo.deleteAll();
 		pokojRepo.deleteAll();
