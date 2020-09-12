@@ -236,6 +236,7 @@
             					<include>pokoje_test.xml</include>
             					<include>studenci_test.xml</include>
             					<include>raport_test_appl.txt</include>
+            					<include>akademik.log</include>
           					</includes>
           					<followSymlinks>false</followSymlinks>
         				</fileset>
