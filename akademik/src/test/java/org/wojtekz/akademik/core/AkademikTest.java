@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -263,8 +264,71 @@ public class AkademikTest {
 			logg.error("----->>> testAkademika - problemy plikowe", ie);
 			Assert.fail("Exception: " + ie.getMessage());
 		}
-		
 	}
+	
+	private void wyswietlMieszkancow(List<Student> mieszki) {
+		if (mieszki == null) {
+			throw new NullPointerException("------!!> Pusta lista mieszkańców");
+		}
+		
+		if (mieszki.isEmpty()) {
+			throw new RuntimeException("------!!> Mieszkańcy muszą być");
+		}
+		
+		for (Student mieszka : mieszki) {
+			logg.trace("--+> {}", mieszka);
+		}
+	}
+	
+	/**
+	 * Test, czy zakwaterowani studenci nie są różnej płci.
+	 */
+	@Test
+	public void testPlciowy() {
+		logg.debug("=============>>> testPlciowy starts");
+		daneTestowe.wrzucTrocheDanychDoBazy();
+		logg.trace("-----> przed zakwateruj testPlciowy");
+		Optional<Pokoj> testowanyPokoj = pokojRepo.findById(1L);
+		Assert.assertTrue(testowanyPokoj.isPresent());
+		akademik.zakwateruj();
+		List<Student> mieszkancy = studentRepo.findByPokoj(testowanyPokoj.get());
+		Assert.assertEquals(2, mieszkancy.size());
+		//----
+		if (logg.isTraceEnabled()) {
+			logg.trace("--------+> mieszkańcy pok. 101");
+			wyswietlMieszkancow(mieszkancy);
+		}
+		//----
+		Assert.assertEquals("Oczekuję Janiny, a nie mam", "Janina", mieszkancy.get(0).getImie());
+		Assert.assertEquals("Oczekuję Małgorzaty, a nie mam", "Małgorzata", mieszkancy.get(1).getImie());
+		logg.trace("--------+> drugi pokój");
+		// -- drugi pokój
+		testowanyPokoj = pokojRepo.findById(2L);
+		logg.trace("--------+>mamy drugi pokój: {}", testowanyPokoj);
+		Assert.assertTrue(testowanyPokoj.isPresent());
+		mieszkancy = studentRepo.findByPokoj(testowanyPokoj.get());
+		Assert.assertEquals(3, mieszkancy.size());
+		if (logg.isTraceEnabled()) {
+			logg.trace("--------+> mieszkańcy pok. 102");
+			wyswietlMieszkancow(mieszkancy);
+		}
+		// Studenci są ładowani z bazy testowe wg identyfikatorów z pola ID
+		Assert.assertEquals("Jan", mieszkancy.get(0).getImie());
+		Assert.assertEquals("Adam", mieszkancy.get(1).getImie());
+		Assert.assertEquals("Mirosław", mieszkancy.get(2).getImie());
+		// -- trzeci pokój
+		testowanyPokoj = pokojRepo.findById(3L);
+		Assert.assertTrue(testowanyPokoj.isPresent());
+		mieszkancy = studentRepo.findByPokoj(testowanyPokoj.get());
+		Assert.assertEquals(1, mieszkancy.size());
+		if (logg.isTraceEnabled()) {
+			logg.trace("--------+> mieszkańcy pok. 103");
+			wyswietlMieszkancow(mieszkancy);
+		}
+		
+		Assert.assertEquals("Oczekuję Ignacego w pok. 3", "Ignacy", mieszkancy.get(0).getImie());
+	}
+	
 	
 	@Test
 	public void testStanuAkademika() {
@@ -291,7 +355,7 @@ public class AkademikTest {
 	
 	@After
 	public void poTescie() throws Exception {
-		logg.debug("-----+> poTescie");
+		logg.debug("== == == == ==>>> poTescie");
 		usunPlik(pathPokoi);
 		usunPlik(pathStudentow);
 		

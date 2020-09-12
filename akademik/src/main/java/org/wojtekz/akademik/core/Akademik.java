@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
@@ -131,6 +132,37 @@ public class Akademik {
 	
 	
 	/**
+	 * Kwateruje studentow w podanym pokoju. Dla podanego pokoju lecimy
+	 * z pętlą tyle razy, jaka jest pojemność pokoju i robimy akcję
+	 * zakwaterowania, czyli metodę zakwateruj() klasy Pokoj.
+	 *
+	 * @param pokoj pokój do zasiedlenia
+	 * @param iterStud iterator do wyłapania kolejnego studenta
+	 * @return iterator studencki przekręcony o liczbę zakwaterowanych studentów
+	 */
+	private Iterator<Student> zakwaterujCzesc(Pokoj pokoj, Iterator<Student> iterStud) {
+		logg.trace("-----*> pokoj {}", pokoj);
+		Student kwatStudent;
+
+		for (int ii = 1 ; ii <= pokoj.getLiczbaMiejsc() ; ii++ ) {
+			if (iterStud.hasNext()) {
+				kwatStudent = iterStud.next();
+				logg.trace("-----*> kwaterujemy studenta {}", kwatStudent);
+				pokoj.zakwateruj(kwatStudent);
+				logg.trace("-----*> student zakwaterowany");
+
+				studentRepo.save(kwatStudent);
+
+				logg.trace("-----*> student zapisany");
+			} else {
+				return iterStud;
+			}
+		}
+
+		return iterStud;
+	}
+	
+	/**
 	 * Kwaterowanie studentów w pokojach. Praktycznie wykonywany
 	 * jest zapis numeru pokoju w rekordzie studenta. Rekord pokoju
 	 * nie jest zmieniany.
@@ -139,7 +171,10 @@ public class Akademik {
 	 * Następnie dla każdego pokoju wykonuje pętlę tyle razy, ile jest
 	 * miejsc w pokoju, przypisując nr pokoju kolejnemu studentowi.
 	 * 
-	 * <p>Na razie bez uwzględniania płci.
+	 * <p>Uwzględniając kobiety będziemy mieli dwie pętle: po kobietach
+	 * i po mężczyznach. Stosujemy 2 razy ten sam algorytm:
+	 * dla każdego pokoju lecimy z pętlą tyle razy, jaka jest pojemność pokoju
+	 * i robimy akcję zakwaterowania, czyli metodę zakwaterujCzesc()
 	 * 
 	 * @return true, jeśli wszystkim studentom przypisano numer pokoju
 	 * 
@@ -148,47 +183,51 @@ public class Akademik {
 		logg.info("------------------>>> KWATERUNEK <<<-------------------");
 		
 		// listy studentów i pokoi
-		List<Student> studenci = studentRepo.findAll();
 		List<Pokoj> pokoje = pokojRepo.findAll();
 		if (logg.isDebugEnabled()) {
 			logg.debug("----->>> mamy pokoi {}", pokoje.size());
-			logg.debug("----->>> mamy studentów {}", studenci.size());
 		}
 		
-		// dla każdego pokoju lecimy z pętlą tyle razy, ile jest pojemność pokoju
-		// i robimy akcję zakwaterowania, czyli metodę zakwateruj()
-		Iterator<Student> iter = studenci.iterator();
-		Student kwatStudent = iter.next();
-		for (Pokoj pokoj : pokoje) {
-			
-			logg.trace("-----*> pokoj {}", pokoj);
-			for (int ii = 1 ; ii <= pokoj.getLiczbaMiejsc() ; ii++ ) {
+		List<Student> kobiety = studentRepo.findByPlec(Plec.KOBIETA);
+		List<Student> mezczyzni = studentRepo.findByPlec(Plec.MEZCZYZNA);
+		
+		Iterator<Student> iterKob = kobiety.iterator();
+		Iterator<Student> iterMez = mezczyzni.iterator();
+		Iterator<Pokoj> iterPok = pokoje.iterator();
+		
+		// pętla po kobietach - damy mają pierwszeństwo
+		while (iterPok.hasNext()) {
+		
+			if (iterKob.hasNext()) {
+				iterKob = zakwaterujCzesc(iterPok.next(), iterKob);
+			} else {
+				break;
+			}
+		}
+		// jeśli są jescze kobiety, a nie ma pokoi - alert
+		if (!iterPok.hasNext() && iterKob.hasNext()) {
+			logg.info("----->>> Brakuje pokoi dla kobiet");
+			logg.error("------->>> Przepełnienie Akademika <<<-------");
+			return false;
+		} else {
+			// są pokoje, więc kwaterujemy mężczyzn
+			while (iterPok.hasNext()) {
 				
-				logg.trace("-----*> student {}", kwatStudent);
-				pokoj.zakwateruj(kwatStudent);
-				logg.trace("-----*> student zakwaterowany {}", kwatStudent);
-
-				studentRepo.save(kwatStudent);
-				
-				if (logg.isTraceEnabled()) {
-					logg.trace("-----*> student zapisany");
-				}
-				
-				if (!iter.hasNext()) {
-					// jeśli nie ma już więcej studentów mamy pozytywny koniec kwaterunku
-					logg.info("------------------>>> ZAKWATEROWANI <<<-------------------");
-					return true;
+				if (iterMez.hasNext()) {
+					iterMez = zakwaterujCzesc(iterPok.next(), iterMez);
 				} else {
-					kwatStudent = iter.next();
+					break;
 				}
 			}
 		}
-		
-		// zabrakło miejsc
-		logg.info("----->>> Nie można zakwaterować studenta {}", kwatStudent);
-		logg.error("------->>> Przepełnienie Akademika <<<-------");
-		return false;
-		
+
+		if (!iterPok.hasNext() && iterMez.hasNext()) {
+			logg.info("----->>> Brakuje pokoi dla mężczyzn");
+			logg.error("------->>> Przepełnienie Akademika <<<-------");
+			return false;
+		}
+
+		return true;
 	}
 	
 	
@@ -207,15 +246,15 @@ public class Akademik {
 			writer.newLine();
 			// Wyświetlamy studentów z pokoju
 			List<Student> mieszkancy = pokoj.getZakwaterowani();
-			
+
 			for (Student mieszka : mieszkancy) {
 				writer.write(mieszka.toString());
 				writer.newLine();
 			}
-			 
+
 			writer.newLine();
 		}
-		
+
 		if (!udaloSie) {
 			writer.write("Nie wszyscy studenci zostali zakwaterowani");
 			writer.newLine();

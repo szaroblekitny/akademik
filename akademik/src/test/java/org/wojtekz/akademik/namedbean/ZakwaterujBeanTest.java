@@ -81,7 +81,9 @@ public class ZakwaterujBeanTest {
 	}
 
 	/**
-	 * Test funkcji kwaterowania.
+	 * Test funkcji kwaterowania. Pobiera studenta o ID=1,
+	 * sprawdza, czy ma on uzupełnione pole pokój i sprawdza,
+	 * czy jest to właściwy pokój.
 	 * 
 	 */
 	@Test
@@ -100,7 +102,7 @@ public class ZakwaterujBeanTest {
 		testStudent = studentRepo.findById(PIERSZY).get();
 		
 		Assert.assertNotNull(testStudent.getPokoj());
-		Assert.assertEquals(PIERSZY, testStudent.getPokoj().getId());
+		Assert.assertEquals(2L, testStudent.getPokoj().getId());
 	}
 
 }
