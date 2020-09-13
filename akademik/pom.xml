@@ -218,8 +218,8 @@
 	</dependencies>
 	
 	<build>
-	
-		<finalName>akademik</finalName>
+		<!-- Wersja pliku widoczna jako wersja w Tomcacie -->
+		<finalName>${project.artifactId}##${project.version}</finalName>
 	
 		<plugins>
 		
