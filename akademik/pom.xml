@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wojtekz</groupId>
 	<artifactId>akademik</artifactId>
-	<version>0.35-SNAPSHOT</version>
+	<version>0.36-SNAPSHOT</version>
 	<packaging>war</packaging>
 	
 	<name>Manager akademika</name>
