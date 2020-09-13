@@ -138,9 +138,9 @@ public class Akademik {
 	 *
 	 * @param pokoj pokój do zasiedlenia
 	 * @param iterStud iterator do wyłapania kolejnego studenta
-	 * @return iterator studencki przekręcony o liczbę zakwaterowanych studentów
+	 * 
 	 */
-	private Iterator<Student> zakwaterujCzesc(Pokoj pokoj, Iterator<Student> iterStud) {
+	private void zakwaterujCzesc(Pokoj pokoj, Iterator<Student> iterStud) {
 		logg.trace("-----*> pokoj {}", pokoj);
 		Student kwatStudent;
 
@@ -155,11 +155,62 @@ public class Akademik {
 
 				logg.trace("-----*> student zapisany");
 			} else {
-				return iterStud;
+				return;
 			}
 		}
 
-		return iterStud;
+	}
+	
+	/**
+	 * Metoda wykonująca właściwe kwaterowanie, opis w metodzie zakwateruj().
+	 * 
+	 * @param pokoje lista pokoi pobranych z bazy
+	 * @param kobiety lista kobiet - studentek
+	 * @param mezczyzni lista mężczyzn - studentów
+	 * @return true kwaterowanie udane, starczyło miejsca w akademiku
+	 * 
+	 */
+	private boolean kwaterowanie(List<Pokoj> pokoje, 
+								  List<Student> kobiety,
+								  List<Student> mezczyzni) {
+		Iterator<Student> iterKob = kobiety.iterator();
+		Iterator<Student> iterMez = mezczyzni.iterator();
+		Iterator<Pokoj> iterPok = pokoje.iterator();
+		
+		// pętla po kobietach - damy mają pierwszeństwo
+		while (iterPok.hasNext()) {
+		
+			if (iterKob.hasNext()) {
+				zakwaterujCzesc(iterPok.next(), iterKob);
+			} else {
+				break;
+			}
+		}
+		// jeśli są jescze kobiety, a nie ma pokoi - alert
+		if (!iterPok.hasNext() && iterKob.hasNext()) {
+			logg.info("----->>> Brakuje pokoi dla kobiet");
+			logg.error("------->>> Przepełnienie Akademika <<<-------");
+			return false;
+		} else {
+			// są pokoje, więc kwaterujemy mężczyzn
+			while (iterPok.hasNext()) {
+				
+				if (iterMez.hasNext()) {
+					zakwaterujCzesc(iterPok.next(), iterMez);
+				} else {
+					break;
+				}
+			}
+		}
+
+		if (!iterPok.hasNext() && iterMez.hasNext()) {
+			logg.info("----->>> Brakuje pokoi dla mężczyzn");
+			logg.error("------->>> Przepełnienie Akademika <<<-------");
+			return false;
+		}
+		
+		logg.info("---------------->>> ZAKWATEROWANO <<<-----------------");
+		return true;
 	}
 	
 	/**
@@ -184,50 +235,15 @@ public class Akademik {
 		
 		// listy studentów i pokoi
 		List<Pokoj> pokoje = pokojRepo.findAll();
-		if (logg.isDebugEnabled()) {
-			logg.debug("----->>> mamy pokoi {}", pokoje.size());
-		}
+		logg.debug("----->>> mamy pokoi {}", pokoje.size());
 		
 		List<Student> kobiety = studentRepo.findByPlec(Plec.KOBIETA);
+		logg.debug("----->>> mamy kobiet {}", kobiety.size());
+		
 		List<Student> mezczyzni = studentRepo.findByPlec(Plec.MEZCZYZNA);
+		logg.debug("----->>> mamy mężczyzn {}", mezczyzni.size());
 		
-		Iterator<Student> iterKob = kobiety.iterator();
-		Iterator<Student> iterMez = mezczyzni.iterator();
-		Iterator<Pokoj> iterPok = pokoje.iterator();
-		
-		// pętla po kobietach - damy mają pierwszeństwo
-		while (iterPok.hasNext()) {
-		
-			if (iterKob.hasNext()) {
-				iterKob = zakwaterujCzesc(iterPok.next(), iterKob);
-			} else {
-				break;
-			}
-		}
-		// jeśli są jescze kobiety, a nie ma pokoi - alert
-		if (!iterPok.hasNext() && iterKob.hasNext()) {
-			logg.info("----->>> Brakuje pokoi dla kobiet");
-			logg.error("------->>> Przepełnienie Akademika <<<-------");
-			return false;
-		} else {
-			// są pokoje, więc kwaterujemy mężczyzn
-			while (iterPok.hasNext()) {
-				
-				if (iterMez.hasNext()) {
-					iterMez = zakwaterujCzesc(iterPok.next(), iterMez);
-				} else {
-					break;
-				}
-			}
-		}
-
-		if (!iterPok.hasNext() && iterMez.hasNext()) {
-			logg.info("----->>> Brakuje pokoi dla mężczyzn");
-			logg.error("------->>> Przepełnienie Akademika <<<-------");
-			return false;
-		}
-
-		return true;
+		return kwaterowanie(pokoje, kobiety, mezczyzni);
 	}
 	
 	

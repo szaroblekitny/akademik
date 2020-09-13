@@ -220,20 +220,33 @@ public class AkademikTest {
 		
 	}
 	
+	/**
+	 * Test metody kwaterowania akademika. Używa danych z konstruktora,
+	 * a nie z klasy {@link org.wojtekz.akademik.util.DaneTestowe}.
+	 * 
+	 * Testuje zapis pokoi i studentów do bazy, wykonuje metodę zakwateruj(),
+	 * sprawdza spójność danych i czy kwaterowanie jest udane: nie powinno być,
+	 * bo mamy za dużo mężczyzn - kobieta zajmuje 1 pokój, a mężczyzn jest czterech.
+	 */
 	@Test
 	public void testKwaterowania() {
 		logg.debug("=============>>> testKwaterowania starts");
 		pokojRepo.saveAll(pokoje);
 		Assert.assertEquals(2, pokojRepo.findAll().size());
+		
 		studentRepo.saveAll(studenci);
 		Assert.assertEquals(5, studentRepo.findAll().size());
+		
 		logg.trace("-----> pokoje i studenci w bazie");
-		akademik.zakwateruj();
+		boolean udane = akademik.zakwateruj();
 		Assert.assertNotEquals(studentRepo.findAll(), studenci);
+		Assert.assertFalse("Kwaterowanie nie powinno się udać", udane);
+		
 		List<Pokoj> wszystkiePokBaza = pokojRepo.findAll();
 		long ileBaza = pokojRepo.count();
 		long ilePoko = pokoje.size();
 		Assert.assertEquals(ilePoko, ileBaza);
+		
 		Assert.assertEquals(pokoje.get(0).getNumerPokoju(), wszystkiePokBaza.get(0).getNumerPokoju());
 		Assert.assertEquals(pokoje.get(1).getNumerPokoju(), wszystkiePokBaza.get(1).getNumerPokoju());
 	}
