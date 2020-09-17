@@ -124,7 +124,9 @@ public class StudentBeanTest {
 	public void testOnRowEdit() {
 		logg.debug("-------> testOnRowEdit");
 		studentBean.onRowEdit(new RowEditEvent(component, behavior, student));
-		verify(komunikaty).addMessage("Edycja studenta", "Student o Id 10");
+		verify(komunikaty).addMessage("Edycja studenta",
+				"Zapisany Student [id=10, imie=" + KLAPA
+				+ ", nazwisko=" + SMIESZNY + ", plec=null, nr pokoju=niezakw.]");
 		Optional<Student> sprStudent = studentRepo.findById(10L);
 		Assert.assertTrue(sprStudent.isPresent());
 		Assert.assertEquals(KLAPA, sprStudent.get().getImie());

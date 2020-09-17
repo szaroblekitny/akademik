@@ -16,28 +16,6 @@
 		</ui:define>
 
 		<ui:define name = "content">
-			<!-- Zawartość strony -->
-
-			<h3>Studenci w tabelce</h3>
-			<p:dataTable var="student" value="#{studentBean.studenci}">
-	    		<p:column headerText="Id">
-	        		<h:outputText value="#{student.id}" />
-	    		</p:column>
-
-	    		<p:column headerText="Imie">
-	        		<h:outputText value="#{student.imie}" />
-	    		</p:column>
-
-				<p:column headerText="Nazwisko">
-	        		<h:outputText value="#{student.nazwisko}" />
-	    		</p:column>
-
-	    		<p:column headerText="Płeć">
-	        		<h:outputText value="#{student.plec}" />
-	    		</p:column>
-
-			</p:dataTable>
-
 			<!-- Edycja tabeli studentów  -->
 			<h:form id="form">
 				<!-- wyskakujące komunikaty -->

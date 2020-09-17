@@ -2,7 +2,8 @@
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html"> 
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<title>Akademik</title>
@@ -15,12 +16,40 @@
 		</ui:define>
 
 		<ui:define name = "content">
-			<!-- zawartość -->
-			<ul>
-				<ui:repeat var="pokoj" value="#{pokojBean.pobierzPokoje()}">
-					<li><h:outputText value="#{pokoj}" /></li>
-				</ui:repeat>
-			</ul>
+			<h:form id="form">
+				<!-- wyskakujące komunikaty -->
+				<p:growl id="msgs" sticky="true" showDetail="true"/>
+			
+				<p:dataTable id="pokojTab" var="pokoj" value="#{pokojBean.pokoje}" editable="true" class="dolnymargines">
+	        		<f:facet name="header">Edycja</f:facet>
+
+	        		<p:ajax event="rowEdit" listener="#{pokojBean.onRowEdit}" update=":form:msgs" />
+	        		<p:ajax event="rowEditCancel" listener="#{pokojBean.onRowCancel}" update=":form:msgs" />
+
+	 				<p:column headerText="Id pokoju">
+	            		<h:outputText value="#{pokoj.id}" />
+	        		</p:column>
+
+	        		<p:column headerText="Nr pokoju">
+	            		<p:cellEditor>
+	                		<f:facet name="output"><h:outputText value="#{pokoj.numerPokoju}" /></f:facet>
+	                		<f:facet name="input"><p:inputText value="#{pokoj.numerPokoju}" class="szerokosc100procent" /></f:facet>
+	            		</p:cellEditor>
+	        		</p:column>
+
+	        		<p:column headerText="Liczba miejsc">
+	            		<p:cellEditor>
+	                		<f:facet name="output"><h:outputText value="#{pokoj.liczbaMiejsc}" /></f:facet>
+							<f:facet name="input"><p:inputText value="#{pokoj.liczbaMiejsc}" class="szerokosc100procent"/></f:facet>
+	            		</p:cellEditor>
+	        		</p:column>
+
+	        		<!-- guzik edycji -->
+	        		<p:column class="kolumnaedycji">
+	            		<p:rowEditor />
+	        		</p:column>
+	        	</p:dataTable>
+			</h:form>
 		</ui:define> 
 
 	</ui:composition>

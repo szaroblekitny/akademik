@@ -25,6 +25,8 @@ public class StudentBean implements Serializable {
 	private static final long serialVersionUID = 297092190215801549L;
 	private static Logger logg = LogManager.getLogger();
 
+	private transient List<Student> studenci;
+	
 	private transient Messagesy komunikaty;
 	private transient StudentRepository studentRepository;
 	
@@ -39,13 +41,16 @@ public class StudentBean implements Serializable {
 	}
 	
 	/**
-	 * Lista studentów dla PrimeFaces (jest deczko prościej).
+	 * Lista studentów dla PrimeFaces. Brana z bazy <b>tylko</b>
+	 * w przypadku, gdy jest nullem. 
 	 * 
 	 * @return po prostu wszyscy studenci jako lista
 	 */
 	public List<Student> getStudenci() {
 		logg.debug("-----------> pobieram studentów do wyświetlenia");
-		List<Student> studenci = studentRepository.findAll();
+		if (studenci == null) {
+			studenci = studentRepository.findAll();
+		}
 		return studenci;
 	}
 	
@@ -56,10 +61,10 @@ public class StudentBean implements Serializable {
 	 * 
 	 * @param event zdarzenie edycji z komponentu p:cellEditor
 	 */
-	public void onRowEdit(RowEditEvent<?> event) {
-		Student student = (Student) event.getObject();
-        komunikaty.addMessage("Edycja studenta", "Student o Id " + student.getId());
+	public void onRowEdit(RowEditEvent<Student> event) {
+		Student student = event.getObject();
         studentRepository.save(student);
+        komunikaty.addMessage("Edycja studenta", "Zapisany " + student.toString());
     }
     
 	/**
