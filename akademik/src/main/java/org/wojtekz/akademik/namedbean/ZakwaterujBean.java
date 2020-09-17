@@ -25,7 +25,7 @@ public class ZakwaterujBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static Logger logg = LogManager.getLogger();
 	
-	private StudentRepository studentRepository;
+	private transient StudentRepository studentRepository;
 	private transient Messagesy komunikaty;
 	private transient Akademik akademik;
 	

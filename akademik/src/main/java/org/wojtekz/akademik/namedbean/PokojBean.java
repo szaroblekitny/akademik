@@ -31,7 +31,7 @@ public class PokojBean implements Serializable {
 	
 	private transient PokojRepository pokojRepository;
 	private transient StudentRepository studentRepository;
-	private Messagesy komunikaty;
+	private transient Messagesy komunikaty;
 	
 	@Autowired
 	public void setPokojRepository(PokojRepository pokojRepository) {
@@ -74,15 +74,14 @@ public class PokojBean implements Serializable {
 	 */
 	public List<String> pobierzPokoje() {
 		logg.trace("-----------> pobierzPokoje start");
-		List<String> pokoje = new ArrayList<>();
-		List<Pokoj> listaPokoi = pokojRepository.findAll();
+		List<String> pobranePok = new ArrayList<>();
 		
-		for (Pokoj ss : listaPokoi) {
-			pokoje.add(ss.toString());
+		for (Pokoj ss : getPokoje()) {
+			pobranePok.add(ss.toString());
 		}
 		
-		logg.debug("-----------> mamy pokoje dla stronki");
-		return pokoje;
+		logg.trace("-----------> mamy pokoje dla stronki");
+		return pobranePok;
 	}
 	
 	
