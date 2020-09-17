@@ -11,7 +11,7 @@
      Aplikacja pozwala wpisać dane pokoi, studentów, wykonać akcję "zakwateruj" i wyświetlić
      wynik w postaci listy pokoi z zakwaterowanymi studentami.</description>
      
-     
+
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
@@ -26,6 +26,7 @@
 		<xstream.version>1.4.11.1</xstream.version>
 		<postgresql-jdbc.version>42.2.10</postgresql-jdbc.version>
 		<atomikos.version>5.0.6</atomikos.version>
+		<primefaces.version>8.0</primefaces.version>
 
 		<junit.version>4.12</junit.version>
 		<mockito.version>1.10.19</mockito.version>
@@ -51,7 +52,7 @@
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
-			<version>8.0</version>
+			<version>${primefaces.version}</version>
 		</dependency>
 
 		<!-- OWASP project to create simple strong security controls for every web platform -->
