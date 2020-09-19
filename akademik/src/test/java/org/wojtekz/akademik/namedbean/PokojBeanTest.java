@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
@@ -43,6 +44,9 @@ public class PokojBeanTest {
 	private transient Pokoj pokoik100;
 	private transient Pokoj pokoik200;
 	private transient Pokoj pokoik500;
+	private transient Student student;
+	private transient ArrayList<Student> studenty = new ArrayList<>();
+	
 	
 	private transient PokojBean testowanyBean;
 	private transient PokojRepository pokojRepository;
@@ -96,12 +100,22 @@ public class PokojBeanTest {
 		pokoik200.setZakwaterowani(new ArrayList<Student>());
 		pokojRepository.save(pokoik200);
 		
+		student = new Student();
+		student.setId(1L);
+		student.setImie("Jan");
+		student.setNazwisko("Nowakowaski");
+		student.setPlec(Plec.MEZCZYZNA);
+		studentRepo.save(student);
+		
+		studenty.add(student);
+		
 		pokoik500 = new Pokoj();
 		pokoik500.setId(500L);
 		pokoik500.setNumerPokoju("500");
 		pokoik500.setLiczbaMiejsc(500);
-		pokoik500.setZakwaterowani(new ArrayList<Student>());
+		pokoik500.setZakwaterowani(studenty);
 		pokojRepository.save(pokoik500);
+		
 		
 	}
 

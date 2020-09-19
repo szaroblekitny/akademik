@@ -93,7 +93,6 @@ public class PokojBean implements Serializable {
 	 */
 	public void onRowEdit(RowEditEvent<Pokoj> event) {
 		logg.debug("---> początek onRowEdit dla zdarzenia {}", event);
-		assert event != null : "---> zdarzenie nulowe";
 		Pokoj pokoj = event.getObject();
 		
         // rozwiązujemy powiązania pokoju ze studentem, jeśli były
