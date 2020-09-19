@@ -1,7 +1,13 @@
 package org.wojtekz.akademik.namedbean;
 
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.faces.component.UIComponent;
+import javax.faces.component.behavior.Behavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,15 +16,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
+import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
-import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
  * Test beana JSF dla pokoi. Generalnie chodzi o to, że Sonar
@@ -33,63 +40,123 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class PokojBeanTest {
 	private static Logger logg = LogManager.getLogger();
 	
-	private transient PokojBean pokBean;
-	private PokojRepository pokojRepository;
-	private StudentRepository studentRepo;
-	private DaneTestowe daneTestowe;
+	private transient Pokoj pokoik100;
+	private transient Pokoj pokoik200;
+	private transient Pokoj pokoik500;
 	
-	@Autowired
-	public void setPokBean(PokojBean pokBean) {
-		this.pokBean = pokBean;
-	}
+	private transient PokojBean testowanyBean;
+	private transient PokojRepository pokojRepository;
+	private transient StudentRepository studentRepo;
+	private transient Messagesy komunikaty = mock(Messagesy.class);
+	private transient UIComponent component = mock(UIComponent.class);
+	private transient Behavior behavior = mock(Behavior.class);
+	
 
+	@Autowired
+	public void setStudentRepo(StudentRepository studentRepo) {
+		this.studentRepo = studentRepo;
+	}
+	
 	@Autowired
 	public void setPokojRepository(PokojRepository pokojRepository) {
 		this.pokojRepository = pokojRepository;
 	}
 	
 	@Autowired
-	public void setStudentRepo(StudentRepository studentRepo) {
-		this.studentRepo = studentRepo;
-	}
-
-	//  TO DO !!! -- tu jest drugie wywołanie bazy -- !!!
-	
-	
-	@Autowired
-	public void setDaneTestowe(DaneTestowe daneTestowe) {
-		this.daneTestowe = daneTestowe;
+	public void setTestowanyBean(PokojBean testowanyBean) {
+		this.testowanyBean = testowanyBean;
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		List<Pokoj> pokoje;
-
+		logg.debug("---------+> setUp PokojBeanTest");
+		studentRepo.deleteAll();
 		// sprawdzenie, czy nie zostały pokoje z poprzedniego testu
 		// i ewentualne kasowanie
 		long ile = pokojRepository.count();
 		if (ile > 0L) {
-			pokoje = pokojRepository.findAll();
-			logg.trace("Mamy pokoje ---------+> {}", Arrays.toString(pokoje.toArray()));
-			studentRepo.deleteAll();
+			List<Pokoj> pokoje = pokojRepository.findAll();
+			logg.trace("Mamy pokoje ------+> {}", Arrays.toString(pokoje.toArray()));
 			pokojRepository.deleteAll();
 		}
 		
-		daneTestowe.wrzucTrocheDanychDoBazy();
+		testowanyBean.setMessagesy(komunikaty);
+		
+		pokoik100 = new Pokoj();
+		pokoik100.setId(100L);
+		pokoik100.setNumerPokoju("100");
+		pokoik100.setLiczbaMiejsc(100);
+		pokoik100.setZakwaterowani(new ArrayList<Student>());
+		pokojRepository.save(pokoik100);
+		
+		pokoik200 = new Pokoj();
+		pokoik200.setId(200L);
+		pokoik200.setNumerPokoju("200");
+		pokoik200.setLiczbaMiejsc(200);
+		pokoik200.setZakwaterowani(new ArrayList<Student>());
+		pokojRepository.save(pokoik200);
+		
+		pokoik500 = new Pokoj();
+		pokoik500.setId(500L);
+		pokoik500.setNumerPokoju("500");
+		pokoik500.setLiczbaMiejsc(500);
+		pokoik500.setZakwaterowani(new ArrayList<Student>());
+		pokojRepository.save(pokoik500);
+		
 	}
+
+	// --------------------------------------------
+	
+	@Test
+	public void testGetPokoje() {
+		logg.debug("===========> testGetPokoje");
+		Assert.assertNotNull("PokBean nullem getPok", testowanyBean);
+		List<Pokoj> lista = testowanyBean.getPokoje();
+		Assert.assertEquals(3, lista.size());
+		Assert.assertEquals("200", lista.get(1).getNumerPokoju());
+	}
+	
+	@Test
+	public void testPobierzPokoje() {
+		logg.debug("===========> testPobierzPokoje");
+		Assert.assertEquals(3, pokojRepository.count());
+		Assert.assertNotNull("PokBean nullem pobPok", testowanyBean);
+		List<String> pokStrList = testowanyBean.pobierzPokoje();
+		Assert.assertEquals(3, pokStrList.size());
+		Assert.assertEquals("Pokoj [id=500, numerPokoju=500, liczbaMiejsc=500]", pokStrList.get(2));
+	}
+	
+	@Test
+	public void testOnRowEdit() {
+		logg.debug("===========> testOnRowEdit");
+		Assert.assertNotNull("PokBean nullem (edit)", testowanyBean);
+		Assert.assertNotNull("Pokój nullem", pokoik500);
+		Assert.assertNotNull("Komponent nullem", component);
+		Assert.assertNotNull("Zachowanie nullem", behavior);
+		logg.debug("-------> wywołanie OnRowEdit");
+		testowanyBean.onRowEdit(new RowEditEvent<Pokoj>(component, behavior, pokoik500));
+		verify(komunikaty).addMessage("Edycja", "Zapisany Pokoj [id=500, numerPokoju=500, liczbaMiejsc=500]");
+		Assert.assertEquals("500", pokoik500.getNumerPokoju());
+	}
+	
+	@Test
+	public void testOnRowCancel() {
+		logg.debug("===========> testOnRowCancel");
+		Assert.assertNotNull("Pokój nullem (canc.)", pokoik500);
+		Assert.assertNotNull("PokBean nullem (cancel)", testowanyBean);
+		testowanyBean.onRowCancel(new RowEditEvent<Pokoj>(component, behavior, pokoik500));
+		verify(komunikaty).addMessage("Edycja anulowana", "500");
+	}
+
+	// --------------------------------------------
 
 	@After
 	public void tearDown() throws Exception {
-		pokojRepository.deleteAll();
+		logg.debug("---------+> tearDown PokojBeanTest");
 		studentRepo.deleteAll();
+		pokojRepository.deleteAll();
 	}
 
-	@Test
-	public void testPobierzPokoje() {
-		Assert.assertEquals(3, pokojRepository.count());
-		List<String> pokStrList = pokBean.pobierzPokoje();
-		Assert.assertEquals(3, pokStrList.size());
-		Assert.assertEquals("Pokoj [id=3, numerPokoju=103, liczbaMiejsc=4]", pokStrList.get(2));
-	}
+	
 
 }

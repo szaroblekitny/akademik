@@ -45,13 +45,13 @@ public class StudentBeanTest {
 	
 	private transient StudentBean studentBean;
 	private transient DaneTestowe daneTestowe;
-	private StudentRepository studentRepo;
-	private PokojRepository pokojRepo;
+	private transient StudentRepository studentRepo;
+	private transient PokojRepository pokojRepo;
 	
 	private transient Messagesy komunikaty;
 	private transient UIComponent component;
 	private transient Behavior behavior;
-	private Student student;
+	private transient Student student;
 	
 	@Autowired
 	public void setStudentRepo(StudentRepository studentRepo) {
@@ -89,12 +89,12 @@ public class StudentBeanTest {
 			studentRepo.deleteAll();
 			pokojRepo.deleteAll();
 		}
-		
+
 		komunikaty = mock(Messagesy.class);
 		component = mock(UIComponent.class);
 		behavior = mock(Behavior.class);
 		studentBean.setMessagesy(komunikaty);
-		
+
 		daneTestowe.wrzucTrocheDanychDoBazy();
 		
 		student = new Student();
@@ -113,17 +113,16 @@ public class StudentBeanTest {
 
 	@Test
 	public void testPobierzStudentow() {
-		logg.debug("-------> testPobierzStudentow");
+		logg.debug("===========> testPobierzStudentow");
 		List<String> stntStrList = studentBean.pobierzStudentow();
 		Assert.assertEquals(6, stntStrList.size());
 		Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA, nr pokoju=niezakw.]", stntStrList.get(2));
 	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+
 	@Test
 	public void testOnRowEdit() {
-		logg.debug("-------> testOnRowEdit");
-		studentBean.onRowEdit(new RowEditEvent(component, behavior, student));
+		logg.debug("===========> testOnRowEdit");
+		studentBean.onRowEdit(new RowEditEvent<Student>(component, behavior, student));
 		verify(komunikaty).addMessage("Edycja studenta",
 				"Zapisany Student [id=10, imie=" + KLAPA
 				+ ", nazwisko=" + SMIESZNY + ", plec=null, nr pokoju=niezakw.]");
@@ -131,18 +130,17 @@ public class StudentBeanTest {
 		Assert.assertTrue(sprStudent.isPresent());
 		Assert.assertEquals(KLAPA, sprStudent.get().getImie());
 	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+
 	@Test
 	public void testOnRowCancel() {
-		logg.debug("-------> testOnRowCancel");
-		studentBean.onRowCancel(new RowEditEvent(component, behavior, student));
+		logg.debug("===========> testOnRowCancel");
+		studentBean.onRowCancel(new RowEditEvent<Student>(component, behavior, student));
 		verify(komunikaty).addMessage("Edycja anulowana", "10");
 	}
-	
+
 	@Test
 	public void testGetStudenci() {
-		logg.debug("-------> testGetStudenci");
+		logg.debug("===========> testGetStudenci");
 		Assert.assertEquals(6, studentRepo.findAll().size());
 		StudentBean bean = new StudentBean();
 		Assert.assertNotNull(bean);
@@ -150,5 +148,5 @@ public class StudentBeanTest {
 		List<Student> stLi = bean.getStudenci();
 		Assert.assertEquals(6, stLi.size());
 	}
- 
+
 }

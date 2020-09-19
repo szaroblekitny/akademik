@@ -92,6 +92,8 @@ public class PokojBean implements Serializable {
 	 * @param event zdarzenie edycji z komponentu p:cellEditor
 	 */
 	public void onRowEdit(RowEditEvent<Pokoj> event) {
+		logg.debug("---> początek onRowEdit dla zdarzenia {}", event);
+		assert event != null : "---> zdarzenie nulowe";
 		Pokoj pokoj = event.getObject();
 		
         // rozwiązujemy powiązania pokoju ze studentem, jeśli były
@@ -115,7 +117,7 @@ public class PokojBean implements Serializable {
 	 * @param event zdarzenie anulowania edycji z komponentu p:cellEditor
 	 */
     public void onRowCancel(RowEditEvent<Pokoj> event) {
-    	komunikaty.addMessage("Edycja anulowana", String.valueOf((event.getObject()).getId()));
+    	komunikaty.addMessage("Edycja anulowana", String.valueOf(event.getObject().getId()));
     }
     
 }
