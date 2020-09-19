@@ -56,13 +56,14 @@ public class StudentBean implements Serializable {
 	
 	
 	/**
-	 * Reakcja na zdarzenie edycji rekordu. Wyświetla komunikat
-	 * i zapisuje rekord do bazy.
+	 * Reakcja na zdarzenie edycji rekordu. Wyświetla komunikat,
+	 * wykwaterowuje studenta i zapisuje poprawiony rekord do bazy.
 	 * 
 	 * @param event zdarzenie edycji z komponentu p:cellEditor
 	 */
 	public void onRowEdit(RowEditEvent<Student> event) {
 		Student student = event.getObject();
+		student.setPokoj(null);
         studentRepository.save(student);
         komunikaty.addMessage("Edycja studenta", "Zapisany " + student.toString());
     }

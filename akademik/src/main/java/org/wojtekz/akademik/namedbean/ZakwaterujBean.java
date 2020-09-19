@@ -1,6 +1,7 @@
 package org.wojtekz.akademik.namedbean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,6 +60,16 @@ public class ZakwaterujBean implements Serializable {
 	@Autowired
 	public void setStudentRepository(StudentRepository studentRepository) {
 		this.studentRepository = studentRepository;
+	}
+	
+	/**
+	 * Lista studentów dla strony głównej akademika. Bierze studentów z bazy.
+	 * 
+	 * @return po prostu wszyscy studenci jako lista
+	 */
+	public List<Student> getStudenci() {
+		logg.debug("-----------> pobieram studentów do wyświetlenia");
+		return studentRepository.findAll();
 	}
 	
 	/**
