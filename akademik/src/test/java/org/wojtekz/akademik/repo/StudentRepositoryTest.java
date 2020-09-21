@@ -54,7 +54,7 @@ public class StudentRepositoryTest {
 	 */
 	@Test
 	public void findAllTest() {
-		logg.debug("----->>> findAllTest method fired");
+		logg.trace("----->>> findAllTest leci");
 		Assert.assertNotNull(studentRep.findAll());
 	}
 	
@@ -80,9 +80,11 @@ public class StudentRepositoryTest {
 	
 	@Test
 	public void testFindByName() {
+		logg.trace("----->>> testFindByName leci");
 		studentRep.save(student);
 		List<Student> listaStudentow = studentRep.findByName(KOWALSKA);
 		Assert.assertEquals(KASIA, listaStudentow.get(0).getImie());
+		studentRep.deleteAll();
 	}
 	
 	/**
@@ -90,6 +92,7 @@ public class StudentRepositoryTest {
 	 */
 	@Test
 	public void testFindByPokoj () {
+		logg.trace("----->>> testFindByPokoj leci");
 		Pokoj zamieszkaly = new Pokoj();
 		zamieszkaly.setId(1L);
 		zamieszkaly.setLiczbaMiejsc(2);
@@ -100,5 +103,19 @@ public class StudentRepositoryTest {
 		List<Student> ciZPokoju = studentRep.findByPokoj(zamieszkaly);
 		Assert.assertEquals(KASIA, ciZPokoju.get(0).getImie());
 	}
-
+	
+	/**
+	 * Test maksymalnej wartości ID.
+	 */
+	@Test
+	public void testMaxa() {
+		logg.trace("----->>> testMaxa leci");
+		studentRep.save(student);
+		// tak dziwaczna konstrukcja, bo inaczej dwie metody mają
+		// taką samą definicję i się gryzie kompilator, co wybrać
+		Long maksik = studentRep.findLastId();
+		Assert.assertEquals(Long.valueOf(1L), maksik);
+		studentRep.deleteAll();
+	}
+	
 }

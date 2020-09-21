@@ -1,7 +1,6 @@
 package org.wojtekz.akademik.namedbean;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
@@ -47,14 +46,14 @@ public class StudentBean implements Serializable {
 	 * @return po prostu wszyscy studenci jako lista
 	 */
 	public List<Student> getStudenci() {
-		logg.debug("-----------> pobieram studentów do wyświetlenia");
+		logg.trace("---------> początek getStudenci");
 		if (studenci == null) {
+			logg.debug("---------> zapis studentów");
 			studenci = studentRepository.findAll();
 		}
 		return studenci;
 	}
-	
-	
+		
 	/**
 	 * Reakcja na zdarzenie edycji rekordu. Wyświetla komunikat,
 	 * wykwaterowuje studenta i zapisuje poprawiony rekord do bazy.
@@ -78,22 +77,19 @@ public class StudentBean implements Serializable {
     }
 
 	/**
-	 * Pobiera listę studentów z bazy i przekształca na Stringi czytelne dla strony web.
+	 * Nowy rekord.Tworzy studenta, nadaje mu ID, dodaje rekord do tabelki
+	 * i przekazuje do edycji.
 	 * 
-	 * @return lista studentów
 	 */
-	public List<String> pobierzStudentow() {
-		logg.trace("-----------> pobierzStudentow start");
-		List<String> studList = new ArrayList<>();
-		List<Student> listaStudentow = studentRepository.findAll();
-		
-		for (Student ss : listaStudentow) {
-			studList.add(ss.toString());
-		}
-		
-		logg.debug("-----------> mamy studentów dla stronki");
-		return studList;
-	}
+    public void onAddNew() {
+    	logg.debug("--------> dodanie nowego studenta");
+        // Car car2Add = service.createCars(1).get(0);
+        // cars1.add(car2Add);
+    	Student nowy = new Student();
+    	nowy.setId(studentRepository.findLastId() + 1L);
+    	studenci.add(nowy);
+        komunikaty.addMessage("Tworzenie", "Nowy student " + nowy.getId());
+    }
 	
 
 }

@@ -111,13 +111,6 @@ public class StudentBeanTest {
 		
 	}
 
-	@Test
-	public void testPobierzStudentow() {
-		logg.debug("===========> testPobierzStudentow");
-		List<String> stntStrList = studentBean.pobierzStudentow();
-		Assert.assertEquals(6, stntStrList.size());
-		Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA, nr pokoju=niezakw.]", stntStrList.get(2));
-	}
 
 	@Test
 	public void testOnRowEdit() {

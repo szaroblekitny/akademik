@@ -21,8 +21,8 @@
 				<!-- wyskakujące komunikaty -->
 				<p:growl id="msgs" showDetail="true"/>
 
-				<p:dataTable id="studentTab" var="student" value="#{studentBean.studenci}" editable="true" class="dolnymargines">
-	        		<f:facet name="header">Edycja</f:facet>
+				<p:dataTable id="studentTab" widgetVar="studenci" var="student" value="#{studentBean.studenci}" editable="true" class="dolnymargines">
+	        		<f:facet name="header">Studenci</f:facet>
 
 	        		<p:ajax event="rowEdit" listener="#{studentBean.onRowEdit}" update=":form:msgs" />
 	        		<p:ajax event="rowEditCancel" listener="#{studentBean.onRowCancel}" update=":form:msgs" />
@@ -69,6 +69,14 @@
 	            		<p:rowEditor />
 	        		</p:column>
 	        	</p:dataTable>
+	        	
+	        	<!-- guzik dodawania danych -->
+       			<div class="marginwokolo">
+           			<p:commandButton value="Nowy rekord" styleClass="ui-priority-primary" process="@this" update=":form:msgs"
+                            action="#{studentBean.onAddNew()}" oncomplete="PF('studenci').addRow();"/>
+       			</div>
+ 
+	        	
 			</h:form>
 		</ui:define> 
 		<!-- koniec treści strony, poniżej jest jeszcze stopka -->

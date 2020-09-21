@@ -44,4 +44,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 	 * @return lista studentek lub studentów
 	 */
 	List<Student> findByPlec(Plec plec);
+	
+	/**
+	 * Szuka rekordu z największym ID.
+	 * 
+	 * @return wartość największego ID rekordu istniejącego w bazie
+	 */
+	@Query("SELECT MAX(st.id) FROM Student st")
+	Long findLastId();
+
 }
