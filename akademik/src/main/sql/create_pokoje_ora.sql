@@ -1,5 +1,5 @@
 CREATE TABLE pokoj (
     id number PRIMARY KEY,
-    numerPokoju  varchar(5),
-    liczbaMiejsc number
+    numer_pokoju  varchar(5),
+    liczba_miejsc number
 );
