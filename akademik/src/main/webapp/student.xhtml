@@ -28,18 +28,18 @@
 	        		<p:ajax event="rowEditCancel" listener="#{studentBean.onRowCancel}" update=":form:msgs" />
 
 	 				<!-- Id tylko wyświetlane -->
-	        		<p:column headerText="Id studenta">
+	        		<p:column id="colidstudenta" headerText="Id studenta">
 	            		<h:outputText value="#{student.id}" />
 	        		</p:column>
 
-	        		<p:column headerText="Imie">
+	        		<p:column id="colimie" headerText="Imie">
 	            		<p:cellEditor>
 	                		<f:facet name="output"><h:outputText value="#{student.imie}" /></f:facet>
 	                		<f:facet name="input"><p:inputText value="#{student.imie}" class="szerokosc100procent" /></f:facet>
 	            		</p:cellEditor>
 	        		</p:column>
 
-	        		<p:column headerText="Nazwisko">
+	        		<p:column id="colnazwisko" headerText="Nazwisko">
 	            		<p:cellEditor>
 	                		<f:facet name="output"><h:outputText value="#{student.nazwisko}" /></f:facet>
 							<f:facet name="input"><p:inputText value="#{student.nazwisko}" class="szerokosc100procent"/></f:facet>
@@ -47,7 +47,7 @@
 	        		</p:column>
 
 	        		<!-- Płcie -->
-	        		<p:column headerText="Płeć">
+	        		<p:column id="colplec" headerText="Płeć">
 	        			<p:cellEditor>
 	                		<f:facet name="output">
 		        			<p:selectOneRadio value="#{student.plec}" unselectable="false" disabled="true">
@@ -65,18 +65,39 @@
 	    			</p:column>
 
 	        		<!-- guzik edycji -->
-	        		<p:column class="kolumnaedycji">
+	        		<p:column id="guzikedycji" class="kolumnaedycji">
 	            		<p:rowEditor />
 	        		</p:column>
 	        	</p:dataTable>
-	        	
-	        	<!-- guzik dodawania danych -->
-       			<div class="marginwokolo">
-           			<p:commandButton value="Nowy rekord" styleClass="ui-priority-primary" process="@this" update=":form:msgs"
+
+       			<!-- fokus - tworzenie nowego studenta w panelu -->
+       			<p:panel id="panel" header="Nowy student">
+
+        			<p:focus context="panel"/>
+
+        			<h:panelGrid columns="3">
+        				<div>
+	        				<p:outputLabel for="studsurname" value="Imię" />
+	            			<p:inputText id="studsurname" value="#{studentBean.imie}" />
+            			</div>
+            			<div>
+	        				<p:outputLabel for="studentname" value="Nazwisko" />
+	            			<p:inputText id="studentname" value="#{studentBean.nazwisko}"/>
+            			</div>
+            			<div>
+            				<p:outputLabel for="studentplec" value="Płeć" />
+            				<p:selectOneRadio id="studentplec" value="#{studentBean.plec}" unselectable="false" disabled="false">
+		            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
+		            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
+		        			</p:selectOneRadio>
+            			</div>
+        			</h:panelGrid>
+
+        			<p:commandButton value="Zapisz" styleClass="ui-priority-primary" process="@parent" update=":form:msgs"
                             action="#{studentBean.onAddNew()}" oncomplete="PF('studenci').addRow();"/>
-       			</div>
- 
-	        	
+    			</p:panel>
+
+	        	<!-- ooooooooooooooooo -->
 			</h:form>
 		</ui:define> 
 		<!-- koniec treści strony, poniżej jest jeszcze stopka -->

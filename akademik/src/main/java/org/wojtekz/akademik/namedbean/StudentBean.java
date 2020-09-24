@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.StudentRepository;
 
@@ -26,6 +27,11 @@ public class StudentBean implements Serializable {
 
 	private transient List<Student> studenci;
 	
+	// dane dodane w celu dodania studenta do listy
+	private transient String imie;
+	private transient String nazwisko;
+	private transient Plec plec;
+	
 	private transient Messagesy komunikaty;
 	private transient StudentRepository studentRepository;
 	
@@ -39,6 +45,31 @@ public class StudentBean implements Serializable {
 		this.studentRepository = studentRepo;
 	}
 	
+
+	public String getImie() {
+		return imie;
+	}
+
+	public void setImie(String imie) {
+		this.imie = imie;
+	}
+
+	public String getNazwisko() {
+		return nazwisko;
+	}
+
+	public void setNazwisko(String nazwisko) {
+		this.nazwisko = nazwisko;
+	}
+	
+	public Plec getPlec() {
+		return plec;
+	}
+
+	public void setPlec(Plec plec) {
+		this.plec = plec;
+	}
+
 	/**
 	 * Lista studentów dla PrimeFaces. Brana z bazy <b>tylko</b>
 	 * w przypadku, gdy jest nullem. 
@@ -48,7 +79,7 @@ public class StudentBean implements Serializable {
 	public List<Student> getStudenci() {
 		logg.trace("---------> początek getStudenci");
 		if (studenci == null) {
-			logg.debug("---------> zapis studentów");
+			logg.debug("---------> findAll studentów");
 			studenci = studentRepository.findAll();
 		}
 		return studenci;
@@ -77,19 +108,25 @@ public class StudentBean implements Serializable {
     }
 
 	/**
-	 * Nowy rekord.Tworzy studenta, nadaje mu ID, dodaje rekord do tabelki
-	 * i przekazuje do edycji.
+	 * Nowy rekord. Metoda wywoływana w panelu tworzenia nowego studenta.
+	 * Tworzy studenta, nadaje mu ID, dopisuje resztę danych przekazanych
+	 * z formatki i zapisuje rekord w bazie.
 	 * 
 	 */
     public void onAddNew() {
     	logg.debug("--------> dodanie nowego studenta");
-        // Car car2Add = service.createCars(1).get(0);
-        // cars1.add(car2Add);
     	Student nowy = new Student();
     	nowy.setId(studentRepository.findLastId() + 1L);
+    	nowy.setImie(this.imie);
+    	nowy.setNazwisko(this.nazwisko);
+    	nowy.setPlec(this.plec);
     	studenci.add(nowy);
-        komunikaty.addMessage("Tworzenie", "Nowy student " + nowy.getId());
+        komunikaty.addMessage("Tworzenie", "Nowy student " + nowy.toString());
+        // zapis do bazy
+        studentRepository.save(nowy);
+        this.imie = null;
+        this.nazwisko = null;
+        this.plec = null;
     }
-	
-
+    
 }

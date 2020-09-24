@@ -26,8 +26,9 @@ public class LoggerFactoryPostProcessor implements BeanFactoryPostProcessor {
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory factory) {
-		logg.info("-------> Wersja JDK {}", System.getProperty("java.version"));
-		logg.info("-------> Wersja Springa {}", SpringVersion.getVersion());
+		logg.info("=============================================  START AKADEMIKA  =============================================");
+		logg.info("----------> Wersja JDK {}", System.getProperty("java.version"));
+		logg.info("----------> Wersja Springa {}", SpringVersion.getVersion());
 		
 		if (logg.isDebugEnabled()) {
 			logg.debug("-----------> postProcessBeanFactory moze modyfikowac kontekst dla faktory {}", factory.getClass().getName());
