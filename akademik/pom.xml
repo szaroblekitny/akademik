@@ -23,7 +23,7 @@
 		<spring-data-jpa.version>2.3.3.RELEASE</spring-data-jpa.version>
 		<log4j.version>2.13.3</log4j.version>
 		<hsqldb.version>2.5.1</hsqldb.version>
-		<xstream.version>1.4.11.1</xstream.version>
+		<xstream.version>1.4.15</xstream.version>
 		<postgresql-jdbc.version>42.2.10</postgresql-jdbc.version>
 		<atomikos.version>5.0.6</atomikos.version>
 		<primefaces.version>8.0</primefaces.version>
