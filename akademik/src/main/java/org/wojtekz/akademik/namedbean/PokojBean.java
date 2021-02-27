@@ -29,10 +29,30 @@ public class PokojBean implements Serializable {
 	
 	private transient List<Pokoj> pokoje;
 	
+	private transient String numerPokoju;
+	private transient int liczbaMiejsc;
+	
 	private transient PokojRepository pokojRepository;
 	private transient StudentRepository studentRepository;
 	private transient Messagesy komunikaty;
 	
+	
+	public String getNumerPokoju() {
+		return numerPokoju;
+	}
+
+	public void setNumerPokoju(String numerPokoju) {
+		this.numerPokoju = numerPokoju;
+	}
+
+	public int getLiczbaMiejsc() {
+		return liczbaMiejsc;
+	}
+
+	public void setLiczbaMiejsc(int liczbaMiejsc) {
+		this.liczbaMiejsc = liczbaMiejsc;
+	}
+
 	@Autowired
 	public void setPokojRepository(PokojRepository pokojRepository) {
 		this.pokojRepository = pokojRepository;
@@ -87,7 +107,7 @@ public class PokojBean implements Serializable {
 	
 	/**
 	 * Reakcja na zdarzenie edycji rekordu. Wyświetla komunikat i zapisuje rekord do bazy.
-	 * Jeśli istnoało powiązanie pomiędzy pokojem a studentami jest ono odwiązywane.
+	 * Jeśli istniało powiązanie pomiędzy pokojem a studentami, jest ono odwiązywane.
 	 * 
 	 * @param event zdarzenie edycji z komponentu p:cellEditor
 	 */
@@ -117,6 +137,29 @@ public class PokojBean implements Serializable {
 	 */
     public void onRowCancel(RowEditEvent<Pokoj> event) {
     	komunikaty.addMessage("Edycja anulowana", String.valueOf(event.getObject().getId()));
+    }
+    
+    
+    /**
+	 * Nowy rekord. Metoda wywoływana w panelu tworzenia nowego pokoju strony pokoj.xhtml.
+	 * Tworzy pokój, nadaje mu ID, dopisuje resztę danych przekazanych
+	 * z formatki i zapisuje rekord w bazie.
+	 * 
+	 */
+    public void onAddNew() {
+    	logg.debug("-----> dodanie nowego pokoju");
+    	// Student nowy = new Student();
+    	Pokoj nowyPokoj = new Pokoj();
+    	nowyPokoj.setId(pokojRepository.findLastId() + 1L);
+    	nowyPokoj.setLiczbaMiejsc(this.liczbaMiejsc);
+    	nowyPokoj.setNumerPokoju(this.numerPokoju);
+    	pokoje.add(nowyPokoj);
+        komunikaty.addMessage("Tworzenie", "Nowy pokój " + nowyPokoj.toString());
+        // zapis do bazy
+        logg.debug("-----> zapis pokoju {} do bazy", nowyPokoj.getNumerPokoju());
+        pokojRepository.save(nowyPokoj);
+        this.numerPokoju = null;
+        this.liczbaMiejsc = 0;
     }
     
 }

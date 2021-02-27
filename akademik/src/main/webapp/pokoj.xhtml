@@ -49,6 +49,27 @@
 	            		<p:rowEditor />
 	        		</p:column>
 	        	</p:dataTable>
+
+				<!-- fokus - tworzenie nowego pokoju w panelu -->
+				<p:panel id="panel" header="Nowy pokój">
+
+					<p:focus context="panel"/>
+
+					<h:panelGrid columns="3">
+						<div>
+							<p:outputLabel for="numerPok" value="Numer pokoju" />
+							<p:inputText id="numerPok" value="#{pokojBean.numerPokoju}" />
+						</div>
+						<div>
+							<p:outputLabel for="liczbaMiejsc" value="Liczba miejsc" />
+							<p:inputText id="liczbaMiejsc" value="#{pokojBean.liczbaMiejsc}"/>
+						</div>
+					</h:panelGrid>
+
+					<p:commandButton value="Zapisz" styleClass="ui-priority-primary" process="@parent" update=":form:msgs"
+                            action="#{pokojBean.onAddNew()}" oncomplete="PF('pokoje').addRow();"/>
+				</p:panel>
+				<!-- koniec nowego pokoju -->
 			</h:form>
 		</ui:define> 
 

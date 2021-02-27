@@ -35,5 +35,13 @@ public interface PokojRepository extends JpaRepository<Pokoj, Long> {
 	@Modifying
 	@Query("delete from Pokoj p where p.numerPokoju = ?1")
 	void deleteByNumber(String numerPokoju);
+	
+	/**
+	 * Szuka rekordu z największym ID.
+	 * 
+	 * @return wartość największego ID rekordu istniejącego w bazie
+	 */
+	@Query("SELECT MAX(pok.id) FROM Pokoj pok")
+	Long findLastId();
 
 }
