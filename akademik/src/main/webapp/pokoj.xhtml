@@ -20,11 +20,11 @@
 				<!-- wyskakujące komunikaty -->
 				<p:growl id="msgs" sticky="true" showDetail="true"/>
 			
-				<p:dataTable id="pokojTab" var="pokoj" value="#{pokojBean.pokoje}" editable="true" class="dolnymargines">
+				<p:dataTable id="pokojTab" var="pokoj" value="#{pokojBean.pokoje}" editable="true" class="dolnymargines" rowKey="#{pokoj.id}">
 	        		<f:facet name="header">Edycja</f:facet>
 
-	        		<p:ajax event="rowEdit" listener="#{pokojBean.onRowEdit}" update=":form:msgs" />
-	        		<p:ajax event="rowEditCancel" listener="#{pokojBean.onRowCancel}" update=":form:msgs" />
+					<p:ajax event="rowEdit" listener="#{pokojBean.onRowEdit}" update=":form:msgs" />
+					<p:ajax event="rowEditCancel" listener="#{pokojBean.onRowCancel}" update=":form:msgs" />
 
 	 				<p:column headerText="Id pokoju">
 	            		<h:outputText value="#{pokoj.id}" />
@@ -48,7 +48,21 @@
 	        		<p:column class="kolumnaedycji">
 	            		<p:rowEditor />
 	        		</p:column>
+	        		
+	        		<!-- guzik kasowania -->
+	        		<p:column class="kolumnakasowania">
+						<p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this" oncomplete="PF('deletePokojDialog').show()">
+							<f:setPropertyActionListener value="#{pokoj}" target="#{pokojBean.wybranyPokoj}"/>
+						</p:commandButton>
+                	</p:column>
+	        		
 	        	</p:dataTable>
+
+				<!-- potwierdzenie kasowania i wywołanie metody pokojBean.deletePokoj -->
+	        	<p:confirmDialog widgetVar="deletePokojDialog" showEffect="fade" width="300" message="Usunąć wybrany pokój ze spisu?" severity="info">
+					<p:commandButton value="Tak" icon="pi pi-check" actionListener="#{pokojBean.deletePokoj}" process="@this" oncomplete="PF('deletePokojDialog').hide()"/>
+					<p:commandButton value="Nie" type="button" styleClass="ui-button-secondary" icon="pi pi-times" onclick="PF('deletePokojDialog').hide()"/>
+				</p:confirmDialog>
 
 				<!-- fokus - tworzenie nowego pokoju w panelu -->
 				<p:panel id="panel" header="Nowy pokój">

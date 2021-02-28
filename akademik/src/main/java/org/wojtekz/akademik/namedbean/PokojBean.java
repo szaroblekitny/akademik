@@ -6,10 +6,12 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
@@ -28,6 +30,7 @@ public class PokojBean implements Serializable {
 	private static Logger logg = LogManager.getLogger();
 	
 	private transient List<Pokoj> pokoje;
+	private transient Pokoj wybranyPokoj;
 	
 	private transient String numerPokoju;
 	private transient int liczbaMiejsc;
@@ -37,6 +40,14 @@ public class PokojBean implements Serializable {
 	private transient Messagesy komunikaty;
 	
 	
+	public Pokoj getWybranyPokoj() {
+		return wybranyPokoj;
+	}
+
+	public void setWybranyPokoj(Pokoj wybranyPokoj) {
+		this.wybranyPokoj = wybranyPokoj;
+	}
+
 	public String getNumerPokoju() {
 		return numerPokoju;
 	}
@@ -161,5 +172,30 @@ public class PokojBean implements Serializable {
         this.numerPokoju = null;
         this.liczbaMiejsc = 0;
     }
-    
+
+
+    /**
+     * Usuwa pokój przez kliknięcie przycisku. Usuwa pokój z listy pokoi utworzonej na potrzeby
+     * obsługi formatki oraz z bazy danych, z tabeli pokoi. Zadaje pytanie o potwierdzenie
+     * i wyświetla komunikat z potwierdzeniem usunięcia pokoju.
+     * 
+     */
+    public void deletePokoj() {
+    	logg.debug("-----> usunięcie pokoju");
+    	
+    	try {
+    		pokojRepository.delete(this.wybranyPokoj);
+    		komunikaty.addMessage("Usunięcie", "Usunięto pokój " + this.wybranyPokoj.getNumerPokoju());
+    		this.pokoje.remove(this.wybranyPokoj);
+    		this.wybranyPokoj = null;
+
+    	} catch (UnexpectedRollbackException ue) {
+    		komunikaty.addMessage("Usunięcie", "Nie można usunąć pokoju "
+    	                         + this.wybranyPokoj.getNumerPokoju()
+    		                     + ": " + ue.getLocalizedMessage());
+		}
+
+        PrimeFaces.current().ajax().update("form:msgs", "form:pokojTab");
+    }
+
 }
