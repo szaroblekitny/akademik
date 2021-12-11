@@ -194,7 +194,7 @@ public class PokojBean implements Serializable {
     	                         + this.wybranyPokoj.getNumerPokoju()
     		                     + ": " + ue.getLocalizedMessage());
 		}
-
+    	logg.debug("-----> Uaktualnienie komunikatów PrimeFaces");
         PrimeFaces.current().ajax().update("form:msgs", "form:pokojTab");
     }
 
