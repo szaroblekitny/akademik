@@ -29,7 +29,7 @@
 		<primefaces.version>8.0</primefaces.version>
 
 		<junit.version>4.13.1</junit.version>
-		<mockito.version>1.10.19</mockito.version>
+		<mockito.version>4.1.0</mockito.version>
 		
 		<!-- Sonar -->
   		<sonar.java.pmd.reportPaths>${project.build.directory}/pmd.xml</sonar.java.pmd.reportPaths>
@@ -186,10 +186,10 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
+    		<groupId>org.mockito</groupId>
+    		<artifactId>mockito-core</artifactId>
+    		<version>${mockito.version}</version>
+    		<scope>test</scope>
 		</dependency>
 		
 		
