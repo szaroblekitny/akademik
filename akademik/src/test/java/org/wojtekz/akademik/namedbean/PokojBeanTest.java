@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.behavior.Behavior;
+import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -55,6 +57,8 @@ public class PokojBeanTest {
 	private transient UIComponent component = mock(UIComponent.class);
 	private transient Behavior behavior = mock(Behavior.class);
 	
+	transient PrimeFaces primefaces = mock(PrimeFaces.class);
+	transient FacesContext facesContext = mock(FacesContext.class);
 
 	@Autowired
 	public void setStudentRepo(StudentRepository studentRepo) {
@@ -116,7 +120,6 @@ public class PokojBeanTest {
 		pokoik500.setZakwaterowani(studenty);
 		pokojRepository.save(pokoik500);
 		
-		
 	}
 
 	// --------------------------------------------
@@ -161,6 +164,18 @@ public class PokojBeanTest {
 		testowanyBean.onRowCancel(new RowEditEvent<Pokoj>(component, behavior, pokoik500));
 		verify(komunikaty).addMessage("Edycja anulowana", "500");
 	}
+
+	@Test
+	public void testOnAddNew() {
+		logg.debug("===========> testOnAddNew");
+		Assert.assertNotNull("PokBean nullem (add new)", testowanyBean);
+		testowanyBean.getPokoje();
+		testowanyBean.setNumerPokoju("102");
+		testowanyBean.setLiczbaMiejsc(20);
+		testowanyBean.onAddNew();
+		Assert.assertEquals(4, pokojRepository.count());
+	}
+
 
 	// --------------------------------------------
 
