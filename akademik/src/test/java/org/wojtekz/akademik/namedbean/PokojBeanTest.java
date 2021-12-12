@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.behavior.Behavior;
-import javax.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -57,8 +55,6 @@ public class PokojBeanTest {
 	private transient UIComponent component = mock(UIComponent.class);
 	private transient Behavior behavior = mock(Behavior.class);
 	
-	transient PrimeFaces primefaces = mock(PrimeFaces.class);
-	transient FacesContext facesContext = mock(FacesContext.class);
 
 	@Autowired
 	public void setStudentRepo(StudentRepository studentRepo) {
@@ -175,6 +171,9 @@ public class PokojBeanTest {
 		testowanyBean.onAddNew();
 		Assert.assertEquals(4, pokojRepository.count());
 	}
+	
+	// Próbowałem napisać testDeletePokoj, ale wtedy trzeba zastosować zaawansowane
+	// metody mockowania różnych aspektów PrimeFaces i w końcu dałem spokój.
 
 
 	// --------------------------------------------
@@ -185,7 +184,5 @@ public class PokojBeanTest {
 		studentRepo.deleteAll();
 		pokojRepository.deleteAll();
 	}
-
-	
 
 }
