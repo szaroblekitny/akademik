@@ -16,14 +16,17 @@
 		</ui:define>
 
 		<ui:define name = "content">
-			<div class="wolnewokolo">
-			Naciśnięcie guzika urochomi automatyczne kwaterowanie. Operacja jest nieodwracalna.
-			</div>
 			<h:form>
 				<p:growl id="kwamsgs" showDetail="true" />
 				<div class="wolnewokolo">
 					<p:commandButton id="kwabut" action="#{zakwaterujBean.zakwateruj()}"
 						value="Kwaterowanie" icon="pi pi-key" ajax="false"
+						class="prawymargines" />
+				</div>
+
+				<div class="wolnewokolo">
+					<p:commandButton id="rozkwabut" action="#{zakwaterujBean.oproznij()}"
+						value="Opróżnienie akademika" icon="pi pi-key" ajax="false"
 						class="prawymargines" />
 				</div>
 			</h:form>

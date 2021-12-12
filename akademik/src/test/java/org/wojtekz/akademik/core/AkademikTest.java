@@ -252,6 +252,23 @@ public class AkademikTest {
 	}
 	
 	/**
+	 * Test opróżniania akademika. Sprawdza, czy numery pokoi dla studentów są puste.
+	 */
+	@Test
+	public void testOprozniania() {
+		logg.debug("=============>>> testOprozniania starts");
+		daneTestowe.wrzucTrocheDanychDoBazy();
+		logg.trace("-----> przed zakwateruj");
+		akademik.zakwateruj();
+		logg.trace("-----> po zakwateruj");
+
+		akademik.oproznij();
+		for (Student student : studentRepo.findAll()) {
+			Assert.assertNull(student.getPokoj());
+		}
+	}
+
+	/**
 	 * Test głównej aplikacji plikowej.
 	 */
 	@Test

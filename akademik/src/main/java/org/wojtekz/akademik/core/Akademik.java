@@ -246,7 +246,19 @@ public class Akademik {
 		return kwaterowanie(pokoje, kobiety, mezczyzni);
 	}
 	
-	
+	/**
+	 * Opróżnienie akademika. Po prostu wymazuje numery pokoi z tebeli studentów.
+	 */
+	public void oproznij() {
+		logg.info("-------- OPRÓŻNIENIE ---------");
+
+		for (Student student : studentRepo.findAll()) {
+			student.setPokoj(null);
+    		studentRepo.save(student);
+    	}
+	}
+
+
 	/**
 	 * Wypisuje do bufora stan kwaterunku akademika w formie raportu tekstowego. Podaje listę pokoi z nazwiskami
 	 * zakwaterowanych studentów.

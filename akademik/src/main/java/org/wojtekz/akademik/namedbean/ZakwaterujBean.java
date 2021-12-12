@@ -90,15 +90,20 @@ public class ZakwaterujBean implements Serializable {
 	public void zakwateruj() {
 		logg.debug("------> zakwateruj w Beanie");
 		// rozkwaterowanie - usunięcie wpisów w polu zakwaterowani tabeli studentów
-		
-		for (Student student : studentRepository.findAll()) {
-			student.setPokoj(null);
-    		studentRepository.save(student);
-    	}
-		
+		akademik.oproznij();
 		
 		boolean ok = akademik.zakwateruj();
 		komunikaty.addMessage("Kwaterowanie", ok ? "OK" : "Nie poszło");
+	}
+
+	/**
+	 * Wywołuje metodę {@link org.wojtekz.akademik.core.Akademik#oproznij}
+	 * i wyświetla stosowny komunikat.
+	 */
+	public void oproznij() {
+		logg.debug("------> oproznij w Beanie");
+		akademik.oproznij();
+		komunikaty.addMessage("Opróżnianie", "Akademik opróżniony");
 	}
 
 }
