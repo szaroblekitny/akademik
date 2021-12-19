@@ -3,6 +3,9 @@ package org.wojtekz.akademik.namedbean;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.application.FacesMessage.Severity;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,8 +95,9 @@ public class ZakwaterujBean implements Serializable {
 		// rozkwaterowanie - usunięcie wpisów w polu zakwaterowani tabeli studentów
 		akademik.oproznij();
 		
-		boolean ok = akademik.zakwateruj();
-		komunikaty.addMessage("Kwaterowanie", ok ? "OK" : "Nie poszło");
+		String meldunek = akademik.zakwateruj();
+		Severity poziom = "Kwaterowanie udane".equals(meldunek) ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR;
+		komunikaty.addMessage(poziom, "Kwaterowanie", meldunek, null);
 	}
 
 	/**

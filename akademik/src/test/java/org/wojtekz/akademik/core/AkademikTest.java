@@ -238,9 +238,9 @@ public class AkademikTest {
 		Assert.assertEquals(5, studentRepo.findAll().size());
 		
 		logg.trace("-----> pokoje i studenci w bazie");
-		boolean udane = akademik.zakwateruj();
+		String komunikat = akademik.zakwateruj();
 		Assert.assertNotEquals(studentRepo.findAll(), studenci);
-		Assert.assertFalse("Kwaterowanie nie powinno się udać", udane);
+		Assert.assertEquals("Kwaterowanie nie powinno się udać", "Brakuje pokoi dla mężczyzn", komunikat);
 		
 		List<Pokoj> wszystkiePokBaza = pokojRepo.findAll();
 		long ileBaza = pokojRepo.count();
@@ -371,7 +371,7 @@ public class AkademikTest {
 		
 		try {
 			BufferedWriter outputWriter = Files.newBufferedWriter(pathRaportu, charset);
-			akademik.podajStanAkademika(outputWriter, true);
+			akademik.podajStanAkademika(outputWriter, "testStanuAkademika");
 			outputWriter.close();
 			List<String> wszyskieLinie = Files.readAllLines(pathRaportu, charset);
 			int ileLinii = wszyskieLinie.size();

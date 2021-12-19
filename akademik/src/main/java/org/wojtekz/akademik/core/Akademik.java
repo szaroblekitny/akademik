@@ -73,8 +73,8 @@ public class Akademik {
 			
 			pobierzZPliku(pokojeReader);
 			pobierzZPliku(studenciReader);
-			boolean udaloSie = zakwateruj();
-			podajStanAkademika(outputWriter, udaloSie);
+			String meldunek = zakwateruj();
+			podajStanAkademika(outputWriter, meldunek);
 			
 			pokojeReader.close();
 			studenciReader.close();
@@ -167,10 +167,10 @@ public class Akademik {
 	 * @param pokoje lista pokoi pobranych z bazy
 	 * @param kobiety lista kobiet - studentek
 	 * @param mezczyzni lista mężczyzn - studentów
-	 * @return true kwaterowanie udane, starczyło miejsca w akademiku
+	 * @return komunikat o wyniku kwaterowania
 	 * 
 	 */
-	private boolean kwaterowanie(List<Pokoj> pokoje, 
+	private String kwaterowanie(List<Pokoj> pokoje,
 								  List<Student> kobiety,
 								  List<Student> mezczyzni) {
 		Iterator<Student> iterKob = kobiety.iterator();
@@ -190,7 +190,7 @@ public class Akademik {
 		if (!iterPok.hasNext() && iterKob.hasNext()) {
 			logg.info("----->>> Brakuje pokoi dla kobiet");
 			logg.error("------->>> Przepełnienie Akademika <<<-------");
-			return false;
+			return "Brakuje pokoi dla kobiet";
 		} else {
 			// są pokoje, więc kwaterujemy mężczyzn
 			while (iterPok.hasNext()) {
@@ -206,11 +206,11 @@ public class Akademik {
 		if (!iterPok.hasNext() && iterMez.hasNext()) {
 			logg.info("----->>> Brakuje pokoi dla mężczyzn");
 			logg.error("------->>> Przepełnienie Akademika <<<-------");
-			return false;
+			return "Brakuje pokoi dla mężczyzn";
 		}
 		
 		logg.info("---------------->>> ZAKWATEROWANO <<<-----------------");
-		return true;
+		return "Kwaterowanie udane";
 	}
 	
 	/**
@@ -225,12 +225,17 @@ public class Akademik {
 	 * <p>Uwzględniając kobiety będziemy mieli dwie pętle: po kobietach
 	 * i po mężczyznach. Stosujemy 2 razy ten sam algorytm:
 	 * dla każdego pokoju lecimy z pętlą tyle razy, jaka jest pojemność pokoju
-	 * i robimy akcję zakwaterowania, czyli metodę zakwaterujCzesc()
+	 * i robimy akcję zakwaterowania, czyli metodę zakwaterujCzesc().
+	 * 
+	 * <p>Ten algorytm nie zakwateruje wszystkich mężczyzn, jeśli duży
+	 * pokój zostanie zajęty przez np. jedną kobietę. Dla takiego przypadku
+	 * być może mężczyzni zmieściliby się w tym pokoju, ale już
+	 * jest niedostępny.
 	 * 
 	 * @return true, jeśli wszystkim studentom przypisano numer pokoju
 	 * 
 	 */
-	public boolean zakwateruj() {
+	public String zakwateruj() {
 		logg.info("------------------>>> KWATERUNEK <<<-------------------");
 		
 		// listy studentów i pokoi
@@ -264,10 +269,10 @@ public class Akademik {
 	 * zakwaterowanych studentów.
 	 * 
 	 * @param writer BufferedWriter - tam zapiywany jest raport
-	 * @param udaloSie jeśli false, dodaje komunikat, że nie wszyscy studenci zostali zakwaterowani
+	 * @param meldunek komunikat o wyniku kwaterowania
 	 * @throws IOException błąd zapisu
 	 */
-	public void podajStanAkademika(BufferedWriter writer, boolean udaloSie) throws IOException {
+	public void podajStanAkademika(BufferedWriter writer, String meldunek) throws IOException {
 		List<Pokoj> spisPokoi = pokojRepo.findAll();
 		for(Pokoj pokoj : spisPokoi) {
 			writer.write(pokoj.toString());
@@ -282,11 +287,9 @@ public class Akademik {
 
 			writer.newLine();
 		}
-
-		if (!udaloSie) {
-			writer.write("Nie wszyscy studenci zostali zakwaterowani");
-			writer.newLine();
-		}
+		
+		writer.write(meldunek);
+		writer.newLine();
 		writer.write("===================");
 	}
 }
