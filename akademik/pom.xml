@@ -24,7 +24,7 @@
 		<log4j.version>2.17.1</log4j.version>
 		<hsqldb.version>2.7.1</hsqldb.version>
 		<xstream.version>1.4.19</xstream.version>
-		<postgresql-jdbc.version>42.3.3</postgresql-jdbc.version>
+		<postgresql-jdbc.version>42.3.8</postgresql-jdbc.version>
 		<atomikos.version>5.0.6</atomikos.version>
 		<primefaces.version>8.0</primefaces.version>
 
