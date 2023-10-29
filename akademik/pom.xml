@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wojtekz</groupId>
 	<artifactId>akademik</artifactId>
-	<version>0.42-SNAPSHOT</version>
+	<version>0.43-SNAPSHOT</version>
 	<packaging>war</packaging>
 	
 	<name>Manager akademika</name>
@@ -309,7 +309,7 @@
 			<plugin>
       			<groupId>org.jacoco</groupId>
       			<artifactId>jacoco-maven-plugin</artifactId>
-      			<version>0.8.5</version>
+      			<version>0.8.11</version>
       			<configuration>
       				<rules>
   						<rule>
