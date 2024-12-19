@@ -16,8 +16,8 @@
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
 		<spring.version>6.0.23</spring.version>
-		<java.version>11</java.version>
-		<maven-compiler.version>3.8.1</maven-compiler.version>
+		<java.version>19</java.version>
+		<maven-compiler.version>3.13.0</maven-compiler.version>
 		<hibernate.version>6.1.7.Final</hibernate.version>
 		<spring-data-jpa.version>3.0.12</spring-data-jpa.version>
 		<log4j.version>2.17.1</log4j.version>
@@ -258,7 +258,7 @@
       				</filesets>
     			</configuration>
   			</plugin>
-  
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -270,9 +270,8 @@
 					<showWarnings>true</showWarnings>
 				</configuration>
 			</plugin>
-			
-			<plugin>
 
+			<plugin>
         		<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-war-plugin</artifactId>
         		<version>3.2.3</version>
