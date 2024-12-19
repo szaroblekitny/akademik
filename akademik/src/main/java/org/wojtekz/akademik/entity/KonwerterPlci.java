@@ -1,7 +1,7 @@
 package org.wojtekz.akademik.entity;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 /**
  * Konwertuje enumerator {@link Plec} na napis zapisywany w bazie danych

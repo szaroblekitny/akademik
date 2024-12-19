@@ -6,8 +6,6 @@ import java.util.Properties;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 
 import org.apache.logging.log4j.LogManager;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +24,9 @@ import com.atomikos.icatch.config.UserTransactionService;
 import com.atomikos.icatch.config.UserTransactionServiceImp;
 import com.atomikos.icatch.jta.UserTransactionImp;
 import com.atomikos.icatch.jta.UserTransactionManager;
+
+import jakarta.transaction.SystemException;
+import jakarta.transaction.UserTransaction;
 
 /**
  * Ta klasa konfiguruje "produkcyjne" (nietestowe) połączenie z bazą danych.
