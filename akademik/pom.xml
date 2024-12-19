@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wojtekz</groupId>
 	<artifactId>akademik</artifactId>
-	<version>0.45-SNAPSHOT</version>
+	<version>0.46-SNAPSHOT</version>
 	<packaging>war</packaging>
 	
 	<name>Manager akademika</name>
@@ -128,7 +128,7 @@
 		
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
 			<exclusions>
