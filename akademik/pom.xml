@@ -15,7 +15,7 @@
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 
-		<spring.version>6.0.0</spring.version>
+		<spring.version>6.0.23</spring.version>
 		<java.version>11</java.version>
 		<maven-compiler.version>3.8.1</maven-compiler.version>
 		<hibernate.version>6.1.7.Final</hibernate.version>
