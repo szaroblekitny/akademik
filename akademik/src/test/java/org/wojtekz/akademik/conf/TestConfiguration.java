@@ -47,6 +47,7 @@ public class TestConfiguration {
 		em.setPackagesToScan("org.wojtekz.akademik.entity");
 		em.setDataSource(hsqldbDataSource());
 		em.setJpaVendorAdapter(hibJpaVendorAdapter());
+		em.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
 		return em;
 	}
@@ -62,7 +63,6 @@ public class TestConfiguration {
 	public HibernateJpaVendorAdapter hibJpaVendorAdapter() {
 		logg.debug("----->>> HibernateJpaVendorAdapter TEST configuration");
 		HibernateJpaVendorAdapter adapt = new HibernateJpaVendorAdapter();
-		adapt.setDatabasePlatform("org.hibernate.dialect.HSQLDialect");
 		adapt.setGenerateDdl(true);
 		adapt.setShowSql(false);
 		adapt.setPrepareConnection(true);
