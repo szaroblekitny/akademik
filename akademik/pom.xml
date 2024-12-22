@@ -27,9 +27,10 @@
 		<atomikos.version>6.0.0</atomikos.version>
 		<primefaces.version>8.0</primefaces.version>
 
-		<junit.version>4.13.1</junit.version>
-		<mockito.version>4.1.0</mockito.version>
-		
+		<!-- testy -->
+		<junit-jupiter.version>5.11.4</junit-jupiter.version>
+		<mockito.version>5.13.0</mockito.version>
+
 		<!-- Sonar -->
   		<sonar.java.pmd.reportPaths>${project.build.directory}/pmd.xml</sonar.java.pmd.reportPaths>
 	</properties>
@@ -221,12 +222,28 @@
 
 		<!-- tests -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${junit-jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<!-- to jest po to, żeby stare testy napisame po junit4 działały na junit5 -->
+		<!-- nowe testy powinno pisać się pod nowy standard -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-commons</artifactId>
+			<version>1.11.4</version>
+		</dependency>
+
+
 		<dependency>
     		<groupId>org.mockito</groupId>
     		<artifactId>mockito-core</artifactId>
