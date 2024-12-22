@@ -3,8 +3,8 @@ package org.wojtekz.akademik.namedbean;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.application.FacesMessage.Severity;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.application.FacesMessage.Severity;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.component.UIComponent;
-import javax.faces.component.behavior.Behavior;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.behavior.Behavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
