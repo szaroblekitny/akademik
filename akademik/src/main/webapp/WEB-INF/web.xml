@@ -20,7 +20,7 @@
 	</listener>
 
     <context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
     </context-param>
 
@@ -52,7 +52,7 @@
 
     <servlet>
         <servlet-name>facesServlet</servlet-name>
-		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -91,7 +91,7 @@
         <location>/errors.xhtml</location>
     </error-page>
     <error-page>
-        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
         <location>/viewerror.xhtml</location>
     </error-page>
 
