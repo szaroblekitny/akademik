@@ -3,7 +3,7 @@ package org.wojtekz.akademik.namedbean;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +25,7 @@ public class EksportBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final String NAZWA_PLIKU = "/zyrafa3.jpg";
 	private static Logger logg = LogManager.getLogger();
-	
+
 	private transient StreamedContent content;
 
 	/**

@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.component.UIComponent;
-import javax.faces.component.behavior.Behavior;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.component.UIComponentBase;
+import jakarta.faces.component.behavior.Behavior;
+import jakarta.faces.component.behavior.BehaviorBase;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,8 +54,8 @@ public class PokojBeanTest {
 	private transient PokojRepository pokojRepository;
 	private transient StudentRepository studentRepo;
 	private transient Messagesy komunikaty = mock(Messagesy.class);
-	private transient UIComponent component = mock(UIComponent.class);
-	private transient Behavior behavior = mock(Behavior.class);
+	private transient UIComponent component;
+	private transient Behavior behavior;
 	
 
 	@Autowired
@@ -84,6 +86,17 @@ public class PokojBeanTest {
 			pokojRepository.deleteAll();
 		}
 		
+		class TestComponent extends UIComponentBase {
+	        @Override
+	        public String getFamily() {
+	            return "test";
+	        }
+	    };
+
+
+	    component = new TestComponent();
+	    behavior = new BehaviorBase();
+
 		testowanyBean.setMessagesy(komunikaty);
 		
 		pokoik100 = new Pokoj();
@@ -115,7 +128,7 @@ public class PokojBeanTest {
 		pokoik500.setLiczbaMiejsc(500);
 		pokoik500.setZakwaterowani(studenty);
 		pokojRepository.save(pokoik500);
-		
+
 	}
 
 	// --------------------------------------------
