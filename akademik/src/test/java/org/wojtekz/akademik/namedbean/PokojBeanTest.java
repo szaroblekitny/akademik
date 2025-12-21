@@ -13,15 +13,14 @@ import jakarta.faces.component.behavior.BehaviorBase;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
@@ -37,8 +36,7 @@ import org.wojtekz.akademik.repo.StudentRepository;
  * @author Wojciech Zaręba
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 @WebAppConfiguration
 public class PokojBeanTest {
 	private static Logger logg = LogManager.getLogger();
@@ -54,8 +52,8 @@ public class PokojBeanTest {
 	private transient PokojRepository pokojRepository;
 	private transient StudentRepository studentRepo;
 	private transient Messagesy komunikaty = mock(Messagesy.class);
-	private transient UIComponent component;
-	private transient Behavior behavior;
+	private transient static UIComponent component;
+	private transient static Behavior behavior;
 	
 
 	@Autowired
@@ -73,8 +71,21 @@ public class PokojBeanTest {
 		this.testowanyBean = testowanyBean;
 	}
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeAll
+	static void setup() {
+		class TestComponent extends UIComponentBase {
+	        @Override
+	        public String getFamily() {
+	            return "test";
+	        }
+	    };
+
+	    component = new TestComponent();
+	    behavior = new BehaviorBase();
+	}
+
+	@BeforeEach
+	void init() throws Exception {
 		logg.debug("---------+> setUp PokojBeanTest");
 		studentRepo.deleteAll();
 		// sprawdzenie, czy nie zostały pokoje z poprzedniego testu
@@ -85,17 +96,6 @@ public class PokojBeanTest {
 			logg.trace("Mamy pokoje ------+> {}", Arrays.toString(pokoje.toArray()));
 			pokojRepository.deleteAll();
 		}
-		
-		class TestComponent extends UIComponentBase {
-	        @Override
-	        public String getFamily() {
-	            return "test";
-	        }
-	    };
-
-
-	    component = new TestComponent();
-	    behavior = new BehaviorBase();
 
 		testowanyBean.setMessagesy(komunikaty);
 		
@@ -136,40 +136,40 @@ public class PokojBeanTest {
 	@Test
 	public void testGetPokoje() {
 		logg.debug("===========> testGetPokoje");
-		Assert.assertNotNull("PokBean nullem getPok", testowanyBean);
+		Assertions.assertNotNull(testowanyBean, "PokBean nullem getPok");
 		List<Pokoj> lista = testowanyBean.getPokoje();
-		Assert.assertEquals(3, lista.size());
-		Assert.assertEquals("200", lista.get(1).getNumerPokoju());
+		Assertions.assertEquals(3, lista.size());
+		Assertions.assertEquals("200", lista.get(1).getNumerPokoju());
 	}
 	
 	@Test
 	public void testPobierzPokoje() {
 		logg.debug("===========> testPobierzPokoje");
-		Assert.assertEquals(3, pokojRepository.count());
-		Assert.assertNotNull("PokBean nullem pobPok", testowanyBean);
+		Assertions.assertEquals(3, pokojRepository.count());
+		Assertions.assertNotNull(testowanyBean, "PokBean nullem pobPok");
 		List<String> pokStrList = testowanyBean.pobierzPokoje();
-		Assert.assertEquals(3, pokStrList.size());
-		Assert.assertEquals("Pokoj [id=500, numerPokoju=500, liczbaMiejsc=500]", pokStrList.get(2));
+		Assertions.assertEquals(3, pokStrList.size());
+		Assertions.assertEquals("Pokoj [id=500, numerPokoju=500, liczbaMiejsc=500]", pokStrList.get(2));
 	}
 	
 	@Test
 	public void testOnRowEdit() {
 		logg.debug("===========> testOnRowEdit");
-		Assert.assertNotNull("PokBean nullem (edit)", testowanyBean);
-		Assert.assertNotNull("Pokój nullem", pokoik500);
-		Assert.assertNotNull("Komponent nullem", component);
-		Assert.assertNotNull("Zachowanie nullem", behavior);
+		Assertions.assertNotNull(testowanyBean, "PokBean nullem (edit)");
+		Assertions.assertNotNull(pokoik500);
+		Assertions.assertNotNull(component, "Komponent nullem");
+		Assertions.assertNotNull(behavior, "Zachowanie nullem");
 		logg.debug("-------> wywołanie OnRowEdit");
 		testowanyBean.onRowEdit(new RowEditEvent<Pokoj>(component, behavior, pokoik500));
 		verify(komunikaty).addMessage("Edycja", "Zapisany Pokoj [id=500, numerPokoju=500, liczbaMiejsc=500]");
-		Assert.assertEquals("500", pokoik500.getNumerPokoju());
+		Assertions.assertEquals("500", pokoik500.getNumerPokoju());
 	}
 	
 	@Test
 	public void testOnRowCancel() {
 		logg.debug("===========> testOnRowCancel");
-		Assert.assertNotNull("Pokój nullem (canc.)", pokoik500);
-		Assert.assertNotNull("PokBean nullem (cancel)", testowanyBean);
+		Assertions.assertNotNull(pokoik500, "Pokój nullem (canc.)");
+		Assertions.assertNotNull(testowanyBean, "PokBean nullem (cancel)");
 		testowanyBean.onRowCancel(new RowEditEvent<Pokoj>(component, behavior, pokoik500));
 		verify(komunikaty).addMessage("Edycja anulowana", "500");
 	}
@@ -177,12 +177,12 @@ public class PokojBeanTest {
 	@Test
 	public void testOnAddNew() {
 		logg.debug("===========> testOnAddNew");
-		Assert.assertNotNull("PokBean nullem (add new)", testowanyBean);
+		Assertions.assertNotNull(testowanyBean, "PokBean nullem (add new)");
 		testowanyBean.getPokoje();
 		testowanyBean.setNumerPokoju("102");
 		testowanyBean.setLiczbaMiejsc(20);
 		testowanyBean.onAddNew();
-		Assert.assertEquals(4, pokojRepository.count());
+		Assertions.assertEquals(4, pokojRepository.count());
 	}
 	
 	// Próbowałem napisać testDeletePokoj, ale wtedy trzeba zastosować zaawansowane
@@ -191,7 +191,7 @@ public class PokojBeanTest {
 
 	// --------------------------------------------
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		logg.debug("---------+> tearDown PokojBeanTest");
 		studentRepo.deleteAll();
