@@ -1,10 +1,10 @@
 Akademik
 ========
 
-A very simple application for learning Spring purpose (in Polish). I learn Spring and other Java technologies on this application.
+A very simple JSF application for learning Spring (in Polish). I use it to learn Spring and other Java technologies.
 
-This is simply a student hostel manager which manages students and rooms.
+This is a simple program to automatically assign dorm rooms to students from a list.
 
-Texts are in Polish ;-)
+The texts are in Polish :-)
 
-The project is under Simple Public License 2.0
+The project is under Simple Public License 2.0.
