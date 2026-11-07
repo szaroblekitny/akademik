@@ -20,7 +20,15 @@ Kroki oznaczone numerami (np. 1.2) służą do odwołań w rozmowie: wystarczy n
 
 Projekt (wersja 0.60-SNAPSHOT) kompiluje się, ale 9 z 36 testów pada, a import i eksport są tylko zarysowane. Ostatnia nowa funkcja (opróżnianie akademika) pochodzi z grudnia 2021. Późniejsze commity to głównie podbicia wersji i przejście z `javax` na `jakarta`.
 
-**Technologie:** Java 21 (kompilacja), Spring 6.2 (bez Spring Boota), Spring Data JPA, Hibernate 6.6, JSF 4.1 (Mojarra) + PrimeFaces 15, XStream do XML, Atomikos (JTA), PostgreSQL przez JNDI w Tomcacie, HSQLDB w testach.
+**Technologie:**
+
+- Java 21 (kompilacja), Spring 6.2 (bez Spring Boota),
+- Spring Data JPA (Jakarta Persistence API, standard mapowania obiektów na tabele bazy) z Hibernate 6.6 jako implementacją,
+- JSF 4.1 (Jakarta Faces, dawniej JavaServer Faces, czyli strony WWW budowane z komponentów) w implementacji Mojarra + biblioteka komponentów PrimeFaces 15,
+- XStream do zapisu i odczytu XML,
+- Atomikos jako menedżer JTA (Jakarta Transactions API, transakcje obejmujące kilka zasobów naraz),
+- PostgreSQL pobierany przez JNDI (Java Naming and Directory Interface, katalog zasobów serwera, z którego aplikacja bierze połączenie do bazy skonfigurowane w Tomcacie),
+- HSQLDB (baza danych w pamięci) w testach.
 
 **Warstwy aplikacji:**
 
@@ -60,7 +68,7 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 - *Nowość:* plik `mockito-extensions/...MockMaker` z `mock-maker-inline` jest od Mockito 5 zbędny, bo to już domyślne ustawienie. Usuniemy go.
 - *Nowość w Javie 21+:* przy agencie ładowanym dynamicznie JVM wypisuje ostrzeżenie. Rozwiążemy to, dodając Mockito jako `-javaagent` w surefire.
 
-**1.2 Wtyczki Maven i kompilator (P2).** Surefire 2.22.2 → 3.6.1, war 3.2.3 → 3.5.1, clean 3.1.0 → 3.5.0. Usunięcie zależności `junit-platform-commons`, która była bez `<scope>test</scope>` i trafiała do WAR-a.
+**1.2 Wtyczki Maven i kompilator (P2).** Surefire 2.22.2 → 3.6.1, war 3.2.3 → 3.5.1, clean 3.1.0 → 3.5.0. Usunięcie zależności `junit-platform-commons`, która była bez `<scope>test</scope>` i trafiała do WAR-a (Web Application Archive, paczka z aplikacją wdrażana do Tomcata).
 
 - Kompilator dostaje `<release>21</release>` zamiast trójki `source`/`target`/`compilerVersion`. Opcja `--release` (od Javy 9) pilnuje też, żeby w kodzie nie dało się użyć API nowszego niż Java 21.
 - Wszystkie trzy wtyczki wymagają Mavena co najmniej 3.6.3 (używany jest Maven 3.10.0).
@@ -77,16 +85,18 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 **1.2b Ostrzeżenia widoczne przy testach.** Dwa ostrzeżenia zauważone po kroku 1.2.
 
 - *Spring, `BeanPostProcessorChecker`:* metoda `exceptionTranslation()` w `AkademikConfiguration` tworzy `BeanPostProcessor`, ale nie jest `static`. Spring musi więc najpierw utworzyć całą klasę konfiguracyjną, zanim zarejestruje postprocesor, a wtedy ta klasa sama nie przechodzi przez wszystkie postprocesory. Poprawka: `public static PersistenceExceptionTranslationPostProcessor exceptionTranslation()`. Metoda statyczna może zostać wywołana bez tworzenia obiektu klasy.
-- *JVM, `sun.misc.Unsafe::objectFieldOffset` wywołane przez XStream:* od Javy 24 (JEP 498) JVM ostrzega przy użyciu starych metod dostępu do pamięci z `sun.misc.Unsafe`, które mają zostać usunięte. XStream 1.4.21 to najnowsza wersja (listopad 2024), więc podbicie nie pomoże. Poprawka: w `AkademikXStream` tworzymy `new XStream(new PureJavaReflectionProvider())`. Ten wariant tworzy obiekty przez konstruktor bezargumentowy zamiast przez `Unsafe`, a `Pokoj` i `Student` taki konstruktor mają.
+- *JVM, `sun.misc.Unsafe::objectFieldOffset` wywołane przez XStream:* od Javy 24 (JEP 498; JEP to JDK Enhancement Proposal, numerowana propozycja zmiany w Javie) JVM ostrzega przy użyciu starych metod dostępu do pamięci z `sun.misc.Unsafe`, które mają zostać usunięte. XStream 1.4.21 to najnowsza wersja (listopad 2024), więc podbicie nie pomoże. Poprawka: w `AkademikXStream` tworzymy `new XStream(new PureJavaReflectionProvider())`. Ten wariant tworzy obiekty przez konstruktor bezargumentowy zamiast przez `Unsafe`, a `Pokoj` i `Student` taki konstruktor mają.
 - *Wynik:* ostrzeżenie o `Unsafe` zostało. Bajtkod XStreama (`javap -c` na klasie `com.thoughtworks.xstream.core.JVM`) pokazuje, że jej statyczny inicjalizator (`static {}`) przy pierwszym użyciu XStreama sam tworzy `SunUnsafeReflectionProvider` i zapisuje nim pola testowej klasy `JVM$Test`, żeby sprawdzić, co działa na tej JVM. To dzieje się niezależnie od providera, którego używamy. `PureJavaReflectionProvider` zostaje, bo nasze własne wczytywanie XML-a nie korzysta już z `Unsafe`. Samo ostrzeżenie da się tylko wyciszyć opcją JVM `--sun-misc-unsafe-memory-access=allow` albo zaakceptować.
 - *Decyzja:* ostrzeżenie zostaje. Jest prawdziwe i przypomina o zamianie XStreama w Etapie 4. Wyciszanie wymagałoby profilu Mavena tylko dla Javy 24+ (Java 21 nie zna tej opcji).
 - *Uwaga na przyszłość:* XStream jest rozwijany bardzo powoli. Przy Etapie 4 warto rozważyć zamianę na Jackson XML albo Jakarta XML Binding (JAXB).
-- Komunikat `HHH10005002 ... CDI is available` to tylko informacja (`INFO`), nie ostrzeżenie. Pojawia się, bo w testach jest na classpath API CDI.
+- Komunikat `HHH10005002 ... CDI is available` to tylko informacja (`INFO`), nie ostrzeżenie. Pojawia się, bo w testach jest na classpath API CDI (Contexts and Dependency Injection, standard Jakarty do wstrzykiwania zależności, konkurencyjny wobec Springa).
 
 **1.3 Poprawka `compareTo` (P3).** Zamiast `(int)(inny.getId() - this.getId())` użyjemy `Long.compare(this.id, inny.id)`.
 
-- *Dlaczego:* odejmowanie dwóch `long` i rzutowanie na `int` obcina wysokie bity, więc dla dużych ID wynik może mieć zły znak. Obecny kod sortuje też odwrotnie (malejąco). Najpierw napiszemy test, który to pokazuje, potem poprawkę (to jest TDD).
+- *Dlaczego:* odejmowanie dwóch `long` i rzutowanie na `int` obcina wysokie bity, więc dla dużych ID wynik może mieć zły znak. Obecny kod sortuje też odwrotnie (malejąco). Najpierw napiszemy test, który to pokazuje, potem poprawkę. To jest TDD (Test-Driven Development, programowanie sterowane testami) w cyklu „czerwony, zielony, refaktor”: test najpierw pada, potem kod sprawia, że przechodzi, na końcu porządki bez zmiany działania.
 - *Uwaga:* obecne testy `PokojTest.testPorownania` i `StudentTest.testPorownania` sprawdzają dokładne wartości z błędnej implementacji (`1` i `-3`). Kontrakt `compareTo` gwarantuje tylko znak wyniku, więc te testy trzeba będzie poprawić razem z kodem.
+- *Wynik:* w każdej klasie trzy testy (kierunek, przepełnienie przy różnicy ID 2^32, sortowanie strumieniem). Faza czerwona dała dokładnie przewidziane 6 porażek na 40 testów, faza zielona 40/40. `compareTo` nie jest używane w kodzie aplikacji, więc zmiana nie wpływa na ekrany.
+- *Przy okazji:* krzaczki w polskich komunikatach w Git Bash usunęła zmienna `MAVEN_OPTS="-Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8"` w `~/.bashrc` (ustawienie terminala, nie projektu).
 
 **1.4 Dialekt Hibernate (P4).** Usunięcie `hibernate.dialect`. Hibernate 6 sam rozpoznaje wersję PostgreSQL z połączenia, a klasy `PostgreSQL10Dialect` są oznaczone jako przestarzałe.
 
@@ -118,7 +128,7 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 
 - *Nowość (Java 16):* `record`, czyli niezmienna klasa danych w jednej linii: `record WierszRaportu(String pokoj, List<String> mieszkancy) {}`. Kompilator sam tworzy konstruktor, gettery, `equals`, `hashCode` i `toString`.
 
-**2.5 Raport HTML przez XSLT (P7).** Arkusz `raport.xsl` w zasobach przekształci XML w tabelę HTML. Użyjemy standardowego `javax.xml.transform` z JDK, bez dodatkowych bibliotek. Na ekranie kwaterowania pojawi się przycisk „Pobierz raport”.
+**2.5 Raport HTML przez XSLT (P7).** XSLT (Extensible Stylesheet Language Transformations) to język opisujący, jak przekształcić jeden dokument XML w inny, np. w HTML. Arkusz `raport.xsl` w zasobach przekształci XML w tabelę HTML. Użyjemy standardowego `javax.xml.transform` z JDK, bez dodatkowych bibliotek. Na ekranie kwaterowania pojawi się przycisk „Pobierz raport”.
 
 **2.6 Testy.** Każdy krok dostaje test: import z przykładowego XML w `src/test/resources`, eksport i ponowny import dają te same dane, raport zawiera wszystkie pokoje.
 
@@ -156,11 +166,11 @@ Cel: projekt wygląda jak typowa aplikacja Springa z 2026 roku. Ten etap daje na
 | --- | --- |
 | `MainConfiguration`: `DataSource` z JNDI, `EntityManagerFactory`, Atomikos, `JtaTransactionManager` | kilka linii w `application.properties`; zwykłe transakcje JPA bez JTA |
 | `web.xml` z listenerami Springa i `FacesServlet` | brak `web.xml`; JoinFaces rejestruje JSF |
-| plik WAR wdrażany do zewnętrznego Tomcata | wykonywalny JAR z wbudowanym Tomcatem: `java -jar akademik.jar` |
+| plik WAR wdrażany do zewnętrznego Tomcata | wykonywalny JAR (Java Archive) z wbudowanym Tomcatem: `java -jar akademik.jar` |
 | wersje każdej biblioteki wpisane w `pom.xml` | jeden rodzic `spring-boot-starter-parent` dobiera zgodne wersje |
 | `log4j2.xml` + kilka zależności logowania | domyślnie Logback, konfiguracja w `application.properties` |
 
-- *Objaśnienie JTA:* Atomikos jest potrzebny tylko wtedy, gdy jedna transakcja obejmuje kilka zasobów naraz (np. dwie bazy albo bazę i kolejkę JMS). Akademik ma jedną bazę, więc wystarczy zwykły `JpaTransactionManager`. Jeśli chcesz ćwiczyć JTA, zostawimy go świadomie.
+- *Objaśnienie JTA:* Atomikos jest potrzebny tylko wtedy, gdy jedna transakcja obejmuje kilka zasobów naraz (np. dwie bazy albo bazę i kolejkę JMS, czyli Jakarta Messaging, standard kolejek komunikatów). Akademik ma jedną bazę, więc wystarczy zwykły `JpaTransactionManager`. Jeśli chcesz ćwiczyć JTA, zostawimy go świadomie.
 - *Decyzja do podjęcia:* usuwamy Atomikos, czy zostawiamy go do ćwiczenia transakcji rozproszonych?
 - *Do sprawdzenia przed startem:* zgodność JoinFaces 6.1 i PrimeFaces 15 z Bootem 4.1.
 
@@ -168,7 +178,7 @@ Cel: projekt wygląda jak typowa aplikacja Springa z 2026 roku. Ten etap daje na
 
 **4.4 Testcontainers zamiast HSQLDB.** Testy uruchomią prawdziwy PostgreSQL w kontenerze Dockera. HSQLDB zachowuje się inaczej niż PostgreSQL (typy, sekwencje), więc test może przejść na HSQLDB i paść w produkcji. Wymaga Docker Desktop.
 
-**4.5 Opcjonalnie: alternatywa dla JSF.** JSF jest dziś niszowy. Jeśli chcesz poznać popularniejsze podejście, można dodać drugi interfejs: REST API (`@RestController`) albo strony w Thymeleaf. Logika w `core` i serwisy z Etapu 2 zostaną bez zmian, i to dobrze pokazuje sens warstw.
+**4.5 Opcjonalnie: alternatywa dla JSF.** JSF jest dziś niszowy. Jeśli chcesz poznać popularniejsze podejście, można dodać drugi interfejs: REST API (Representational State Transfer, usługi wymieniające dane, zwykle JSON, przez zwykłe żądania HTTP; w Springu `@RestController`) albo strony w Thymeleaf. Logika w `core` i serwisy z Etapu 2 zostaną bez zmian, i to dobrze pokazuje sens warstw.
 
 **Gotowe, gdy:** `mvn spring-boot:run` uruchamia aplikację, a testy działają na PostgreSQL w kontenerze.
 
@@ -199,9 +209,9 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | --- | --- | --- | --- |
 | 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | 1c29a35 |
 | 1.2 | Wtyczki Maven i kompilator `release` | zrobione | 0b3964e |
-| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | zrobione | cdb193b (część 1), |
+| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | zrobione | cdb193b, 04225a9 |
 | 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | e166b4a |
-| 1.3 | Poprawka `compareTo` | do zrobienia | |
+| 1.3 | Poprawka `compareTo` | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | |
 | 1.4 | Dialekt Hibernate | do zrobienia | |
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | do zrobienia | |
 | 1.6 | Uruchomienie w Tomcacie | do zrobienia | |

@@ -104,13 +104,17 @@ public class Pokoj implements Serializable, Plikowalny, Comparable<Pokoj> {
 	/**
 	 * Porównuje ten obiekt z określonym obiektem w celu posortowania.
 	 * W przypadku klasy Pokoj całkowicie wystarczające jest porównanie
-	 * po identyfikatorze.
-	 * 
+	 * po identyfikatorze, rosnąco.
+	 *
+	 * <p>Long.compare zamiast odejmowania: różnica dwóch long rzutowana na int
+	 * może się przepełnić i dać zły znak albo zero.
+	 *
 	 * @param innyPokoj porównywany Pokój
+	 * @return wartość ujemna, zero lub dodatnia, gdy ten pokój ma mniejsze, równe lub większe ID
 	 */
 	@Override
 	public int compareTo(Pokoj innyPokoj) {
-		return (int) (innyPokoj.getId() - this.getId());
+		return Long.compare(this.id, innyPokoj.id);
 	}
 	
 }
