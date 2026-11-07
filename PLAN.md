@@ -1,0 +1,199 @@
+# Akademik – plan dokończenia projektu
+
+Utworzony 2026-11-07. Ten plik jest główną wersją planu; postęp odhaczamy tutaj, w dzienniku na końcu.
+
+## Jak korzystać z tego planu
+
+Plan ma cztery etapy, od najprostszego do najbardziej ambitnego. Realizujemy je po jednym kroku: krok to jedna mała, sprawdzalna zmiana zakończona osobnym commitem.
+
+Zasady pracy:
+
+1. **Najpierw objaśnienie, potem kod.** Przed każdym krokiem opisuję, co zmieniam i dlaczego. Szczególnie zaznaczam rzeczy, które w Javie i Springu pojawiły się po Javie 8.
+2. **Testy uruchamiasz Ty.** Po każdej zmianie podaję komendę (zwykle `mvn test`) i piszę, czego się spodziewać: ile testów, jaki komunikat, co oznaczałby błąd. Sam uruchamiasz, sprawdzasz i mówisz mi, co wyszło. Krok jest skończony dopiero, gdy potwierdzisz, że testy są zielone.
+3. **Jeden krok = jeden commit na osobnej gałęzi.** Dzięki temu w historii Gita widać dokładnie, co się zmieniło, i łatwo cofnąć pomyłkę.
+4. **Ty decydujesz o tempie.** Po każdym kroku zatrzymuję się, a Ty możesz dopytać, zmienić kierunek albo napisać coś samodzielnie.
+5. **Dziennik na końcu dokumentu** pokazuje, co już zrobione.
+
+Kroki oznaczone numerami (np. 1.2) służą do odwołań w rozmowie: wystarczy napisać „robimy 1.2”.
+
+## Stan obecny projektu
+
+Projekt (wersja 0.60-SNAPSHOT) kompiluje się, ale 9 z 36 testów pada, a import i eksport są tylko zarysowane. Ostatnia nowa funkcja (opróżnianie akademika) pochodzi z grudnia 2021. Późniejsze commity to głównie podbicia wersji i przejście z `javax` na `jakarta`.
+
+**Technologie:** Java 21 (kompilacja), Spring 6.2 (bez Spring Boota), Spring Data JPA, Hibernate 6.6, JSF 4.1 (Mojarra) + PrimeFaces 15, XStream do XML, Atomikos (JTA), PostgreSQL przez JNDI w Tomcacie, HSQLDB w testach.
+
+**Warstwy aplikacji:**
+
+| Pakiet | Rola | Najważniejsze klasy |
+| --- | --- | --- |
+| `conf` | konfiguracja Springa w Javie (bez XML) | `MainConfiguration`, `AkademikConfiguration`, `AkademikXStream` |
+| `entity` | encje JPA, czyli tabele bazy | `Pokoj`, `Student`, `Plec` + `KonwerterPlci` |
+| `repo` | dostęp do bazy przez Spring Data | `PokojRepository`, `StudentRepository` |
+| `core` | logika biznesowa | `Akademik` (kwaterowanie), `Plikowanie` (XML) |
+| `namedbean` | beany dla ekranów JSF | `ZakwaterujBean`, `StudentBean`, `PokojBean`, `ImportBean`, `EksportBean` |
+| `webapp` | strony XHTML | `akademik.xhtml`, `student.xhtml`, `pokoj.xhtml`, `kwateruj.xhtml`, `import.xhtml`, `eksport.xhtml` |
+
+**Znane problemy:**
+
+| # | Problem | Gdzie | Etap |
+| --- | --- | --- | --- |
+| P1 | 9 testów pada: Mockito 5.13 nie obsługuje Javy 25, którą masz zainstalowaną | `pom.xml` | 1 |
+| P2 | Stare wtyczki Maven (surefire 2.22.2, war 3.2.3, clean 3.1.0) i zbędny `junit-vintage-engine` | `pom.xml` | 1 |
+| P3 | `compareTo` sortuje malejąco i może przepełnić `int` | `Pokoj`, `Student` | 1 |
+| P4 | Przestarzały dialekt `PostgreSQL10Dialect` | `MainConfiguration` | 1 |
+| P5 | Import zapisuje plik do `h:/TEMP/` i nie ładuje go do bazy | `ImportBean` | 2 |
+| P6 | Eksport pobiera obrazek żyrafy zamiast danych | `EksportBean` | 2 |
+| P7 | Brak raportu XML/HTML zapowiedzianego w `opis.html` | `Akademik` | 2 |
+| P8 | ID nadawane przez `findLastId() + 1`, co daje wyścig przy dwóch użytkownikach | `StudentBean`, `PokojBean` | 3 |
+| P9 | Algorytm marnuje miejsca: jedna kobieta blokuje duży pokój | `Akademik.kwaterowanie` | 3 |
+| P10 | Stare przestrzenie nazw `java.sun.com/jsf` w XHTML i nagłówek `web.xml` 3.1 | `webapp` | 1 |
+
+## Etap 1: zielone testy i porządki
+
+Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. Funkcje aplikacji się nie zmieniają. To fundament pod resztę.
+
+**1.1 Podbicie Mockito (P1).** Z 5.13.0 na 5.24.0.
+
+- *Dlaczego pada:* Mockito tworzy atrapy klas, generując w locie bajtkod przez bibliotekę ByteBuddy. Każda nowa Java zmienia format plików `.class` (numer wersji), a stary ByteBuddy nie zna formatu Javy 25. Stąd komunikat „Mockito cannot mock this class”.
+- *Nowość:* plik `mockito-extensions/...MockMaker` z `mock-maker-inline` jest od Mockito 5 zbędny, bo to już domyślne ustawienie. Usuniemy go.
+- *Nowość w Javie 21+:* przy agencie ładowanym dynamicznie JVM wypisuje ostrzeżenie. Rozwiążemy to, dodając Mockito jako `-javaagent` w surefire.
+
+**1.2 Wtyczki Maven i JUnit (P2).** Surefire 2.22.2 → 3.6.1, war 3.2.3 → 3.5.1, clean 3.1.0 → 3.5.0. Usunięcie `junit-vintage-engine`, bo wszystkie testy są już w JUnit 5.
+
+- *Objaśnienie:* JUnit 5 to nie jedna biblioteka, tylko platforma z „silnikami”. Jupiter uruchamia testy JUnit 5, Vintage stare testy JUnit 4. Skoro starych testów już nie ma, Vintage tylko spowalnia start.
+- Przy okazji ustawimy `<maven.compiler.release>21</maven.compiler.release>` zamiast pary `source`/`target`. Opcja `--release` (od Javy 9) pilnuje też, żeby w kodzie nie dało się użyć API nowszego niż Java 21.
+
+**1.3 Poprawka `compareTo` (P3).** Zamiast `(int)(inny.getId() - this.getId())` użyjemy `Long.compare(this.id, inny.id)`.
+
+- *Dlaczego:* odejmowanie dwóch `long` i rzutowanie na `int` obcina wysokie bity, więc dla dużych ID wynik może mieć zły znak. Obecny kod sortuje też odwrotnie (malejąco). Najpierw napiszemy test, który to pokazuje, potem poprawkę (to jest TDD).
+
+**1.4 Dialekt Hibernate (P4).** Usunięcie `hibernate.dialect`. Hibernate 6 sam rozpoznaje wersję PostgreSQL z połączenia, a klasy `PostgreSQL10Dialect` są oznaczone jako przestarzałe.
+
+**1.5 Przestrzenie nazw JSF (P10).** Zamiana `http://java.sun.com/jsf/...` na `jakarta.faces.html`, `jakarta.faces.core`, `jakarta.faces.facelets`. Aktualizacja `web.xml` do wersji 6.0 (Jakarta EE 10). Stare adresy działają jeszcze dzięki zgodności wstecz, ale Faces 4 oznacza je jako przestarzałe.
+
+**1.6 Uruchomienie aplikacji w Tomcacie.** Sprawdzimy ręcznie, czy wszystkie ekrany działają po zmianach. Potrzebny będzie Tomcat 10.1 lub 11 i PostgreSQL. Przygotuję instrukcję i ewentualnie plik `docker-compose.yml` z bazą.
+
+**Gotowe, gdy:** 36 testów zielonych, aplikacja startuje w Tomcacie, każdy ekran się otwiera.
+
+## Etap 2: import, eksport i raport
+
+Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków już istnieje (`Plikowanie`, `Akademik.pobierzZPliku`), trzeba je tylko połączyć z ekranami.
+
+**2.1 Wspólna usługa `DaneService` (warstwa serwisowa).** Logikę „plik → baza” i „baza → plik” przeniesiemy z `Akademik` do osobnej klasy z adnotacją `@Service` i `@Transactional`.
+
+- *Objaśnienie:* bean JSF powinien tylko obsługiwać ekran, a serwis wykonywać pracę w jednej transakcji. Jeśli import 50 studentów padnie na 30., `@Transactional` wycofa wszystko i baza nie zostanie w połowie wypełniona.
+- *Nowość:* wstrzykiwanie przez konstruktor zamiast setterów z `@Autowired`. Pola mogą być wtedy `final`, a od Springa 4.3 przy jednym konstruktorze adnotacja `@Autowired` jest zbędna.
+
+**2.2 Import do bazy (P5).** `ImportBean.upload()` przekaże strumień z przesłanego pliku prosto do `DaneService`, bez zapisu na dysk `h:/TEMP/`. Ekran pokaże, ile pokoi lub studentów wczytano.
+
+- *Nowość:* `try-with-resources` (Java 7), czyli `try (InputStream in = ...) { }`. Strumień zamyka się sam, także przy wyjątku. Obecny kod zamyka strumienie ręcznie i przy błędzie zostawia je otwarte.
+- *Decyzja do podjęcia:* czy import ma najpierw kasować istniejące dane (jak wersja plikowa), czy dopisywać?
+
+**2.3 Eksport do XML (P6).** `EksportBean` zamiast żyrafy wygeneruje `pokoje.xml` i `studenci.xml` przez `Plikowanie.saveObjectList()`. Format będzie taki sam jak przy imporcie, więc eksport i import zrobią pełne koło.
+
+- *Objaśnienie:* obecny `EksportBean` liczy plik w konstruktorze, raz na sesję. Przeniesiemy to do metody wywoływanej przy kliknięciu, żeby eksport zawsze pokazywał aktualne dane.
+
+**2.4 Raport XML kwaterunku (P7).** Nowa metoda tworzy dokument XML: lista pokoi, w każdym zakwaterowani studenci, na końcu meldunek o wyniku.
+
+- *Nowość (Java 16):* `record`, czyli niezmienna klasa danych w jednej linii: `record WierszRaportu(String pokoj, List<String> mieszkancy) {}`. Kompilator sam tworzy konstruktor, gettery, `equals`, `hashCode` i `toString`.
+
+**2.5 Raport HTML przez XSLT (P7).** Arkusz `raport.xsl` w zasobach przekształci XML w tabelę HTML. Użyjemy standardowego `javax.xml.transform` z JDK, bez dodatkowych bibliotek. Na ekranie kwaterowania pojawi się przycisk „Pobierz raport”.
+
+**2.6 Testy.** Każdy krok dostaje test: import z przykładowego XML w `src/test/resources`, eksport i ponowny import dają te same dane, raport zawiera wszystkie pokoje.
+
+**Gotowe, gdy:** da się wczytać pliki XML z ekranu, zakwaterować, pobrać raport HTML i wyeksportować dane.
+
+## Etap 3: lepsze kwaterowanie i identyfikatory
+
+Cel: algorytm mieści więcej studentów, a ID nadaje baza danych. Ten etap robimy ściśle metodą TDD: najpierw test, który pada, potem kod.
+
+**3.1 Test pokazujący słabość algorytmu (P9).** Przykład: pokoje 4-osobowy i 1-osobowy, jedna kobieta i czterech mężczyzn. Obecny algorytm daje kobietę do pokoju 4-osobowego i trzech mężczyzn zostaje bez miejsca. Test będzie wymagał, żeby wszyscy się zmieścili.
+
+**3.2 Nowy algorytm.** Propozycja prostej heurystyki: dla każdej płci policz liczbę osób, a potem przydzielaj pokoje tak, żeby suma miejsc była jak najbliższa potrzebom (najpierw grupa liczniejsza, największe pokoje najpierw). Jeśli się nie zmieszczą, komunikat poda, ilu osób zabrakło.
+
+- *Nowość (Java 8+):* strumienie (`stream()`, `filter`, `sorted`, `collect`) i `Comparator.comparingInt(Pokoj::getLiczbaMiejsc).reversed()` zamiast ręcznych pętli z iteratorami.
+- *Nowość (Java 16/21):* zamiast zwracać tekst „Kwaterowanie udane” i porównywać go w `ZakwaterujBean`, zwrócimy `record WynikKwaterowania(boolean udane, int niezakwaterowani, String komunikat)`. Porównywanie napisów jest kruche: literówka psuje logikę bez błędu kompilacji.
+
+**3.3 ID z sekwencji bazy (P8).** `@Id @GeneratedValue(strategy = GenerationType.SEQUENCE)` w encjach i usunięcie `findLastId()`.
+
+- *Dlaczego:* dwóch użytkowników naraz może odczytać ten sam ostatni ID i obaj zapiszą `ID + 1`. Sekwencja w bazie wydaje numery atomowo.
+- *Uwaga:* pliki XML z importu zawierają własne ID. Trzeba będzie zdecydować, czy import je zachowuje, czy nadaje nowe.
+
+**3.4 Walidacja danych.** Adnotacje Bean Validation (`@NotBlank`, `@Min(1)`) na polach encji, żeby nie dało się zapisać pokoju z 0 miejsc ani studenta bez nazwiska. JSF pokaże błędy automatycznie przy formularzu. Potrzebna będzie implementacja walidacji, czyli zależność Hibernate Validator.
+
+**Gotowe, gdy:** test z 3.1 przechodzi, nowe rekordy dostają ID z sekwencji, formularze odrzucają błędne dane.
+
+## Etap 4 (opcjonalny): Spring Boot i nowoczesne narzędzia
+
+Cel: projekt wygląda jak typowa aplikacja Springa z 2026 roku. Ten etap daje najwięcej nauki, bo tak dziś pisze się aplikacje w pracy. Aktualne wersje (Maven Central, listopad 2026): Spring Framework 7.0.10, Spring Boot 4.1.2, Hibernate 7.4, JoinFaces 6.1.2.
+
+**4.1 Najpierw Spring 7 bez Boota.** Podbicie Springa z 6.2 do 7.0 i Hibernate do 7.x jako osobny krok. Mniejsza zmiana, łatwiej znaleźć przyczynę, jeśli coś pęknie.
+
+**4.2 Przejście na Spring Boot.** Boot zastępuje większość ręcznej konfiguracji „autokonfiguracją”: wykrywa biblioteki w classpath i sam tworzy dla nich beany.
+
+| Dziś (ręcznie) | Po migracji (Boot) |
+| --- | --- |
+| `MainConfiguration`: `DataSource` z JNDI, `EntityManagerFactory`, Atomikos, `JtaTransactionManager` | kilka linii w `application.properties`; zwykłe transakcje JPA bez JTA |
+| `web.xml` z listenerami Springa i `FacesServlet` | brak `web.xml`; JoinFaces rejestruje JSF |
+| plik WAR wdrażany do zewnętrznego Tomcata | wykonywalny JAR z wbudowanym Tomcatem: `java -jar akademik.jar` |
+| wersje każdej biblioteki wpisane w `pom.xml` | jeden rodzic `spring-boot-starter-parent` dobiera zgodne wersje |
+| `log4j2.xml` + kilka zależności logowania | domyślnie Logback, konfiguracja w `application.properties` |
+
+- *Objaśnienie JTA:* Atomikos jest potrzebny tylko wtedy, gdy jedna transakcja obejmuje kilka zasobów naraz (np. dwie bazy albo bazę i kolejkę JMS). Akademik ma jedną bazę, więc wystarczy zwykły `JpaTransactionManager`. Jeśli chcesz ćwiczyć JTA, zostawimy go świadomie.
+- *Decyzja do podjęcia:* usuwamy Atomikos, czy zostawiamy go do ćwiczenia transakcji rozproszonych?
+- *Do sprawdzenia przed startem:* zgodność JoinFaces 6.1 i PrimeFaces 15 z Bootem 4.1.
+
+**4.3 Flyway zamiast luźnych skryptów SQL.** Skrypty z `src/main/sql` staną się migracjami `V1__schemat.sql`, `V2__dane.sql`. Flyway uruchomi je przy starcie aplikacji i zapamięta w tabeli, które już wykonał. Skrypty dla Oracle można usunąć albo zostawić jako osobny zestaw.
+
+**4.4 Testcontainers zamiast HSQLDB.** Testy uruchomią prawdziwy PostgreSQL w kontenerze Dockera. HSQLDB zachowuje się inaczej niż PostgreSQL (typy, sekwencje), więc test może przejść na HSQLDB i paść w produkcji. Wymaga Docker Desktop.
+
+**4.5 Opcjonalnie: alternatywa dla JSF.** JSF jest dziś niszowy. Jeśli chcesz poznać popularniejsze podejście, można dodać drugi interfejs: REST API (`@RestController`) albo strony w Thymeleaf. Logika w `core` i serwisy z Etapu 2 zostaną bez zmian, i to dobrze pokazuje sens warstw.
+
+**Gotowe, gdy:** `mvn spring-boot:run` uruchamia aplikację, a testy działają na PostgreSQL w kontenerze.
+
+## Słowniczek nowości w Javie
+
+To są nowości, które pojawią się w kodzie podczas prac. Każdą omówię szerzej przy pierwszym użyciu.
+
+| Element | Od Javy | Przykład | Po co |
+| --- | --- | --- | --- |
+| try-with-resources | 7 | `try (var in = plik.getInputStream()) { ... }` | automatyczne zamykanie strumieni |
+| lambdy i referencje metod | 8 | `studenci.forEach(s -> s.setPokoj(null))`, `Pokoj::getLiczbaMiejsc` | krótki kod zamiast klas anonimowych |
+| strumienie (Stream API) | 8 | `pokoje.stream().filter(p -> p.getLiczbaMiejsc() > 1).toList()` | przetwarzanie kolekcji bez ręcznych pętli |
+| `Optional` | 8 | `repo.findById(id).orElseThrow()` | jawne „może nie być wyniku” zamiast `null` |
+| `var` | 10 | `var pokoje = pokojRepo.findAll();` | kompilator sam ustala typ zmiennej lokalnej |
+| wyrażenia `switch` | 14 | `String s = switch (plec) { case KOBIETA -> "K"; case MEZCZYZNA -> "M"; };` | `switch` zwraca wartość, bez `break` |
+| bloki tekstowe | 15 | `"""` wieloliniowy tekst `"""` | czytelny XML i SQL w testach |
+| `record` | 16 | `record WynikKwaterowania(boolean udane, String komunikat) {}` | niezmienne klasy danych bez boilerplate'u |
+| `instanceof` z wzorcem | 16 | `if (obj instanceof Pokoj p) { p.getId(); }` | bez dodatkowego rzutowania |
+| `Stream.toList()` | 16 | `stream.toList()` | krócej niż `collect(Collectors.toList())` |
+| wzorce typów w `switch` | 21 | `switch (obj) { case Pokoj p -> ...; case Student s -> ...; }` | rozpoznanie typu bez łańcucha `if`-ów (przyda się w `pobierzZPliku`) |
+| kolekcje sekwencyjne | 21 | `lista.getFirst()`, `lista.getLast()` | zamiast `get(0)` i `get(size() - 1)` |
+
+## Dziennik postępu
+
+Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zrobienia, w toku, zrobione, pominięte.
+
+| Krok | Opis | Status | Commit |
+| --- | --- | --- | --- |
+| 1.1 | Podbicie Mockito | do zrobienia | |
+| 1.2 | Wtyczki Maven, usunięcie JUnit Vintage | do zrobienia | |
+| 1.3 | Poprawka `compareTo` | do zrobienia | |
+| 1.4 | Dialekt Hibernate | do zrobienia | |
+| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | do zrobienia | |
+| 1.6 | Uruchomienie w Tomcacie | do zrobienia | |
+| 2.1 | `DaneService` | do zrobienia | |
+| 2.2 | Import do bazy | do zrobienia | |
+| 2.3 | Eksport do XML | do zrobienia | |
+| 2.4 | Raport XML | do zrobienia | |
+| 2.5 | Raport HTML przez XSLT | do zrobienia | |
+| 2.6 | Testy importu, eksportu i raportu | do zrobienia | |
+| 3.1 | Test słabości algorytmu | do zrobienia | |
+| 3.2 | Nowy algorytm kwaterowania | do zrobienia | |
+| 3.3 | ID z sekwencji | do zrobienia | |
+| 3.4 | Walidacja danych | do zrobienia | |
+| 4.1 | Spring 7 i Hibernate 7 | do zrobienia | |
+| 4.2 | Spring Boot 4 + JoinFaces | do zrobienia | |
+| 4.3 | Flyway | do zrobienia | |
+| 4.4 | Testcontainers | do zrobienia | |
+| 4.5 | REST API lub Thymeleaf | do zrobienia | |
