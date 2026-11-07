@@ -255,12 +255,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-commons</artifactId>
-			<version>1.11.4</version>
-		</dependency>
-
-		<dependency>
     		<groupId>org.mockito</groupId>
     		<artifactId>mockito-core</artifactId>
     		<version>${mockito.version}</version>
@@ -314,7 +308,7 @@
 		
 			<plugin>
     			<artifactId>maven-clean-plugin</artifactId>
-    			<version>3.1.0</version>
+    			<version>3.5.0</version>
     			<configuration>
       				<filesets>
         				<fileset>
@@ -338,9 +332,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler.version}</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<compilerVersion>${java.version}</compilerVersion>
+					<!-- release (od Javy 9) zamiast source/target: kompiluje do formatu Javy 21
+					     i sprawdza, że kod używa tylko API dostępnego w Javie 21 -->
+					<release>${java.version}</release>
 					<showWarnings>true</showWarnings>
 				</configuration>
 			</plugin>
@@ -348,7 +342,7 @@
 			<plugin>
         		<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-war-plugin</artifactId>
-        		<version>3.2.3</version>
+        		<version>3.5.1</version>
         		<configuration>
           			<archive>
             			<manifestEntries>
@@ -376,7 +370,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
     			<artifactId>maven-surefire-plugin</artifactId>
-    			<version>2.22.2</version>
+    			<version>3.6.1</version>
     			<configuration>
     				<!-- Mockito jako agent Javy ładowany przy starcie JVM testów.
     				     Od Javy 21 dynamiczne doładowanie agenta w trakcie działania

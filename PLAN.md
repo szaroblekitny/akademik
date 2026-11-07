@@ -38,7 +38,7 @@ Projekt (wersja 0.60-SNAPSHOT) kompiluje się, ale 9 z 36 testów pada, a import
 | # | Problem | Gdzie | Etap |
 | --- | --- | --- | --- |
 | P1 | 9 testów pada: Mockito 5.13 nie obsługuje Javy 25, którą masz zainstalowaną | `pom.xml` | 1 |
-| P2 | Stare wtyczki Maven (surefire 2.22.2, war 3.2.3, clean 3.1.0) i zbędny `junit-vintage-engine` | `pom.xml` | 1 |
+| P2 | Stare wtyczki Maven (surefire 2.22.2, war 3.2.3, clean 3.1.0); 31 z 36 testów nadal w JUnit 4 (przez `junit-vintage-engine`) | `pom.xml`, `src/test` | 1 |
 | P3 | `compareTo` sortuje malejąco i może przepełnić `int` | `Pokoj`, `Student` | 1 |
 | P4 | Przestarzały dialekt `PostgreSQL10Dialect` | `MainConfiguration` | 1 |
 | P5 | Import zapisuje plik do `h:/TEMP/` i nie ładuje go do bazy | `ImportBean` | 2 |
@@ -60,10 +60,18 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 - *Nowość:* plik `mockito-extensions/...MockMaker` z `mock-maker-inline` jest od Mockito 5 zbędny, bo to już domyślne ustawienie. Usuniemy go.
 - *Nowość w Javie 21+:* przy agencie ładowanym dynamicznie JVM wypisuje ostrzeżenie. Rozwiążemy to, dodając Mockito jako `-javaagent` w surefire.
 
-**1.2 Wtyczki Maven i JUnit (P2).** Surefire 2.22.2 → 3.6.1, war 3.2.3 → 3.5.1, clean 3.1.0 → 3.5.0. Usunięcie `junit-vintage-engine`, bo wszystkie testy są już w JUnit 5.
+**1.2 Wtyczki Maven i kompilator (P2).** Surefire 2.22.2 → 3.6.1, war 3.2.3 → 3.5.1, clean 3.1.0 → 3.5.0. Usunięcie zależności `junit-platform-commons`, która była bez `<scope>test</scope>` i trafiała do WAR-a.
 
-- *Objaśnienie:* JUnit 5 to nie jedna biblioteka, tylko platforma z „silnikami”. Jupiter uruchamia testy JUnit 5, Vintage stare testy JUnit 4. Skoro starych testów już nie ma, Vintage tylko spowalnia start.
-- Przy okazji ustawimy `<maven.compiler.release>21</maven.compiler.release>` zamiast pary `source`/`target`. Opcja `--release` (od Javy 9) pilnuje też, żeby w kodzie nie dało się użyć API nowszego niż Java 21.
+- Kompilator dostaje `<release>21</release>` zamiast trójki `source`/`target`/`compilerVersion`. Opcja `--release` (od Javy 9) pilnuje też, żeby w kodzie nie dało się użyć API nowszego niż Java 21.
+- Wszystkie trzy wtyczki wymagają Mavena co najmniej 3.6.3 (używany jest Maven 3.10.0).
+- *Korekta planu:* pierwotnie w tym kroku miało też zniknąć `junit-vintage-engine`. Okazało się, że w JUnit 5 jest tylko `PokojBeanTest` (5 testów), a 10 pozostałych klas (31 testów) to nadal JUnit 4. Bez Vintage te testy przestałyby się w ogóle uruchamiać. Przenosimy to do kroku 1.2a.
+
+**1.2a Migracja testów na JUnit 5 (P2).** Przepisanie 10 klas testowych z JUnit 4 na JUnit 5 (Jupiter), a na końcu usunięcie `junit-vintage-engine`.
+
+- *Objaśnienie:* JUnit 5 to nie jedna biblioteka, tylko platforma z „silnikami”. Jupiter uruchamia testy JUnit 5, Vintage stare testy JUnit 4. Po migracji Vintage nie będzie potrzebny.
+- Główne zamiany: `org.junit.Test` → `org.junit.jupiter.api.Test`, `@Before`/`@After` → `@BeforeEach`/`@AfterEach`, `Assert.assertEquals` → `Assertions.assertEquals`, `@RunWith(SpringJUnit4ClassRunner.class)` + `@ContextConfiguration` → `@SpringJUnitConfig`. Uwaga na kolejność argumentów: w obu wersjach komunikat błędu przy asercjach stoi w innym miejscu (w JUnit 4 pierwszy, w JUnit 5 ostatni).
+- Wzorzec jest już w `PokojBeanTest`, przerobionym w grudniu 2025.
+- Proponowana kolejność: najpierw proste testy bez Springa (`PokojTest`, `StudentTest`, `AkademikXStreamTest`), potem te z kontekstem Springa. Po każdej klasie liczba testów musi zostać ta sama (36).
 
 **1.3 Poprawka `compareTo` (P3).** Zamiast `(int)(inny.getId() - this.getId())` użyjemy `Long.compare(this.id, inny.id)`.
 
@@ -178,8 +186,9 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 
 | Krok | Opis | Status | Commit |
 | --- | --- | --- | --- |
-| 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | |
-| 1.2 | Wtyczki Maven, usunięcie JUnit Vintage | do zrobienia | |
+| 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | 1c29a35 |
+| 1.2 | Wtyczki Maven i kompilator `release` | zrobione | |
+| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | do zrobienia | |
 | 1.3 | Poprawka `compareTo` | do zrobienia | |
 | 1.4 | Dialekt Hibernate | do zrobienia | |
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | do zrobienia | |
