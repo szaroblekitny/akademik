@@ -5,13 +5,11 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
@@ -25,8 +23,7 @@ import org.wojtekz.akademik.repo.StudentRepository;
  * @author Wojtek
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 public class DaneTestoweTest {
 	private static Logger logg = LogManager.getLogger();
 	
@@ -49,7 +46,7 @@ public class DaneTestoweTest {
 		this.pokojRepo = pokojRepo;
 	}
 
-	@After
+	@AfterEach
 	public void setDown() throws Exception {
 		logg.debug("------+> Kasowanie danych po teście");
 		studentRepo.deleteAll();
@@ -64,8 +61,8 @@ public class DaneTestoweTest {
 		daneDane.wrzucTrocheDanychDoBazy(daneDane.getMieszkancy());
 		logg.trace("----->>> Dane wrzucone, sprawdzam");
 		Optional<Student> stt = studentRepo.findById(3L);
-		Assert.assertFalse(stt.isEmpty());
-		Assert.assertEquals("Malinowski", stt.get().getNazwisko());
+		Assertions.assertFalse(stt.isEmpty());
+		Assertions.assertEquals("Malinowski", stt.get().getNazwisko());
 	}
 
 	@Test
@@ -75,7 +72,7 @@ public class DaneTestoweTest {
 		logg.trace("----->>> dane wrzucone do bazy");
 		List<Pokoj> pokList = pokojRepo.findByNumerPokoju("102");
 		logg.trace("----->>> lista pokoi pobrana");
-		Assert.assertEquals(3, pokList.get(0).getLiczbaMiejsc());
+		Assertions.assertEquals(3, pokList.get(0).getLiczbaMiejsc());
 	}
 
 	
@@ -85,8 +82,8 @@ public class DaneTestoweTest {
 		daneDane.wrzucTrocheDanychDoBazy();
 		logg.trace("-------+> dane wrzucone");
 		long ilePokoi = pokojRepo.count();
-		Assert.assertEquals("Liczba pokoi niezgodna", 3, ilePokoi);
+		Assertions.assertEquals(3, ilePokoi, "Liczba pokoi niezgodna");
 		long ileStudentow = studentRepo.count();
-		Assert.assertEquals("Liczba studnetow niezgodna", 6, ileStudentow);
+		Assertions.assertEquals(6, ileStudentow, "Liczba studnetow niezgodna");
 	}
 }

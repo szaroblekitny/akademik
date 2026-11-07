@@ -1,7 +1,7 @@
 package org.wojtekz.akademik.core;
 
-import org.junit.After;
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,12 +18,10 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
@@ -38,8 +36,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  * @author Wojtek
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 public class AkademikTest {
 	private final String PLIK_POKOI = "pokoje_test_appl.xml";
 	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
@@ -85,7 +82,7 @@ public class AkademikTest {
 		this.pokojRepo = pokojRepo;
 	}
 
-	@Before
+	@BeforeEach
 	public void przedTest() throws Exception {
 		logg.debug("-----+> przedTest starts");
 		
@@ -189,11 +186,11 @@ public class AkademikTest {
 			reader.close();
 			
 			List<Pokoj> pokZBazy = pokojRepo.findByNumerPokoju("102");
-			Assert.assertEquals(3, pokZBazy.get(0).getLiczbaMiejsc());
+			Assertions.assertEquals(3, pokZBazy.get(0).getLiczbaMiejsc());
 			
 		} catch (IOException ee) {
 			logg.error("----->>> testPobierzPokoje: Błąd odczytu pliku z pokojami", ee);
-			Assert.fail("Exception: " + ee.getMessage());
+			Assertions.fail("Exception: " + ee.getMessage());
 		}
 		
 	}
@@ -209,13 +206,13 @@ public class AkademikTest {
 			logg.trace("-----> studenci pobrani");
 			
 			List<Student> malinowscyZBazy = studentRepo.findByName("Malinowski");
-			Assert.assertEquals(3, malinowscyZBazy.get(0).getId());
-			Assert.assertEquals("Adam", malinowscyZBazy.get(0).getImie());
-			Assert.assertEquals("Jerzy", malinowscyZBazy.get(1).getImie());
+			Assertions.assertEquals(3, malinowscyZBazy.get(0).getId());
+			Assertions.assertEquals("Adam", malinowscyZBazy.get(0).getImie());
+			Assertions.assertEquals("Jerzy", malinowscyZBazy.get(1).getImie());
 			
 		} catch (IOException ee) {
 			logg.error("----- ERROR >> Błąd odczytu pliku ze studentami");
-			Assert.fail("Exception: " + ee.getMessage());
+			Assertions.fail("Exception: " + ee.getMessage());
 		}
 		
 	}
@@ -232,23 +229,23 @@ public class AkademikTest {
 	public void testKwaterowania() {
 		logg.debug("=============>>> testKwaterowania starts");
 		pokojRepo.saveAll(pokoje);
-		Assert.assertEquals(2, pokojRepo.findAll().size());
+		Assertions.assertEquals(2, pokojRepo.findAll().size());
 		
 		studentRepo.saveAll(studenci);
-		Assert.assertEquals(5, studentRepo.findAll().size());
+		Assertions.assertEquals(5, studentRepo.findAll().size());
 		
 		logg.trace("-----> pokoje i studenci w bazie");
 		String komunikat = akademik.zakwateruj();
-		Assert.assertNotEquals(studentRepo.findAll(), studenci);
-		Assert.assertEquals("Kwaterowanie nie powinno się udać", "Brakuje pokoi dla mężczyzn", komunikat);
+		Assertions.assertNotEquals(studentRepo.findAll(), studenci);
+		Assertions.assertEquals("Brakuje pokoi dla mężczyzn", komunikat, "Kwaterowanie nie powinno się udać");
 		
 		List<Pokoj> wszystkiePokBaza = pokojRepo.findAll();
 		long ileBaza = pokojRepo.count();
 		long ilePoko = pokoje.size();
-		Assert.assertEquals(ilePoko, ileBaza);
+		Assertions.assertEquals(ilePoko, ileBaza);
 		
-		Assert.assertEquals(pokoje.get(0).getNumerPokoju(), wszystkiePokBaza.get(0).getNumerPokoju());
-		Assert.assertEquals(pokoje.get(1).getNumerPokoju(), wszystkiePokBaza.get(1).getNumerPokoju());
+		Assertions.assertEquals(pokoje.get(0).getNumerPokoju(), wszystkiePokBaza.get(0).getNumerPokoju());
+		Assertions.assertEquals(pokoje.get(1).getNumerPokoju(), wszystkiePokBaza.get(1).getNumerPokoju());
 	}
 	
 	/**
@@ -264,7 +261,7 @@ public class AkademikTest {
 
 		akademik.oproznij();
 		for (Student student : studentRepo.findAll()) {
-			Assert.assertNull(student.getPokoj());
+			Assertions.assertNull(student.getPokoj());
 		}
 	}
 
@@ -287,12 +284,12 @@ public class AkademikTest {
 			}
 			
 			int ileLinii = wszyskieLinie.size();
-			Assert.assertEquals("Pokoj [id=1, numerPokoju=101, liczbaMiejsc=2]", wszyskieLinie.get(0));
-			Assert.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA, nr pokoju=102]", wszyskieLinie.get(ileLinii - 5));
+			Assertions.assertEquals("Pokoj [id=1, numerPokoju=101, liczbaMiejsc=2]", wszyskieLinie.get(0));
+			Assertions.assertEquals("Student [id=3, imie=Adam, nazwisko=Malinowski, plec=MEZCZYZNA, nr pokoju=102]", wszyskieLinie.get(ileLinii - 5));
 			
 		} catch (IOException ie) {
 			logg.error("----->>> testAkademika - problemy plikowe", ie);
-			Assert.fail("Exception: " + ie.getMessage());
+			Assertions.fail("Exception: " + ie.getMessage());
 		}
 	}
 	
@@ -319,44 +316,44 @@ public class AkademikTest {
 		daneTestowe.wrzucTrocheDanychDoBazy();
 		logg.trace("-----> przed zakwateruj testPlciowy");
 		Optional<Pokoj> testowanyPokoj = pokojRepo.findById(1L);
-		Assert.assertTrue(testowanyPokoj.isPresent());
+		Assertions.assertTrue(testowanyPokoj.isPresent());
 		akademik.zakwateruj();
 		List<Student> mieszkancy = studentRepo.findByPokoj(testowanyPokoj.get());
-		Assert.assertEquals(2, mieszkancy.size());
+		Assertions.assertEquals(2, mieszkancy.size());
 		//----
 		if (logg.isTraceEnabled()) {
 			logg.trace("--------+> mieszkańcy pok. 101");
 			wyswietlMieszkancow(mieszkancy);
 		}
 		//----
-		Assert.assertEquals("Oczekuję Janiny, a nie mam", "Janina", mieszkancy.get(0).getImie());
-		Assert.assertEquals("Oczekuję Małgorzaty, a nie mam", "Małgorzata", mieszkancy.get(1).getImie());
+		Assertions.assertEquals("Janina", mieszkancy.get(0).getImie(), "Oczekuję Janiny, a nie mam");
+		Assertions.assertEquals("Małgorzata", mieszkancy.get(1).getImie(), "Oczekuję Małgorzaty, a nie mam");
 		logg.trace("--------+> drugi pokój");
 		// -- drugi pokój
 		testowanyPokoj = pokojRepo.findById(2L);
 		logg.trace("--------+>mamy drugi pokój: {}", testowanyPokoj);
-		Assert.assertTrue(testowanyPokoj.isPresent());
+		Assertions.assertTrue(testowanyPokoj.isPresent());
 		mieszkancy = studentRepo.findByPokoj(testowanyPokoj.get());
-		Assert.assertEquals(3, mieszkancy.size());
+		Assertions.assertEquals(3, mieszkancy.size());
 		if (logg.isTraceEnabled()) {
 			logg.trace("--------+> mieszkańcy pok. 102");
 			wyswietlMieszkancow(mieszkancy);
 		}
 		// Studenci są ładowani z bazy testowe wg identyfikatorów z pola ID
-		Assert.assertEquals("Jan", mieszkancy.get(0).getImie());
-		Assert.assertEquals("Adam", mieszkancy.get(1).getImie());
-		Assert.assertEquals("Mirosław", mieszkancy.get(2).getImie());
+		Assertions.assertEquals("Jan", mieszkancy.get(0).getImie());
+		Assertions.assertEquals("Adam", mieszkancy.get(1).getImie());
+		Assertions.assertEquals("Mirosław", mieszkancy.get(2).getImie());
 		// -- trzeci pokój
 		testowanyPokoj = pokojRepo.findById(3L);
-		Assert.assertTrue(testowanyPokoj.isPresent());
+		Assertions.assertTrue(testowanyPokoj.isPresent());
 		mieszkancy = studentRepo.findByPokoj(testowanyPokoj.get());
-		Assert.assertEquals(1, mieszkancy.size());
+		Assertions.assertEquals(1, mieszkancy.size());
 		if (logg.isTraceEnabled()) {
 			logg.trace("--------+> mieszkańcy pok. 103");
 			wyswietlMieszkancow(mieszkancy);
 		}
 		
-		Assert.assertEquals("Oczekuję Ignacego w pok. 3", "Ignacy", mieszkancy.get(0).getImie());
+		Assertions.assertEquals("Ignacy", mieszkancy.get(0).getImie(), "Oczekuję Ignacego w pok. 3");
 	}
 	
 	
@@ -375,15 +372,15 @@ public class AkademikTest {
 			outputWriter.close();
 			List<String> wszyskieLinie = Files.readAllLines(pathRaportu, charset);
 			int ileLinii = wszyskieLinie.size();
-			Assert.assertEquals("===================", wszyskieLinie.get(ileLinii - 1));
+			Assertions.assertEquals("===================", wszyskieLinie.get(ileLinii - 1));
 		} catch (IOException ee) {
 			logg.error("-----> testStanuAkademika Błąd bufora ", ee);
-			Assert.fail("Exception: " + ee.getMessage());
+			Assertions.fail("Exception: " + ee.getMessage());
 		}
 		
 	}
 	
-	@After
+	@AfterEach
 	public void poTescie() throws Exception {
 		logg.debug("== == == == ==>>> poTescie");
 		usunPlik(pathPokoi);

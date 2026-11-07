@@ -1,20 +1,17 @@
 package org.wojtekz.akademik.namedbean;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Student;
@@ -29,8 +26,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  * @author Wojciech Zaręba
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 @WebAppConfiguration
 public class ZakwaterujBeanTest {
 	private static Logger logg = LogManager.getLogger();
@@ -64,7 +60,7 @@ public class ZakwaterujBeanTest {
 	}
 	
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logg.debug("-------> setUp ZakwaterujBeanTest");
 		
@@ -74,7 +70,7 @@ public class ZakwaterujBeanTest {
 		logg.debug("-------> setUp ZakwaterujBeanTest koniec");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		studentRepo.deleteAll();
 		pokojRepo.deleteAll();
@@ -89,20 +85,20 @@ public class ZakwaterujBeanTest {
 	@Test
 	public void testZakwateruj() {
 		logg.debug("=============>>> testZakwateruj");
-		assertNotNull(zakwaterujBean);
+		Assertions.assertNotNull(zakwaterujBean);
 		Optional<Student> studenPrzed = studentRepo.findById(PIERSZY);
-		
-		Assert.assertFalse("----> Nie ma studenta", studenPrzed.isEmpty());
+
+		Assertions.assertFalse(studenPrzed.isEmpty(), "----> Nie ma studenta");
 		
 		Student testStudent = studenPrzed.get();
 		
-		Assert.assertNull(testStudent.getPokoj());
+		Assertions.assertNull(testStudent.getPokoj());
 		
 		zakwaterujBean.zakwateruj();
 		testStudent = studentRepo.findById(PIERSZY).get();
 		
-		Assert.assertNotNull(testStudent.getPokoj());
-		Assert.assertEquals(2L, testStudent.getPokoj().getId());
+		Assertions.assertNotNull(testStudent.getPokoj());
+		Assertions.assertEquals(2L, testStudent.getPokoj().getId());
 	}
 
 }

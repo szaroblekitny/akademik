@@ -5,18 +5,15 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 public class PokojRepositoryTest {
 	private static Logger logg = LogManager.getLogger();
 	
@@ -44,7 +41,7 @@ public class PokojRepositoryTest {
 	 * i zapisuje go w bazie.
 	 * 
 	 */
-	@Before
+	@BeforeEach
 	public void before() {
 		logg.debug("-----+> Pokoj before początek");
 		List<Pokoj> pokoje;
@@ -69,9 +66,9 @@ public class PokojRepositoryTest {
 		logg.debug("--------> Pokoj findAllTest method fired");
 		
 		// test początkowy, czy mamy połączenie z bazą - to nie jest oczywiste :-)
-		Assert.assertNotNull(pokojRep.findAll());
+		Assertions.assertNotNull(pokojRep.findAll());
 		
-		Assert.assertEquals(1L, pokojRep.findAll().get(0).getId());
+		Assertions.assertEquals(1L, pokojRep.findAll().get(0).getId());
 		// czyszczenie przed kolejnym testem
 		pokojRep.deleteAll();
 	}
@@ -83,7 +80,7 @@ public class PokojRepositoryTest {
 		pokojRep.save(pokoj);
 		logg.trace("----->>> zapiszIOdczyt po save pokoj");
 		listaPokoi = pokojRep.findAll();
-		Assert.assertEquals(1, listaPokoi.size());
+		Assertions.assertEquals(1, listaPokoi.size());
 		pokojRep.deleteAll();
 	}
 

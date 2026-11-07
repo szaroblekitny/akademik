@@ -71,6 +71,7 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 - *Objaśnienie:* JUnit 5 to nie jedna biblioteka, tylko platforma z „silnikami”. Jupiter uruchamia testy JUnit 5, Vintage stare testy JUnit 4. Po migracji Vintage nie będzie potrzebny.
 - Główne zamiany: `org.junit.Test` → `org.junit.jupiter.api.Test`, `@Before`/`@After` → `@BeforeEach`/`@AfterEach`, `Assert.assertEquals` → `Assertions.assertEquals`, `@RunWith(SpringJUnit4ClassRunner.class)` + `@ContextConfiguration` → `@SpringJUnitConfig`. Uwaga na kolejność argumentów: w obu wersjach komunikat błędu przy asercjach stoi w innym miejscu (w JUnit 4 pierwszy, w JUnit 5 ostatni).
 - Wzorzec jest już w `PokojBeanTest`, przerobionym w grudniu 2025.
+- *Kolejność testów:* JUnit 4 i JUnit 5 wybierają kolejność metod testowych inaczej (oba deterministycznie, ale według innego algorytmu). Testy, które zostawiają dane w bazie HSQLDB dla następnych, mogą po migracji zacząć padać. To byłby sygnał, że testy nie są od siebie niezależne, a nie błąd migracji.
 - Proponowana kolejność: najpierw proste testy bez Springa (`PokojTest`, `StudentTest`, `AkademikXStreamTest`), potem te z kontekstem Springa. Po każdej klasie liczba testów musi zostać ta sama (36).
 
 **1.2b Ostrzeżenia widoczne przy testach.** Dwa ostrzeżenia zauważone po kroku 1.2.
@@ -198,7 +199,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | --- | --- | --- | --- |
 | 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | 1c29a35 |
 | 1.2 | Wtyczki Maven i kompilator `release` | zrobione | 0b3964e |
-| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | w toku: część 1 (3 klasy bez Springa) zrobiona | |
+| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | zrobione | cdb193b (część 1), |
 | 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | e166b4a |
 | 1.3 | Poprawka `compareTo` | do zrobienia | |
 | 1.4 | Dialekt Hibernate | do zrobienia | |

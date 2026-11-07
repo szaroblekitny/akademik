@@ -11,15 +11,13 @@ import jakarta.faces.component.behavior.Behavior;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Pokoj;
@@ -35,8 +33,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  * @author Wojciech Zaręba
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 @WebAppConfiguration
 public class StudentBeanTest {
 	private static Logger logg = LogManager.getLogger();
@@ -75,7 +72,7 @@ public class StudentBeanTest {
 	}
 
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		logg.debug("------+> setUp");
 		
@@ -104,7 +101,7 @@ public class StudentBeanTest {
 		logg.debug("------+> koniec setUp");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		studentRepo.deleteAll();
 		pokojRepo.deleteAll();
@@ -120,8 +117,8 @@ public class StudentBeanTest {
 				"Zapisany Student [id=10, imie=" + KLAPA
 				+ ", nazwisko=" + SMIESZNY + ", plec=null, nr pokoju=niezakw.]");
 		Optional<Student> sprStudent = studentRepo.findById(10L);
-		Assert.assertTrue(sprStudent.isPresent());
-		Assert.assertEquals(KLAPA, sprStudent.get().getImie());
+		Assertions.assertTrue(sprStudent.isPresent());
+		Assertions.assertEquals(KLAPA, sprStudent.get().getImie());
 	}
 
 	@Test
@@ -134,12 +131,12 @@ public class StudentBeanTest {
 	@Test
 	public void testGetStudenci() {
 		logg.debug("===========> testGetStudenci");
-		Assert.assertEquals(6, studentRepo.findAll().size());
+		Assertions.assertEquals(6, studentRepo.findAll().size());
 		StudentBean bean = new StudentBean();
-		Assert.assertNotNull(bean);
+		Assertions.assertNotNull(bean);
 		bean.setStudentRepo(studentRepo);
 		List<Student> stLi = bean.getStudenci();
-		Assert.assertEquals(6, stLi.size());
+		Assertions.assertEquals(6, stLi.size());
 	}
 
 }
