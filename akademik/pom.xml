@@ -25,6 +25,8 @@
 		<xstream.version>1.4.21</xstream.version>
 		<postgresql-jdbc.version>42.7.12</postgresql-jdbc.version>
 		<atomikos.version>6.0.0</atomikos.version>
+		<!-- Weld 6.x = CDI 4.1 (Jakarta EE 11); Weld 7 to już CDI 5 (Jakarta EE 12) -->
+		<weld.version>6.0.4.Final</weld.version>
 
 		<!-- testy -->
 		<junit-jupiter.version>5.11.4</junit-jupiter.version>
@@ -69,6 +71,16 @@
 			<groupId>org.glassfish</groupId>
 			<artifactId>jakarta.faces</artifactId>
 			<version>4.1.5</version>
+		</dependency>
+
+		<!-- CDI (Contexts and Dependency Injection) dla Tomcata: Faces 4.x go wymaga, -->
+		<!-- a Tomcat, w odróżnieniu od pełnych serwerów Jakarta EE, nie ma go wbudowanego. -->
+		<!-- Weld 6 to CDI 4.1, czyli Jakarta EE 11, tak jak Faces 4.1 i Tomcat 11. -->
+		<!-- Przynosi też jakarta.enterprise.cdi-api i cdi-el-api. -->
+		<dependency>
+			<groupId>org.jboss.weld.servlet</groupId>
+			<artifactId>weld-servlet-core</artifactId>
+			<version>${weld.version}</version>
 		</dependency>
 
 
@@ -165,10 +177,6 @@
             		<artifactId>javassist</artifactId>
         		</exclusion>
         		<exclusion>
-        			<groupId>jakarta.persistence</groupId>
-        			<artifactId>jakarta.persistence-api</artifactId>
-        		</exclusion>
-        		<exclusion>
         			<groupId>jakarta.transaction</groupId>
 					<artifactId>jakarta.transaction-api</artifactId>
         		</exclusion>
@@ -200,12 +208,10 @@
 		</dependency>
 		
 		
-		<dependency>
-    		<groupId>jakarta.persistence</groupId>
-    		<artifactId>jakarta.persistence-api</artifactId>
-    		<version>3.2.0</version>
-		</dependency>
-		
+		<!-- jakarta.persistence-api (JPA, Jakarta Persistence) przychodzi z hibernate-core: -->
+		<!-- Hibernate 6.6 implementuje JPA 3.1, więc API musi być 3.1. API 3.2 (Jakarta EE 11) -->
+		<!-- pasuje dopiero do Hibernate 7, a z 6.6 psuje proxy EntityManagerFactory w Springu. -->
+
 		<dependency>
     		<groupId>jakarta.transaction</groupId>
     		<artifactId>jakarta.transaction-api</artifactId>
@@ -220,14 +226,9 @@
 
 		<dependency>
     		<groupId>org.apache.logging.log4j</groupId>
-    		<artifactId>log4j-slf4j-impl</artifactId>
+    		<!-- most SLF4J 2.x -> Log4j 2; stary log4j-slf4j-impl był dla SLF4J 1.7 -->
+    		<artifactId>log4j-slf4j2-impl</artifactId>
     		<version>${log4j.version}</version>
-    		<exclusions>
-    			<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-    		</exclusions>
 		</dependency>
 
 		<dependency>
@@ -279,13 +280,6 @@
     		<groupId>jakarta.el</groupId>
     		<artifactId>jakarta.el-api</artifactId>
     		<version>6.0.1</version>
-    		<scope>test</scope>
-		</dependency>
-
-		<dependency>
-    		<groupId>jakarta.enterprise</groupId>
-    		<artifactId>jakarta.enterprise.cdi-el-api</artifactId>
-    		<version>4.1.0</version>
     		<scope>test</scope>
 		</dependency>
 

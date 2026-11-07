@@ -20,6 +20,10 @@
 	
 		<logger name="org.hibernate" level="info">
 		</logger>
+
+		<!-- Weld (CDI dla Faces) na poziomie debug zalewa log szczegółami startu -->
+		<logger name="org.jboss.weld" level="info">
+		</logger>
         
         <Root level="debug">
             <AppenderRef ref="Console"/>

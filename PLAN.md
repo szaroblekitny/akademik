@@ -112,6 +112,19 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 
 **1.6 Uruchomienie aplikacji w Tomcacie.** Sprawdzimy ręcznie, czy wszystkie ekrany działają po zmianach. Potrzebny będzie Tomcat 10.1 lub 11 i PostgreSQL. Przygotuję instrukcję i ewentualnie plik `docker-compose.yml` z bazą.
 
+- *Ustalenia (7.11.2026):* Dockera nie ma, PostgreSQL 18 jest zainstalowany lokalnie. Tomcat: najpierw próba na `H:\app\apache-tomcat-10.1.34`, ostatecznie Tomcat 11 (patrz korekta niżej). Do zrobienia w tym kroku: baza i użytkownik, tabele ze skryptów `src/main/sql`, zasób JNDI `jdbc/akademik` w konfiguracji Tomcata, wdrożenie WAR-a i ręczne sprawdzenie ekranów.
+- *Baza:* skrypt `src/main/sql/setup_postgres.sql` (uruchamiany w PowerShellu przez `psql -U postgres -f ...`) zakłada rolę `tomcat`, bazę `akademik` i tabele z danymi przykładowymi, dołączając stare skrypty przez `\ir` (ścieżka liczona względem katalogu skryptu). Polskie znaki w `psql`: przed uruchomieniem `chcp 1250`, bo `psql` pisze w stronie kodowej Windows 1250, a konsola domyślnie czyta 852.
+- *Korekta planu (Tomcat 11 i Weld):* pierwsze wdrożenie na Tomcacie 10.1 padło z `NoClassDefFoundError: jakarta/enterprise/inject/spi/el/ELAwareBeanManager`. Przyczyny są dwie. Po pierwsze, Faces 4.x wymaga CDI (Contexts and Dependency Injection), a Tomcat go nie ma. Po drugie, Mojarra 4.1 należy do Jakarta EE 11 (Servlet 6.1, EL 6.0, CDI 4.1), a Tomcat 10.1 do Jakarta EE 10. Wybrana droga: **Tomcat 11** zamiast cofania bibliotek, bo Etap 4 (Spring 7, Boot 4) i tak wymaga Jakarta EE 11. Zmiany:
+  - w `pom.xml` doszedł `weld-servlet-core` 6.0.4.Final (CDI 4.1). Weld 7 to już CDI 5, czyli Jakarta EE 12, i nie pasuje;
+  - usunięta deklaracja `jakarta.enterprise.cdi-el-api` z zakresem *test*. Bliższa deklaracja wygrywa, więc wycięłaby tę bibliotekę z WAR-a, a Weld przynosi ją w zakresie *compile*;
+  - nowa klasa `conf/FacesCdiActivator` (`@FacesConfig @ApplicationScoped`). Weld startuje tylko wtedy, gdy znajdzie choć jeden bean CDI, a nasze beany są beanami Springa;
+  - nowy `WEB-INF/beans.xml` w trybie `annotated`: Weld zajmuje się tylko klasami z adnotacjami CDI, a klasy Springa zostawia w spokoju.
+- *Korekta planu (wersja JPA):* drugie wdrożenie padło w Springu: `EntityManagerFactory interface [org.hibernate.SessionFactory] seems to conflict...`, a głębiej `methods with same signature getSchemaManager() but incompatible return types`. Przyczyna: `pom.xml` wykluczał `jakarta.persistence-api` z Hibernate'a i dokładał wersję 3.2.0 (Jakarta EE 11). Tymczasem Hibernate 6.6 implementuje JPA (Jakarta Persistence) 3.1. W API 3.2 metoda `getSchemaManager()` zwraca inny typ niż w `SessionFactory` Hibernate'a, a Java nie umie zrobić proxy implementującego oba interfejsy. Poprawka: usunięte wykluczenie i deklaracja 3.2.0, więc API 3.1.0 przychodzi teraz z Hibernate'a. Testy tego nie wykrywały, bo `TestConfiguration` obchodzi problem przez `setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class)`. JPA 3.2 wróci razem z Hibernate 7 w Etapie 4.
+- *Korekta planu (upload w PrimeFaces):* trzecie wdrożenie: Spring już wstał, ale padło `ClassNotFoundException: org.primefaces.webapp.filter.FileUploadFilter`. PrimeFaces od wersji 13 nie ma własnego filtra uploadu ani parametru `primefaces.UPLOADER` i czyta pliki standardowym API Servletu (`HttpServletRequest.getParts()`). Poprawka w `web.xml`: usunięte filtr, jego mapowanie i parametr, a przy `FacesServlet` doszło `<multipart-config>` (limit 10 MB na plik, 20 MB na żądanie).
+- *Przy okazji (logowanie):* przy starcie pojawiało się ostrzeżenie `SLF4J(W): No SLF4J providers were found`. W WAR-ze jest `slf4j-api` 2.0, a most do Log4j był w starej wersji `log4j-slf4j-impl`, przeznaczonej dla SLF4J 1.7, więc SLF4J go ignorował. Logi bibliotek piszących przez SLF4J przepadały. Zamiana na `log4j-slf4j2-impl` (ta sama wersja Log4j).
+- *Przy okazji (szum w logu):* w `log4j2.xml` logger `org.jboss.weld` na poziomie `info`. Główny logger (`Root`) ma `debug`, więc bez tego Weld wypisywał setki linii przy starcie.
+- *Co sprawdzamy przy okazji:* krok 1.4 (Hibernate sam wykrywa PostgreSQL, brak błędu o dialekcie) i krok 1.5 (strony JSF z nowymi przestrzeniami nazw).
+
 **Gotowe, gdy:** wszystkie testy zielone (40 po kroku 1.3: 36 pierwotnych + 4 nowe testy `compareTo`), aplikacja startuje w Tomcacie, każdy ekran się otwiera.
 
 ## Etap 2: import, eksport i raport
@@ -184,7 +197,7 @@ Cel: projekt wygląda jak typowa aplikacja Springa z 2026 roku. Ten etap daje na
 
 **4.3 Flyway zamiast luźnych skryptów SQL.** Skrypty z `src/main/sql` staną się migracjami `V1__schemat.sql`, `V2__dane.sql`. Flyway uruchomi je przy starcie aplikacji i zapamięta w tabeli, które już wykonał. Skrypty dla Oracle można usunąć albo zostawić jako osobny zestaw.
 
-**4.4 Testcontainers zamiast HSQLDB.** Testy uruchomią prawdziwy PostgreSQL w kontenerze Dockera. HSQLDB zachowuje się inaczej niż PostgreSQL (typy, sekwencje), więc test może przejść na HSQLDB i paść w produkcji. Wymaga Docker Desktop.
+**4.4 Testcontainers zamiast HSQLDB.** Testy uruchomią prawdziwy PostgreSQL w kontenerze Dockera. HSQLDB zachowuje się inaczej niż PostgreSQL (typy, sekwencje), więc test może przejść na HSQLDB i paść w produkcji. Wymaga Docker Desktop. *Uwaga:* Dockera obecnie nie ma. Przed tym krokiem trzeba zdecydować, czy go instalować, czy np. testować na lokalnym PostgreSQL w osobnej bazie testowej.
 
 **4.5 Opcjonalnie: alternatywa dla JSF.** JSF jest dziś niszowy. Jeśli chcesz poznać popularniejsze podejście, można dodać drugi interfejs: REST API (Representational State Transfer, usługi wymieniające dane, zwykle JSON, przez zwykłe żądania HTTP; w Springu `@RestController`) albo strony w Thymeleaf. Logika w `core` i serwisy z Etapu 2 zostaną bez zmian, i to dobrze pokazuje sens warstw.
 
@@ -221,8 +234,8 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | e166b4a |
 | 1.3 | Poprawka `compareTo` | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | 819a9b2 |
 | 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) | zrobione, do sprawdzenia w Tomcacie w 1.6 | 38cbab1 |
-| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | zrobione, do sprawdzenia w Tomcacie w 1.6 | |
-| 1.6 | Uruchomienie w Tomcacie | do zrobienia | |
+| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | zrobione, do sprawdzenia w Tomcacie w 1.6 | 4521296 |
+| 1.6 | Uruchomienie w Tomcacie | w toku: aplikacja startuje na Tomcacie 11, na ekranach są błędy do zebrania i poprawienia | |
 | 2.1 | `DaneService` | do zrobienia | |
 | 2.2 | Import do bazy | do zrobienia | |
 | 2.3 | Eksport do XML | do zrobienia | |
