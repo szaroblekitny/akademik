@@ -55,6 +55,8 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 **1.1 Podbicie Mockito (P1).** Z 5.13.0 na 5.24.0.
 
 - *Dlaczego pada:* Mockito tworzy atrapy klas, generując w locie bajtkod przez bibliotekę ByteBuddy. Każda nowa Java zmienia format plików `.class` (numer wersji), a stary ByteBuddy nie zna formatu Javy 25. Stąd komunikat „Mockito cannot mock this class”.
+- *Pułapka znaleziona przy realizacji:* ByteBuddy przychodził do projektu dwiema drogami: z Mockito i z Hibernate'a (1.14.18). Przy dwóch wersjach na tej samej głębokości drzewa Maven wybiera tę z zależności zadeklarowanej wcześniej w `pom.xml`, czyli z Hibernate'a. Dlatego samo podbicie Mockito by nie pomogło. Rozwiązanie: sekcja `<dependencyManagement>` ustala wersję ByteBuddy na 1.17.7.
+- *Druga pułapka:* po naprawie Mockito JaCoCo 0.8.11 zgłaszał `IllegalClassFormatException` przy klasach `...$MockitoMock$...`. Mocki są generowane w trakcie testów w formacie Javy 25 (bo na niej działa JVM), a JaCoCo 0.8.11 tego formatu nie zna. Wcześniej błąd się nie pojawiał, bo Mockito w ogóle nie tworzył mocków. Rozwiązanie: JaCoCo 0.8.16.
 - *Nowość:* plik `mockito-extensions/...MockMaker` z `mock-maker-inline` jest od Mockito 5 zbędny, bo to już domyślne ustawienie. Usuniemy go.
 - *Nowość w Javie 21+:* przy agencie ładowanym dynamicznie JVM wypisuje ostrzeżenie. Rozwiążemy to, dodając Mockito jako `-javaagent` w surefire.
 
@@ -176,7 +178,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 
 | Krok | Opis | Status | Commit |
 | --- | --- | --- | --- |
-| 1.1 | Podbicie Mockito | do zrobienia | |
+| 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | |
 | 1.2 | Wtyczki Maven, usunięcie JUnit Vintage | do zrobienia | |
 | 1.3 | Poprawka `compareTo` | do zrobienia | |
 | 1.4 | Dialekt Hibernate | do zrobienia | |

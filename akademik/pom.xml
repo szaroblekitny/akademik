@@ -28,12 +28,34 @@
 
 		<!-- testy -->
 		<junit-jupiter.version>5.11.4</junit-jupiter.version>
-		<mockito.version>5.13.0</mockito.version>
+		<mockito.version>5.24.0</mockito.version>
+		<!-- ByteBuddy: ta sama wersja, której używa Mockito 5.24.0 (obsługuje Javę 25) -->
+		<bytebuddy.version>1.17.7</bytebuddy.version>
 
 		<!-- Sonar -->
   		<sonar.java.pmd.reportPaths>${project.build.directory}/pmd.xml</sonar.java.pmd.reportPaths>
 	</properties>
-	
+
+	<!-- Zarządzanie wersjami zależności przechodnich. Nic tu nie dodaje zależności,
+	     tylko ustala, jaka wersja wygra, jeśli biblioteka pojawi się w drzewie zależności.
+	     Bez tego ByteBuddy przychodził w starej wersji 1.14.18 z Hibernate'a
+	     (Hibernate jest zadeklarowany wcześniej niż Mockito, więc Maven wybierał jego wersję),
+	     a ta wersja nie obsługuje Javy 25. -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.bytebuddy</groupId>
+				<artifactId>byte-buddy</artifactId>
+				<version>${bytebuddy.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.bytebuddy</groupId>
+				<artifactId>byte-buddy-agent</artifactId>
+				<version>${bytebuddy.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 
 		<dependency>
@@ -336,10 +358,32 @@
         		</configuration>
 			</plugin>
 			
+			<!-- Ustawia właściwość ${org.mockito:mockito-core:jar} = ścieżka do jara Mockito
+			     w lokalnym repozytorium Mavena. Potrzebne niżej w surefire. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.8.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>properties</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
     			<artifactId>maven-surefire-plugin</artifactId>
     			<version>2.22.2</version>
+    			<configuration>
+    				<!-- Mockito jako agent Javy ładowany przy starcie JVM testów.
+    				     Od Javy 21 dynamiczne doładowanie agenta w trakcie działania
+    				     daje ostrzeżenie, a w przyszłych wersjach będzie zablokowane.
+    				     @{argLine} to ustawienia agenta JaCoCo (pokrycie kodu) - zachowujemy je. -->
+    				<argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+    			</configuration>
 			</plugin>
 			
 			<!-- Sonar i raporty dla niego -->
@@ -374,7 +418,9 @@
 			<plugin>
       			<groupId>org.jacoco</groupId>
       			<artifactId>jacoco-maven-plugin</artifactId>
-      			<version>0.8.11</version>
+      			<!-- Od 0.8.14 JaCoCo obsługuje pliki .class Javy 25. Starsza wersja nie umiała
+      			     instrumentować klas generowanych w locie przez Mockito na Javie 25. -->
+      			<version>0.8.16</version>
       			<configuration>
       				<rules>
   						<rule>
