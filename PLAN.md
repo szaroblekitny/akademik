@@ -106,9 +106,13 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 
 **1.5 Przestrzenie nazw JSF (P10).** Zamiana `http://java.sun.com/jsf/...` na `jakarta.faces.html`, `jakarta.faces.core`, `jakarta.faces.facelets`. Aktualizacja `web.xml` do wersji 6.0 (Jakarta EE 10). Stare adresy działają jeszcze dzięki zgodności wstecz, ale Faces 4 oznacza je jako przestarzałe.
 
+- *Wynik:* 12 plików XHTML, po 3 przestrzenie nazw w każdym (`h`, `f`, `ui`). Przestrzeń `p` (PrimeFaces, `http://primefaces.org/ui`) zostaje, bo to adres PrimeFaces, a nie Jakarty. `faces-config.xml` przeszedł z wersji 2.2 na 4.0, a `web.xml` z 3.1 na 6.0. Oba pliki zostały sprawdzone parserem XML.
+- Zamiana w XHTML przez `sed -b`: tryb binarny zachowuje końce linii CRLF. Zwykłe `sed -i` w Git Bash zamieniłoby je na LF i diff pokazałby zmianę każdej linii.
+- Testy nie obejmują stron JSF. Weryfikacja w Tomcacie w kroku 1.6.
+
 **1.6 Uruchomienie aplikacji w Tomcacie.** Sprawdzimy ręcznie, czy wszystkie ekrany działają po zmianach. Potrzebny będzie Tomcat 10.1 lub 11 i PostgreSQL. Przygotuję instrukcję i ewentualnie plik `docker-compose.yml` z bazą.
 
-**Gotowe, gdy:** 36 testów zielonych, aplikacja startuje w Tomcacie, każdy ekran się otwiera.
+**Gotowe, gdy:** wszystkie testy zielone (40 po kroku 1.3: 36 pierwotnych + 4 nowe testy `compareTo`), aplikacja startuje w Tomcacie, każdy ekran się otwiera.
 
 ## Etap 2: import, eksport i raport
 
@@ -216,8 +220,8 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | zrobione | cdb193b, 04225a9 |
 | 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | e166b4a |
 | 1.3 | Poprawka `compareTo` | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | 819a9b2 |
-| 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) | zrobione, do sprawdzenia w Tomcacie w 1.6 | |
-| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | do zrobienia | |
+| 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) | zrobione, do sprawdzenia w Tomcacie w 1.6 | 38cbab1 |
+| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | zrobione, do sprawdzenia w Tomcacie w 1.6 | |
 | 1.6 | Uruchomienie w Tomcacie | do zrobienia | |
 | 2.1 | `DaneService` | do zrobienia | |
 | 2.2 | Import do bazy | do zrobienia | |
