@@ -100,6 +100,10 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 
 **1.4 Dialekt Hibernate (P4).** Usunięcie `hibernate.dialect`. Hibernate 6 sam rozpoznaje wersję PostgreSQL z połączenia, a klasy `PostgreSQL10Dialect` są oznaczone jako przestarzałe.
 
+- *Dialekt* to klasa Hibernate'a, która wie, jak mówić SQL-em konkretnej bazy: jak wygląda stronicowanie, sekwencje, typy kolumn. Hibernate 6 odczytuje nazwę i wersję bazy z połączenia JDBC (Java Database Connectivity, standardowy interfejs do baz danych) i sam dobiera dialekt.
+- *Korekta planu:* sprawdzenie zawartości `hibernate-core-6.6.4.Final.jar` pokazało, że klasy `org.hibernate.dialect.PostgreSQL10Dialect` w nim **nie ma** (jest tylko `PostgreSQLDialect`). Więc to nie było tylko przestarzałe ustawienie. Konfiguracja produkcyjna wskazywała klasę, której nie ma, więc aplikacja w Tomcacie najpewniej nie wystartowałaby od czasu przejścia na Hibernate 6 (grudzień 2024). Testy tego nie wykryły, bo `TestConfiguration` (HSQLDB) w ogóle nie ustawia dialektu.
+- Testy nie sprawdzą tej zmiany, bo `MainConfiguration` działa tylko z PostgreSQL przez JNDI w Tomcacie. Weryfikacja w kroku 1.6.
+
 **1.5 Przestrzenie nazw JSF (P10).** Zamiana `http://java.sun.com/jsf/...` na `jakarta.faces.html`, `jakarta.faces.core`, `jakarta.faces.facelets`. Aktualizacja `web.xml` do wersji 6.0 (Jakarta EE 10). Stare adresy działają jeszcze dzięki zgodności wstecz, ale Faces 4 oznacza je jako przestarzałe.
 
 **1.6 Uruchomienie aplikacji w Tomcacie.** Sprawdzimy ręcznie, czy wszystkie ekrany działają po zmianach. Potrzebny będzie Tomcat 10.1 lub 11 i PostgreSQL. Przygotuję instrukcję i ewentualnie plik `docker-compose.yml` z bazą.
@@ -211,8 +215,8 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.2 | Wtyczki Maven i kompilator `release` | zrobione | 0b3964e |
 | 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | zrobione | cdb193b, 04225a9 |
 | 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | e166b4a |
-| 1.3 | Poprawka `compareTo` | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | |
-| 1.4 | Dialekt Hibernate | do zrobienia | |
+| 1.3 | Poprawka `compareTo` | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | 819a9b2 |
+| 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) | zrobione, do sprawdzenia w Tomcacie w 1.6 | |
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | do zrobienia | |
 | 1.6 | Uruchomienie w Tomcacie | do zrobienia | |
 | 2.1 | `DaneService` | do zrobienia | |
