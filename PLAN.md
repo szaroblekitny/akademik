@@ -73,6 +73,15 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 - Wzorzec jest już w `PokojBeanTest`, przerobionym w grudniu 2025.
 - Proponowana kolejność: najpierw proste testy bez Springa (`PokojTest`, `StudentTest`, `AkademikXStreamTest`), potem te z kontekstem Springa. Po każdej klasie liczba testów musi zostać ta sama (36).
 
+**1.2b Ostrzeżenia widoczne przy testach.** Dwa ostrzeżenia zauważone po kroku 1.2.
+
+- *Spring, `BeanPostProcessorChecker`:* metoda `exceptionTranslation()` w `AkademikConfiguration` tworzy `BeanPostProcessor`, ale nie jest `static`. Spring musi więc najpierw utworzyć całą klasę konfiguracyjną, zanim zarejestruje postprocesor, a wtedy ta klasa sama nie przechodzi przez wszystkie postprocesory. Poprawka: `public static PersistenceExceptionTranslationPostProcessor exceptionTranslation()`. Metoda statyczna może zostać wywołana bez tworzenia obiektu klasy.
+- *JVM, `sun.misc.Unsafe::objectFieldOffset` wywołane przez XStream:* od Javy 24 (JEP 498) JVM ostrzega przy użyciu starych metod dostępu do pamięci z `sun.misc.Unsafe`, które mają zostać usunięte. XStream 1.4.21 to najnowsza wersja (listopad 2024), więc podbicie nie pomoże. Poprawka: w `AkademikXStream` tworzymy `new XStream(new PureJavaReflectionProvider())`. Ten wariant tworzy obiekty przez konstruktor bezargumentowy zamiast przez `Unsafe`, a `Pokoj` i `Student` taki konstruktor mają.
+- *Wynik:* ostrzeżenie o `Unsafe` zostało. Bajtkod XStreama (`javap -c` na klasie `com.thoughtworks.xstream.core.JVM`) pokazuje, że jej statyczny inicjalizator (`static {}`) przy pierwszym użyciu XStreama sam tworzy `SunUnsafeReflectionProvider` i zapisuje nim pola testowej klasy `JVM$Test`, żeby sprawdzić, co działa na tej JVM. To dzieje się niezależnie od providera, którego używamy. `PureJavaReflectionProvider` zostaje, bo nasze własne wczytywanie XML-a nie korzysta już z `Unsafe`. Samo ostrzeżenie da się tylko wyciszyć opcją JVM `--sun-misc-unsafe-memory-access=allow` albo zaakceptować.
+- *Decyzja:* ostrzeżenie zostaje. Jest prawdziwe i przypomina o zamianie XStreama w Etapie 4. Wyciszanie wymagałoby profilu Mavena tylko dla Javy 24+ (Java 21 nie zna tej opcji).
+- *Uwaga na przyszłość:* XStream jest rozwijany bardzo powoli. Przy Etapie 4 warto rozważyć zamianę na Jackson XML albo Jakarta XML Binding (JAXB).
+- Komunikat `HHH10005002 ... CDI is available` to tylko informacja (`INFO`), nie ostrzeżenie. Pojawia się, bo w testach jest na classpath API CDI.
+
 **1.3 Poprawka `compareTo` (P3).** Zamiast `(int)(inny.getId() - this.getId())` użyjemy `Long.compare(this.id, inny.id)`.
 
 - *Dlaczego:* odejmowanie dwóch `long` i rzutowanie na `int` obcina wysokie bity, więc dla dużych ID wynik może mieć zły znak. Obecny kod sortuje też odwrotnie (malejąco). Najpierw napiszemy test, który to pokazuje, potem poprawkę (to jest TDD).
@@ -187,8 +196,9 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | Krok | Opis | Status | Commit |
 | --- | --- | --- | --- |
 | 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | 1c29a35 |
-| 1.2 | Wtyczki Maven i kompilator `release` | zrobione | |
+| 1.2 | Wtyczki Maven i kompilator `release` | zrobione | 0b3964e |
 | 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | do zrobienia | |
+| 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | |
 | 1.3 | Poprawka `compareTo` | do zrobienia | |
 | 1.4 | Dialekt Hibernate | do zrobienia | |
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | do zrobienia | |
