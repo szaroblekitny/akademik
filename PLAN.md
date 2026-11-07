@@ -85,6 +85,7 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 **1.3 Poprawka `compareTo` (P3).** Zamiast `(int)(inny.getId() - this.getId())` użyjemy `Long.compare(this.id, inny.id)`.
 
 - *Dlaczego:* odejmowanie dwóch `long` i rzutowanie na `int` obcina wysokie bity, więc dla dużych ID wynik może mieć zły znak. Obecny kod sortuje też odwrotnie (malejąco). Najpierw napiszemy test, który to pokazuje, potem poprawkę (to jest TDD).
+- *Uwaga:* obecne testy `PokojTest.testPorownania` i `StudentTest.testPorownania` sprawdzają dokładne wartości z błędnej implementacji (`1` i `-3`). Kontrakt `compareTo` gwarantuje tylko znak wyniku, więc te testy trzeba będzie poprawić razem z kodem.
 
 **1.4 Dialekt Hibernate (P4).** Usunięcie `hibernate.dialect`. Hibernate 6 sam rozpoznaje wersję PostgreSQL z połączenia, a klasy `PostgreSQL10Dialect` są oznaczone jako przestarzałe.
 
@@ -197,8 +198,8 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | --- | --- | --- | --- |
 | 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | 1c29a35 |
 | 1.2 | Wtyczki Maven i kompilator `release` | zrobione | 0b3964e |
-| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | do zrobienia | |
-| 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | |
+| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | w toku: część 1 (3 klasy bez Springa) zrobiona | |
+| 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | e166b4a |
 | 1.3 | Poprawka `compareTo` | do zrobienia | |
 | 1.4 | Dialekt Hibernate | do zrobienia | |
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | do zrobienia | |
