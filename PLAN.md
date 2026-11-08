@@ -168,6 +168,9 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 
 - *Objaśnienie:* bean JSF powinien tylko obsługiwać ekran, a serwis wykonywać pracę w jednej transakcji. Jeśli import 50 studentów padnie na 30., `@Transactional` wycofa wszystko i baza nie zostanie w połowie wypełniona.
 - *Nowość:* wstrzykiwanie przez konstruktor zamiast setterów z `@Autowired`. Pola mogą być wtedy `final`, a od Springa 4.3 przy jednym konstruktorze adnotacja `@Autowired` jest zbędna.
+- *Wynik (8.11.2026):* nowy pakiet `service` z klasą `DaneService` (`@Service @Transactional`) i rekordem `WynikImportu(int pokoje, int studenci)`. Metody: `importuj(reader)` (rozpoznaje typ obiektu przez `switch` z wzorcami typów z Javy 21), `eksportujPokoje(writer)` i `eksportujStudentow(writer)` (obie `readOnly = true`). `Akademik.pobierzZPliku()` usunięta, a `Akademik.akademik()` woła teraz usługę. Testy: nowy `DaneServiceTest` (4 testy, w tym wycofanie całego importu, gdy trzeci student wskazuje nieistniejący pokój), a dwa stare testy importu z `AkademikTest` przeszły do niego. Razem 42 testy.
+- *Faza czerwona:* szkielet usługi zwracał zera. Pierwsze uruchomienie dało 3 błędy zamiast porażek, bo XStream nie umie zapisać listy z `List.of()`: jej klasa `java.util.ImmutableCollections$ListN` jest zamknięta w module `java.base` i refleksja nie ma do niej dostępu. W teście lista jest kopiowana do `ArrayList`. To kolejny argument za 2.1a. Drugie uruchomienie dało dokładnie przewidziane 4 porażki na 44 testy.
+- *Pułapki `@Transactional`:* (1) wycofanie następuje domyślnie tylko przy `RuntimeException`, bo kontrolowany `IOException` transakcję zatwierdza; (2) wywołanie metody z wnętrza tej samej klasy omija proxy Springa, a więc i transakcję.
 
 **2.1a JAXB zamiast XStream.** Odczyt i zapis XML w `Plikowanie` przejdzie z XStream na JAXB (Jakarta XML Binding), standard Jakarty. Klasy `Pokoj` i `Student` dostaną adnotacje `@XmlRootElement`, `@XmlElement` itp., a `AkademikXStream` zniknie.
 
@@ -303,7 +306,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, sprawdzone w Tomcacie w 1.6 | 4521296 |
 | 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531, e008b10 |
 | 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | 72ae1d4 |
-| 2.1 | `DaneService` |  | do zrobienia | |
+| 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | |
 | 2.1a | JAXB zamiast XStream | #7 | do zrobienia | |
 | 2.2 | Import do bazy | #3 (refs) | do zrobienia | |
 | 2.3 | Eksport do XML | #8 | do zrobienia | |

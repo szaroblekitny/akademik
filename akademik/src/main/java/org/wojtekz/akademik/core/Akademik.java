@@ -12,11 +12,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Plec;
-import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
+import org.wojtekz.akademik.service.DaneService;
 
 import com.thoughtworks.xstream.io.StreamException;
 
@@ -32,13 +32,13 @@ import com.thoughtworks.xstream.io.StreamException;
 public class Akademik {
 	private static Logger logg = LogManager.getLogger();
 	
-	private Plikowanie plikowanie;
+	private DaneService daneService;
 	private StudentRepository studentRepo;
 	private PokojRepository pokojRepo;
 	
 	@Autowired
-	public void setPlikowanie(Plikowanie plikowanie) {
-		this.plikowanie = plikowanie;
+	public void setDaneService(DaneService daneService) {
+		this.daneService = daneService;
 	}
 
 	@Autowired
@@ -71,8 +71,8 @@ public class Akademik {
 			pokojRepo.deleteAll();
 			studentRepo.deleteAll();
 			
-			pobierzZPliku(pokojeReader);
-			pobierzZPliku(studenciReader);
+			daneService.importuj(pokojeReader);
+			daneService.importuj(studenciReader);
 			String meldunek = zakwateruj();
 			podajStanAkademika(outputWriter, meldunek);
 			
@@ -89,47 +89,6 @@ public class Akademik {
 		}
 	}
  	
-	
-	/**
-	 * Pobiera z bufora (pliku XML) listę obiektów i zapisuje do bazy, rozpoznając
-	 * typ obiektu.
-	 *
-	 * @param reader bufor odczytu danych (z pliku)
-	 * @throws IOException jeśli jest błąd odczytu
-	 */
-	public void pobierzZPliku(BufferedReader reader) throws IOException {
-		logg.trace("----->>> pobierzZPliku");
-		
-		Plikowalny pp;
-		
-		List<Plikowalny> pobrane = plikowanie.loadObjectList(reader);
-		
-		if (!pobrane.isEmpty()) {
-			pp = pobrane.get(0);
-		} else {
-			logg.warn("----->>> pobierzZPliku brak rekordów");
-			return;
-		}
-		
-		if (pp instanceof Pokoj) {
-			for (Plikowalny pok : pobrane) {
-				pokojRepo.save((Pokoj) pok);
-			}
-			logg.debug("----->>> pokoje zapisane do bazy danych");
-			return;
-		}
-		
-		if (pp instanceof Student) {
-			for (Plikowalny stud : pobrane) {
-				studentRepo.save((Student) stud);
-			}
-			logg.debug("----->>> studenci zapisani do bazy danych");
-			return;
-		}
-		
-		logg.warn("----->>> pobierzZPliku - nieznany typ obiektu");
-	}
-	
 	
 	/**
 	 * Kwateruje studentow w podanym pokoju. Dla podanego pokoju lecimy

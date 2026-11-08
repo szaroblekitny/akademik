@@ -173,50 +173,9 @@ public class AkademikTest {
 		
 	}
 
-	/**
-	 * Test, czy aplikacja umie pobrać dane z pliku i zapisać je w bazie danych.
-	 */
-	@Test
-	public void testPobierzPokoje() {
-		logg.debug("=============>>> testPobierzPokoje starts");
-		
-		try {
-			BufferedReader reader = Files.newBufferedReader(pathPokoi, charset);
-			akademik.pobierzZPliku(reader);
-			reader.close();
-			
-			List<Pokoj> pokZBazy = pokojRepo.findByNumerPokoju("102");
-			Assertions.assertEquals(3, pokZBazy.get(0).getLiczbaMiejsc());
-			
-		} catch (IOException ee) {
-			logg.error("----->>> testPobierzPokoje: Błąd odczytu pliku z pokojami", ee);
-			Assertions.fail("Exception: " + ee.getMessage());
-		}
-		
-	}
-	
-	@Test
-	public void testPobierzStudentow () {
-		logg.debug("=============>>> testPobierzStudentow starts");
-		
-		try {
-			BufferedReader reader = Files.newBufferedReader(pathStudentow, charset);
-			akademik.pobierzZPliku(reader);
-			reader.close();
-			logg.trace("-----> studenci pobrani");
-			
-			List<Student> malinowscyZBazy = studentRepo.findByName("Malinowski");
-			Assertions.assertEquals(3, malinowscyZBazy.get(0).getId());
-			Assertions.assertEquals("Adam", malinowscyZBazy.get(0).getImie());
-			Assertions.assertEquals("Jerzy", malinowscyZBazy.get(1).getImie());
-			
-		} catch (IOException ee) {
-			logg.error("----- ERROR >> Błąd odczytu pliku ze studentami");
-			Assertions.fail("Exception: " + ee.getMessage());
-		}
-		
-	}
-	
+	// testPobierzPokoje i testPobierzStudentow przeniesione do DaneServiceTest
+	// (krok 2.1 planu naprawczego: import przeszedł z Akademik do DaneService)
+
 	/**
 	 * Test metody kwaterowania akademika. Używa danych z konstruktora,
 	 * a nie z klasy {@link org.wojtekz.akademik.util.DaneTestowe}.
