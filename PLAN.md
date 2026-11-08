@@ -13,6 +13,7 @@ Zasady pracy:
 3. **Jeden krok = jeden commit na osobnej gałęzi.** Dzięki temu w historii Gita widać dokładnie, co się zmieniło, i łatwo cofnąć pomyłkę.
 4. **Ty decydujesz o tempie.** Po każdym kroku zatrzymuję się, a Ty możesz dopytać, zmienić kierunek albo napisać coś samodzielnie.
 5. **Dziennik na końcu dokumentu** pokazuje, co już zrobione.
+6. **Issues z GitHuba.** Przy krokach, które rozwiązują issue, jest dopisek *Issues:*. Commit kończącego kroku ma w opisie `closes #N`, a commit, który rozwiązuje issue tylko częściowo, ma `refs #N`. GitHub zamknie issue sam, gdy commit trafi na gałąź `master`. Na gałęzi roboczej issue zostaje otwarte.
 
 Kroki oznaczone numerami (np. 1.2) służą do odwołań w rozmowie: wystarczy napisać „robimy 1.2”.
 
@@ -55,6 +56,23 @@ Projekt (wersja 0.60-SNAPSHOT) kompiluje się, ale 9 z 36 testów pada, a import
 | P8 | ID nadawane przez `findLastId() + 1`, co daje wyścig przy dwóch użytkownikach | `StudentBean`, `PokojBean` | 3 |
 | P9 | Algorytm marnuje miejsca: jedna kobieta blokuje duży pokój | `Akademik.kwaterowanie` | 3 |
 | P10 | Stare przestrzenie nazw `java.sun.com/jsf` w XHTML i nagłówek `web.xml` 3.1 | `webapp` | 1 |
+
+**Otwarte issues na GitHubie** (stan na 8.11.2026, [lista](https://github.com/szaroblekitny/akademik/issues)):
+
+| Issue | Temat | Krok planu |
+| --- | --- | --- |
+| [#3](https://github.com/szaroblekitny/akademik/issues/3) | Niepotrzebne identyfikatory w plikach wejściowych | 2.2 (częściowo), 3.3 |
+| [#7](https://github.com/szaroblekitny/akademik/issues/7) | Obsługa plików XML nie powinna używać XStream | 2.1a |
+| [#8](https://github.com/szaroblekitny/akademik/issues/8) | Eksport pliku z danymi | 2.3 |
+| [#12](https://github.com/szaroblekitny/akademik/issues/12) | Ręczne wprowadzanie, edycja i kasowanie rekordów | 3.5 |
+| [#14](https://github.com/szaroblekitny/akademik/issues/14) | Techniczna: moduły z Javy 9 | bez kroku, decyzja odłożona |
+| [#16](https://github.com/szaroblekitny/akademik/issues/16) | Sortowanie wyniku działania | 2.7 |
+| [#17](https://github.com/szaroblekitny/akademik/issues/17) | Plik logu ląduje w złym miejscu w Tomcacie | 1.7 |
+| [#21](https://github.com/szaroblekitny/akademik/issues/21) | Generator danych | 3.6 |
+| [#22](https://github.com/szaroblekitny/akademik/issues/22) | Przenieść konfigurację do pliku | 4.2 |
+| [#23](https://github.com/szaroblekitny/akademik/issues/23) | Nazwy tabel | 4.3 |
+
+[#14](https://github.com/szaroblekitny/akademik/issues/14) zostaje na razie bez działań. Uwaga do późniejszej decyzji: aplikacja WAR w Tomcacie nie korzysta z modułów JPMS (Java Platform Module System), bo Tomcat ładuje klasy po staremu, z classpath. Spring i Hibernate też modułów nie wymagają.
 
 ## Etap 1: zielone testy i porządki
 
@@ -125,7 +143,14 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 - *Przy okazji (szum w logu):* w `log4j2.xml` logger `org.jboss.weld` na poziomie `info`. Główny logger (`Root`) ma `debug`, więc bez tego Weld wypisywał setki linii przy starcie.
 - *Co sprawdzamy przy okazji:* krok 1.4 (Hibernate sam wykrywa PostgreSQL, brak błędu o dialekcie) i krok 1.5 (strony JSF z nowymi przestrzeniami nazw).
 
-**Gotowe, gdy:** wszystkie testy zielone (40 po kroku 1.3: 36 pierwotnych + 4 nowe testy `compareTo`), aplikacja startuje w Tomcacie, każdy ekran się otwiera.
+**1.7 Plik logu aplikacji we właściwym miejscu.** Log aplikacji będzie trafiał do `logs/akademik.log` w katalogu Tomcata, obok jego własnych logów.
+
+- *Issues:* [#17](https://github.com/szaroblekitny/akademik/issues/17) (closes).
+- *Dlaczego plik lądował w `bin`:* ścieżka względna, np. `fileName="akademik.log"`, liczy się od katalogu roboczego procesu, a Tomcat uruchamiany skryptem z `bin` ma tam swój katalog roboczy. Obecnie w `log4j2.xml` zapis do pliku jest w ogóle wykomentowany i wszystko idzie tylko na konsolę.
+- *Rozwiązanie:* `fileName="${sys:catalina.base}/logs/akademik.log"`. Log4j wstawi tu właściwość systemową `catalina.base`, którą ustawia Tomcat. Do tego `RollingFile` zamiast `File`, czyli nowy plik co dzień, a stare pliki są z czasem usuwane, więc log nie rośnie bez końca.
+- *Do sprawdzenia:* w testach nie ma Tomcata, więc nie ma też `catalina.base`. Trzeba podać wartość domyślną (`${sys:catalina.base:-target}`), żeby testy pisały do `target`.
+
+**Gotowe, gdy:** wszystkie testy zielone (40 po kroku 1.3: 36 pierwotnych + 4 nowe testy `compareTo`), aplikacja startuje w Tomcacie, każdy ekran się otwiera, a log aplikacji jest w `logs` Tomcata.
 
 ## Etap 2: import, eksport i raport
 
@@ -136,14 +161,23 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 - *Objaśnienie:* bean JSF powinien tylko obsługiwać ekran, a serwis wykonywać pracę w jednej transakcji. Jeśli import 50 studentów padnie na 30., `@Transactional` wycofa wszystko i baza nie zostanie w połowie wypełniona.
 - *Nowość:* wstrzykiwanie przez konstruktor zamiast setterów z `@Autowired`. Pola mogą być wtedy `final`, a od Springa 4.3 przy jednym konstruktorze adnotacja `@Autowired` jest zbędna.
 
+**2.1a JAXB zamiast XStream.** Odczyt i zapis XML w `Plikowanie` przejdzie z XStream na JAXB (Jakarta XML Binding), standard Jakarty. Klasy `Pokoj` i `Student` dostaną adnotacje `@XmlRootElement`, `@XmlElement` itp., a `AkademikXStream` zniknie.
+
+- *Issues:* [#7](https://github.com/szaroblekitny/akademik/issues/7) (closes).
+- *Dlaczego:* XStream z pliku XML potrafi utworzyć obiekt **dowolnej** klasy z classpath, jeśli plik o nią poprosi. W aplikacji, która przyjmuje pliki od użytkowników (nasz import), to klasyczna droga ataku. XStream miał wiele takich podatności i dziś chroni się listą dozwolonych klas, którą trzeba pilnować. JAXB tworzy tylko klasy, które sami wskażemy. Przy okazji zniknie ostrzeżenie o `sun.misc.Unsafe` z kroku 1.2b.
+- *Kolejność:* przed importem (2.2) i eksportem (2.3), bo oba opierają się na `Plikowanie`. Krok zaczyna się od testu, który zapisuje i odczytuje listę pokoi i studentów. Test przechodzi na XStream, potem musi przejść na JAXB.
+- *Decyzja do podjęcia:* czy format plików może się zmienić (inne nazwy elementów XML), czy JAXB ma czytać dokładnie obecne pliki? Pliki przykładowe i tak trzeba będzie poprawić w 2.2 z powodu #3.
+
 **2.2 Import do bazy (P5).** `ImportBean.upload()` przekaże strumień z przesłanego pliku prosto do `DaneService`, bez zapisu na dysk `h:/TEMP/`. Ekran pokaże, ile pokoi lub studentów wczytano.
 
 - *Nowość:* `try-with-resources` (Java 7), czyli `try (InputStream in = ...) { }`. Strumień zamyka się sam, także przy wyjątku. Obecny kod zamyka strumienie ręcznie i przy błędzie zostawia je otwarte.
 - *Decyzja do podjęcia:* czy import ma najpierw kasować istniejące dane (jak wersja plikowa), czy dopisywać?
+- *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (refs). Import przestanie wymagać pola `id` w plikach. Dopóki nie ma sekwencji (3.3), ID nada tymczasowo dotychczasowy mechanizm. Issue zamknie dopiero krok 3.3.
 
 **2.3 Eksport do XML (P6).** `EksportBean` zamiast żyrafy wygeneruje `pokoje.xml` i `studenci.xml` przez `Plikowanie.saveObjectList()`. Format będzie taki sam jak przy imporcie, więc eksport i import zrobią pełne koło.
 
 - *Objaśnienie:* obecny `EksportBean` liczy plik w konstruktorze, raz na sesję. Przeniesiemy to do metody wywoływanej przy kliknięciu, żeby eksport zawsze pokazywał aktualne dane.
+- *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (closes). Issue mówi o eksporcie danych zakwaterowanych studentów. Plik `studenci.xml` będzie zawierał przydzielony pokój, więc to obejmuje.
 
 **2.4 Raport XML kwaterunku (P7).** Nowa metoda tworzy dokument XML: lista pokoi, w każdym zakwaterowani studenci, na końcu meldunek o wyniku.
 
@@ -153,7 +187,12 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 
 **2.6 Testy.** Każdy krok dostaje test: import z przykładowego XML w `src/test/resources`, eksport i ponowny import dają te same dane, raport zawiera wszystkie pokoje.
 
-**Gotowe, gdy:** da się wczytać pliki XML z ekranu, zakwaterować, pobrać raport HTML i wyeksportować dane.
+**2.7 Sortowanie wyniku na stronie głównej.** Lista na stronie głównej będzie posortowana według pokoi, a w pokoju według nazwisk.
+
+- *Issues:* [#16](https://github.com/szaroblekitny/akademik/issues/16) (closes).
+- *Objaśnienie:* kolejność może ustalić baza (metoda repozytorium `findAllByOrderByNumerPokojuAsc()`, którą Spring Data tworzy z samej nazwy metody) albo Java (`Comparator.comparing(Pokoj::getNumerPokoju)`). Wybierzemy jedno i omówimy różnicę. `compareTo` z kroku 1.3 sortuje po ID, a nie po numerze pokoju, więc tu go nie wystarczy użyć wprost.
+
+**Gotowe, gdy:** da się wczytać pliki XML z ekranu, zakwaterować, pobrać raport HTML i wyeksportować dane, a strona główna pokazuje dane posortowane według pokoi.
 
 ## Etap 3: lepsze kwaterowanie i identyfikatory
 
@@ -170,10 +209,24 @@ Cel: algorytm mieści więcej studentów, a ID nadaje baza danych. Ten etap robi
 
 - *Dlaczego:* dwóch użytkowników naraz może odczytać ten sam ostatni ID i obaj zapiszą `ID + 1`. Sekwencja w bazie wydaje numery atomowo.
 - *Uwaga:* pliki XML z importu zawierają własne ID. Trzeba będzie zdecydować, czy import je zachowuje, czy nadaje nowe.
+- *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (closes). Po tym kroku ID w plikach wejściowych nie są już potrzebne do niczego. Issue chce, żeby program nadawał je sam, więc to przemawia za nadawaniem nowych.
 
 **3.4 Walidacja danych.** Adnotacje Bean Validation (`@NotBlank`, `@Min(1)`) na polach encji, żeby nie dało się zapisać pokoju z 0 miejsc ani studenta bez nazwiska. JSF pokaże błędy automatycznie przy formularzu. Potrzebna będzie implementacja walidacji, czyli zależność Hibernate Validator.
 
-**Gotowe, gdy:** test z 3.1 przechodzi, nowe rekordy dostają ID z sekwencji, formularze odrzucają błędne dane.
+**3.5 Ręczne dodawanie, edycja i kasowanie rekordów.** Ekrany pokoi i studentów dostaną pełną obsługę: dodaj, popraw, usuń. To, co jest dziś na ekranach, sprawdzimy w kroku 1.6 i tu uzupełnimy braki.
+
+- *Issues:* [#12](https://github.com/szaroblekitny/akademik/issues/12) (closes).
+- *Objaśnienie:* w PrimeFaces wygodne są `p:dataTable` z edycją w wierszu (`editable="true"`) i `p:dialog` z formularzem dla nowego rekordu. Walidacja z 3.4 zadziała w obu miejscach bez dodatkowego kodu, a ID nada sekwencja z 3.3, dlatego ten krok jest po nich.
+- *Do przemyślenia:* co ma się stać przy kasowaniu pokoju, w którym ktoś mieszka? Proponuję odmowę z komunikatem, bo klucz obcy `student.zakwaterowani` i tak nie pozwoli usunąć takiego pokoju.
+
+**3.6 Generator danych (opcjonalny).** Program pomocniczy tworzy pliki XML z losowymi pokojami i studentami w zadanej liczbie, np. 50 pokoi i 150 studentów.
+
+- *Issues:* [#21](https://github.com/szaroblekitny/akademik/issues/21) (closes).
+- *Po co:* do sprawdzania algorytmu na dużych danych i do ręcznych testów importu. Imiona i nazwiska będą losowane z krótkich list, a płeć dopasowana do imienia.
+- *Nowość (Java 17):* `RandomGenerator` i `RandomGenerator.of("L64X128MixRandom")`, nowy interfejs generatorów liczb losowych, oraz `random.nextInt(1, 5)` z zakresem od-do. Opcjonalnie `java Generator.java` (Java 11) uruchamia plik źródłowy bez osobnej kompilacji.
+- *Kolejność:* krok nie zależy od innych poza formatem XML z 2.1a. Można go zrobić wcześniej, np. przed 3.1, jeśli będzie potrzebny do testów algorytmu.
+
+**Gotowe, gdy:** test z 3.1 przechodzi, nowe rekordy dostają ID z sekwencji, formularze odrzucają błędne dane, a pokoje i studentów da się dodawać, poprawiać i usuwać z ekranu.
 
 ## Etap 4 (opcjonalny): Spring Boot i nowoczesne narzędzia
 
@@ -194,8 +247,11 @@ Cel: projekt wygląda jak typowa aplikacja Springa z 2026 roku. Ten etap daje na
 - *Objaśnienie JTA:* Atomikos jest potrzebny tylko wtedy, gdy jedna transakcja obejmuje kilka zasobów naraz (np. dwie bazy albo bazę i kolejkę JMS, czyli Jakarta Messaging, standard kolejek komunikatów). Akademik ma jedną bazę, więc wystarczy zwykły `JpaTransactionManager`. Jeśli chcesz ćwiczyć JTA, zostawimy go świadomie.
 - *Decyzja do podjęcia:* usuwamy Atomikos, czy zostawiamy go do ćwiczenia transakcji rozproszonych?
 - *Do sprawdzenia przed startem:* zgodność JoinFaces 6.1 i PrimeFaces 15 z Bootem 4.1.
+- *Issues:* [#22](https://github.com/szaroblekitny/akademik/issues/22) (closes). Ustawienia Hibernate'a z `MainConfiguration.hibernateProperties()` trafią do `application.properties` jako `spring.jpa.properties.hibernate.*`. Gdyby Etap 4 miał poczekać, da się to zrobić wcześniej bez Boota: plik `hibernate.properties` w zasobach i `@PropertySource` w konfiguracji.
 
 **4.3 Flyway zamiast luźnych skryptów SQL.** Skrypty z `src/main/sql` staną się migracjami `V1__schemat.sql`, `V2__dane.sql`. Flyway uruchomi je przy starcie aplikacji i zapamięta w tabeli, które już wykonał. Skrypty dla Oracle można usunąć albo zostawić jako osobny zestaw.
+
+- *Issues:* [#23](https://github.com/szaroblekitny/akademik/issues/23) (closes). Kolejna migracja, `V3__nazwy_tabel.sql`, zmieni nazwy: `pokoj` → `pokoje`, `student` → `studenci`, kolumna `zakwaterowani` → `pokoj_id`. Encje dostaną `@Table(name = "pokoje")`, `@Table(name = "studenci")` i `@JoinColumn(name = "pokoj_id")`. Właśnie do takich zmian służy Flyway: istniejąca baza dostaje `ALTER TABLE ... RENAME`, a dane zostają.
 
 **4.4 Testcontainers zamiast HSQLDB.** Testy uruchomią prawdziwy PostgreSQL w kontenerze Dockera. HSQLDB zachowuje się inaczej niż PostgreSQL (typy, sekwencje), więc test może przejść na HSQLDB i paść w produkcji. Wymaga Docker Desktop. *Uwaga:* Dockera obecnie nie ma. Przed tym krokiem trzeba zdecydować, czy go instalować, czy np. testować na lokalnym PostgreSQL w osobnej bazie testowej.
 
@@ -226,28 +282,33 @@ To są nowości, które pojawią się w kodzie podczas prac. Każdą omówię sz
 
 Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zrobienia, w toku, zrobione, pominięte.
 
-| Krok | Opis | Status | Commit |
-| --- | --- | --- | --- |
-| 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) | zrobione | 1c29a35 |
-| 1.2 | Wtyczki Maven i kompilator `release` | zrobione | 0b3964e |
-| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage | zrobione | cdb193b, 04225a9 |
-| 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) | zrobione | e166b4a |
-| 1.3 | Poprawka `compareTo` | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | 819a9b2 |
-| 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) | zrobione, do sprawdzenia w Tomcacie w 1.6 | 38cbab1 |
-| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 | zrobione, do sprawdzenia w Tomcacie w 1.6 | 4521296 |
-| 1.6 | Uruchomienie w Tomcacie | w toku: aplikacja startuje na Tomcacie 11, na ekranach są błędy do zebrania i poprawienia | |
-| 2.1 | `DaneService` | do zrobienia | |
-| 2.2 | Import do bazy | do zrobienia | |
-| 2.3 | Eksport do XML | do zrobienia | |
-| 2.4 | Raport XML | do zrobienia | |
-| 2.5 | Raport HTML przez XSLT | do zrobienia | |
-| 2.6 | Testy importu, eksportu i raportu | do zrobienia | |
-| 3.1 | Test słabości algorytmu | do zrobienia | |
-| 3.2 | Nowy algorytm kwaterowania | do zrobienia | |
-| 3.3 | ID z sekwencji | do zrobienia | |
-| 3.4 | Walidacja danych | do zrobienia | |
-| 4.1 | Spring 7 i Hibernate 7 | do zrobienia | |
-| 4.2 | Spring Boot 4 + JoinFaces | do zrobienia | |
-| 4.3 | Flyway | do zrobienia | |
-| 4.4 | Testcontainers | do zrobienia | |
-| 4.5 | REST API lub Thymeleaf | do zrobienia | |
+| Krok | Opis | Issues | Status | Commit |
+| --- | --- | --- | --- | --- |
+| 1.1 | Podbicie Mockito (+ ByteBuddy 1.17.7, JaCoCo 0.8.16) |  | zrobione | 1c29a35 |
+| 1.2 | Wtyczki Maven i kompilator `release` |  | zrobione | 0b3964e |
+| 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage |  | zrobione | cdb193b, 04225a9 |
+| 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) |  | zrobione | e166b4a |
+| 1.3 | Poprawka `compareTo` |  | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | 819a9b2 |
+| 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) |  | zrobione, do sprawdzenia w Tomcacie w 1.6 | 38cbab1 |
+| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, do sprawdzenia w Tomcacie w 1.6 | 4521296 |
+| 1.6 | Uruchomienie w Tomcacie |  | w toku: aplikacja startuje na Tomcacie 11, na ekranach są błędy do zebrania i poprawienia | 97cd531 (część 1) |
+| 1.7 | Plik logu w `logs` Tomcata | #17 | do zrobienia | |
+| 2.1 | `DaneService` |  | do zrobienia | |
+| 2.1a | JAXB zamiast XStream | #7 | do zrobienia | |
+| 2.2 | Import do bazy | #3 (refs) | do zrobienia | |
+| 2.3 | Eksport do XML | #8 | do zrobienia | |
+| 2.4 | Raport XML |  | do zrobienia | |
+| 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
+| 2.6 | Testy importu, eksportu i raportu |  | do zrobienia | |
+| 2.7 | Sortowanie strony głównej | #16 | do zrobienia | |
+| 3.1 | Test słabości algorytmu |  | do zrobienia | |
+| 3.2 | Nowy algorytm kwaterowania |  | do zrobienia | |
+| 3.3 | ID z sekwencji | #3 | do zrobienia | |
+| 3.4 | Walidacja danych |  | do zrobienia | |
+| 3.5 | Dodawanie, edycja, kasowanie rekordów | #12 | do zrobienia | |
+| 3.6 | Generator danych (opcjonalny) | #21 | do zrobienia | |
+| 4.1 | Spring 7 i Hibernate 7 |  | do zrobienia | |
+| 4.2 | Spring Boot 4 + JoinFaces | #22 | do zrobienia | |
+| 4.3 | Flyway | #23 | do zrobienia | |
+| 4.4 | Testcontainers |  | do zrobienia | |
+| 4.5 | REST API lub Thymeleaf |  | do zrobienia | |
