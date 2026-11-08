@@ -195,6 +195,8 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 - *Kolejność (zmiana 8.11.2026):* eksport przed importem. Plik wyeksportowany z prawdziwej bazy będzie gotowym materiałem do sprawdzenia importu w 2.3.
 - *Objaśnienie:* obecny `EksportBean` liczy plik w konstruktorze, raz na sesję. Przeniesiemy to do metody wywoływanej przy kliknięciu, żeby eksport zawsze pokazywał aktualne dane.
 - *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (refs). Eksport danych zamiast żyrafy. Issue mówi jednak o danych **zakwaterowanych** studentów, a plik eksportu nie zawiera przydziału pokoi (decyzja z 2.1a), więc issue zamknie raport kwaterunku w 2.4.
+- *Wynik (8.11.2026):* `EksportBean.getContent()` przy każdym kliknięciu woła `DaneService.eksportuj()` do tablicy bajtów i zwraca `DefaultStreamedContent` z nazwą `akademik.xml` i typem `application/xml`. Bajty zamiast `writer(...)` PrimeFaces, bo eksport kończy się w transakcji usługi, a lambda przechowuje tylko serializowalną tablicę. Konstruktor nie używa już `FacesContext`, a `zyrafa3.jpg` usunięta. Poprawka w `eksport.xhtml`: funkcje `start()`/`stop()` dla `PrimeFaces.monitorDownload` były w `<h:head>` poza `<ui:composition>`, więc Facelets je pomijał; teraz są w `<ui:define>`. Nowy `EksportBeanTest` (2 testy, w tym aktualne dane przy drugim eksporcie w tej samej sesji). Faza czerwona: 1 porażka i 1 błąd na 47, zielona: 47/47. Sprawdzone w Tomcacie: plik z PostgreSQL wygląda dobrze.
+- *Ciekawostka:* JAXB z GlassFisha sam dopisuje `standalone="yes"` w deklaracji XML. Oznacza to, że dokument nie zależy od zewnętrznego DTD; z XSD nie ma to nic wspólnego.
 
 **2.3 Import do bazy (P5).** `ImportBean.upload()` przekaże strumień z przesłanego pliku prosto do `DaneService`, bez zapisu na dysk `h:/TEMP/`. Ekran pokaże, ile pokoi lub studentów wczytano.
 
@@ -321,8 +323,8 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531, e008b10 |
 | 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | 72ae1d4 |
 | 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | eb5a00a |
-| 2.1a | JAXB zamiast XStream | #7 | zrobione (część 1: czerwona 4 porażki, zielona 46/46; część 2: czerwona 5 porażek i 2 błędy, zielona 45/45) | 1ac0212 (część 1) |
-| 2.2 | Eksport do XML | #8 (refs) | do zrobienia | |
+| 2.1a | JAXB zamiast XStream | #7 | zrobione (część 1: czerwona 4 porażki, zielona 46/46; część 2: czerwona 5 porażek i 2 błędy, zielona 45/45) | 1ac0212 (część 1), bd81a60 (część 2) |
+| 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | |
 | 2.3 | Import do bazy | #3 (refs) | do zrobienia | |
 | 2.4 | Raport XML | #8 | do zrobienia | |
 | 2.5 | Raport HTML przez XSLT |  | do zrobienia | |

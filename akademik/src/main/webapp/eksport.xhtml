@@ -8,17 +8,6 @@
 <h:head>
 	<title>Akademik</title>
 	<link rel="stylesheet" type="text/css" href="akademik.css"/>
-	<script type="text/javascript">
-    //<![CDATA[
-function start() {
-    PF('statusDialog').show();
-}
- 
-function stop() {
-    PF('statusDialog').hide();
-}
-    //]]>
-</script>
 </h:head>
 <h:body>
 	<ui:composition template = "template/template.xhtml">
@@ -27,13 +16,27 @@ function stop() {
 		</ui:define>
 
 		<ui:define name = "content">
+			<!-- skrypt musi być wewnątrz ui:define: Facelets pomija wszystko, co stoi -->
+			<!-- poza ui:composition, więc w h:head te funkcje w ogóle nie trafiały na stronę -->
+			<script type="text/javascript">
+			//<![CDATA[
+			function start() {
+				PF('statusDialog').show();
+			}
+
+			function stop() {
+				PF('statusDialog').hide();
+			}
+			//]]>
+			</script>
+
 			<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
     			<h:outputText value="Chwilka..." />
 			</p:dialog>
 
 			<h:form>
 				<div class="otoczkaBut">
-	    			<p:commandButton value="Eksport" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="pi pi-upload">
+	    			<p:commandButton value="Eksport" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="pi pi-download">
 	        			<p:fileDownload value="#{eksportBean.content}" />
 	    			</p:commandButton>
     			</div>
