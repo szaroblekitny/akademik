@@ -158,6 +158,8 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 
 **Gotowe, gdy:** wszystkie testy zielone (40 po kroku 1.3: 36 pierwotnych + 4 nowe testy `compareTo`), aplikacja startuje w Tomcacie, każdy ekran się otwiera, a log aplikacji jest w `logs` Tomcata.
 
+**Etap 1 zakończony 8.11.2026.** Wersja aplikacji podniesiona z 0.60-SNAPSHOT na **0.70-SNAPSHOT**, więc WAR nazywa się teraz `akademik##0.70-SNAPSHOT.war`. Gałąź `etap1-porzadki` trafia przez pull request do `master`, a Etap 2 zaczyna się na nowej gałęzi od `master`. W Tomcacie stary WAR i katalog `akademik##0.60-SNAPSHOT` trzeba usunąć ręcznie, bo inaczej Tomcat uruchomi obie wersje naraz (tak działa wdrażanie równoległe).
+
 ## Etap 2: import, eksport i raport
 
 Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków już istnieje (`Plikowanie`, `Akademik.pobierzZPliku`), trzeba je tylko połączyć z ekranami.
@@ -300,7 +302,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) |  | zrobione, sprawdzone w Tomcacie w 1.6 | 38cbab1 |
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, sprawdzone w Tomcacie w 1.6 | 4521296 |
 | 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531, e008b10 |
-| 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | |
+| 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | 72ae1d4 |
 | 2.1 | `DaneService` |  | do zrobienia | |
 | 2.1a | JAXB zamiast XStream | #7 | do zrobienia | |
 | 2.2 | Import do bazy | #3 (refs) | do zrobienia | |
