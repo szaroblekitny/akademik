@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.1" 
-         xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<!-- Servlet 6.0 (Jakarta EE 10): Tomcat 10.1 i nowsze -->
+<web-app version="6.0"
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
          
 	<display-name>Akademik</display-name>
 
@@ -26,13 +27,8 @@
 
     <context-param>
     	<param-name>primefaces.THEME</param-name>
-    	<param-value>nova-light</param-value>
-	</context-param>
-
-	<!-- włączenie mechanizmu uploadu - importu pliku -->
-	<context-param>
-		<param-name>primefaces.UPLOADER</param-name>
-		<param-value>auto</param-value>
+    	<!-- PrimeFaces 15 ma wbudowany tylko motyw saga-blue; nova-light już nie istnieje -->
+    	<param-value>saga-blue</param-value>
 	</context-param>
 
     <context-param>
@@ -54,6 +50,13 @@
         <servlet-name>facesServlet</servlet-name>
 		<servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
+        <!-- Upload pliku (import): PrimeFaces 13+ czyta go standardowym API Servletu -->
+        <!-- (HttpServletRequest.getParts()), które działa tylko z multipart-config. -->
+        <!-- Zastępuje dawny FileUploadFilter i parametr primefaces.UPLOADER. -->
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>         <!-- 10 MB na plik -->
+            <max-request-size>20971520</max-request-size>   <!-- 20 MB na całe żądanie -->
+        </multipart-config>
     </servlet>
 
     <servlet-mapping>
@@ -76,15 +79,6 @@
     <welcome-file-list>
         <welcome-file>faces/akademik.xhtml</welcome-file>
     </welcome-file-list>
-
-    <filter>
-    	<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<servlet-name>facesServlet</servlet-name>
-	</filter-mapping>
 
     <error-page>
         <exception-type>java.lang.Exception</exception-type>

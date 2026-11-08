@@ -9,6 +9,7 @@ import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.reflection.PureJavaReflectionProvider;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.NullPermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
@@ -41,7 +42,10 @@ public class AkademikXStream extends XStreamMarshaller {
 		@SuppressWarnings("rawtypes")
 		final Class[] cl = {Pokoj.class, Student.class};
 		
-		XStream xstream = new XStream();
+		// PureJavaReflectionProvider tworzy obiekty przez konstruktor bezargumentowy.
+		// Domyślny provider używa sun.misc.Unsafe, a od Javy 24 JVM ostrzega
+		// przy jego użyciu (JEP 498). Pokoj i Student mają konstruktor bezargumentowy.
+		XStream xstream = new XStream(new PureJavaReflectionProvider());
 		// clear out existing permissions and set own ones
 		xstream.addPermission(NoTypePermission.NONE);
 		// allow some basics

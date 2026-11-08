@@ -25,8 +25,16 @@ import org.wojtekz.akademik.util.DaneTestowe;
 public class AkademikConfiguration {
 	private static Logger logg = LogManager.getLogger();
 	
+	/**
+	 * Postprocesor tłumaczący wyjątki JPA/Hibernate'a na wyjątki Springa (DataAccessException).
+	 * Metoda jest statyczna, bo zwraca BeanPostProcessor: Spring może ją wywołać
+	 * bez tworzenia obiektu tej klasy konfiguracyjnej, więc sama konfiguracja
+	 * przechodzi potem normalnie przez wszystkie postprocesory.
+	 *
+	 * @return postprocesor tłumaczenia wyjątków
+	 */
 	@Bean
-	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+	public static PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 		logg.debug("----->>> PersistenceExceptionTranslationPostProcessor bean configuration");
 		return new PersistenceExceptionTranslationPostProcessor();
 	}

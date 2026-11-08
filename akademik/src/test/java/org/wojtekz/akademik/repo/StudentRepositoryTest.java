@@ -4,20 +4,17 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 public class StudentRepositoryTest {
 	private static Logger logg = LogManager.getLogger();
 	private Student student;
@@ -36,7 +33,7 @@ public class StudentRepositoryTest {
 		this.pokojRep = pokojRep;
 	}
 
-	@Before
+	@BeforeEach
 	public void before() {
 		logg.debug("----->>> StudentRepository before method fired");
 		student = new Student();
@@ -55,7 +52,7 @@ public class StudentRepositoryTest {
 	@Test
 	public void findAllTest() {
 		logg.trace("----->>> findAllTest leci");
-		Assert.assertNotNull(studentRep.findAll());
+		Assertions.assertNotNull(studentRep.findAll());
 	}
 	
 	/**
@@ -73,9 +70,9 @@ public class StudentRepositoryTest {
 		logg.trace("----->>> zapiszIOdczytay po save student");
 		List<Student> listaStudentow = studentRep.findAll();
 		logg.trace("----->>> zapiszIOdczytay po findAll");
-		Assert.assertEquals(1, listaStudentow.size());
-		Assert.assertEquals(KASIA, listaStudentow.get(0).getImie());
-		Assert.assertEquals(Plec.KOBIETA, listaStudentow.get(0).getPlec());
+		Assertions.assertEquals(1, listaStudentow.size());
+		Assertions.assertEquals(KASIA, listaStudentow.get(0).getImie());
+		Assertions.assertEquals(Plec.KOBIETA, listaStudentow.get(0).getPlec());
 	}
 	
 	@Test
@@ -83,7 +80,7 @@ public class StudentRepositoryTest {
 		logg.trace("----->>> testFindByName leci");
 		studentRep.save(student);
 		List<Student> listaStudentow = studentRep.findByName(KOWALSKA);
-		Assert.assertEquals(KASIA, listaStudentow.get(0).getImie());
+		Assertions.assertEquals(KASIA, listaStudentow.get(0).getImie());
 		studentRep.deleteAll();
 	}
 	
@@ -101,7 +98,7 @@ public class StudentRepositoryTest {
 		pokojRep.save(zamieszkaly);
 		studentRep.save(student);
 		List<Student> ciZPokoju = studentRep.findByPokoj(zamieszkaly);
-		Assert.assertEquals(KASIA, ciZPokoju.get(0).getImie());
+		Assertions.assertEquals(KASIA, ciZPokoju.get(0).getImie());
 	}
 	
 	/**
@@ -114,7 +111,7 @@ public class StudentRepositoryTest {
 		// tak dziwaczna konstrukcja, bo inaczej dwie metody mają
 		// taką samą definicję i się gryzie kompilator, co wybrać
 		Long maksik = studentRep.findLastId();
-		Assert.assertEquals(Long.valueOf(1L), maksik);
+		Assertions.assertEquals(Long.valueOf(1L), maksik);
 		studentRep.deleteAll();
 	}
 	

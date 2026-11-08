@@ -11,13 +11,11 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Plikowalny;
@@ -25,8 +23,7 @@ import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestConfiguration.class})
+@SpringJUnitConfig(classes = {TestConfiguration.class})
 public class PlikowanieTest {
 	private static Logger logg = LogManager.getLogger();
 	
@@ -39,7 +36,7 @@ public class PlikowanieTest {
     @Autowired
     Plikowanie plikowanie;
     
-    @Before
+    @BeforeEach
     public void before() {
     	logg.debug("----->>> Plikowanie test before method fired");
     	
@@ -67,10 +64,10 @@ public class PlikowanieTest {
 		try {
 			buffWriter = Files.newBufferedWriter(path, StandardCharsets.UTF_8);
 			plikowanie.saveObjectList(buffWriter, listaStudentow);
-			Assert.assertTrue(true);
+			Assertions.assertTrue(true);
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> testWriteList: ", ee);
-			Assert.assertFalse("----->>> Mamy błąd zapisu", true);
+			Assertions.fail("----->>> Mamy błąd zapisu", ee);
 		}
 	}
 	
@@ -98,10 +95,10 @@ public class PlikowanieTest {
 			plikowanie.saveObjectList(buWri, pokoje);
 			wczytLista  = plikowanie.loadObjectList(buReader);
 			
-			Assert.assertEquals("102", ((Pokoj) (wczytLista.get(1))).getNumerPokoju());
+			Assertions.assertEquals("102", ((Pokoj) (wczytLista.get(1))).getNumerPokoju());
 		} catch (Exception ex) {
 			logg.error("----- ERROR >> testWriteList: ", ex);
-			Assert.assertFalse("----->>> Mamy błąd zapisu", true);
+			Assertions.fail("----->>> Mamy błąd zapisu", ex);
 		}
 		
 	}

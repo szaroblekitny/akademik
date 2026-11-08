@@ -61,7 +61,9 @@ public class MainConfiguration {
 	 */
 	private Properties hibernateProperties() {
 	    Properties properties = new Properties();
-	    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
+	    // Bez "hibernate.dialect": Hibernate 6 sam rozpoznaje bazę i jej wersję z połączenia JDBC
+	    // i dobiera org.hibernate.dialect.PostgreSQLDialect. Stara klasa PostgreSQL10Dialect
+	    // nie istnieje już w hibernate-core 6.6 (przeniesiona do hibernate-community-dialects).
 	    properties.setProperty("hibernate.transaction.coordinator_class", "jta");
 	    properties.setProperty("hibernate.transaction.jta.platform", "Atomikos");
 	    properties.setProperty("hibernate.jta.allowTransactionAccess", "true");

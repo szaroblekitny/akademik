@@ -111,13 +111,17 @@ public class Student implements Serializable, Plikowalny, Comparable<Student> {
 	 * uniemożliwia porównanie go z obiektem podanym w parametrze.
 	 * 
 	 * <p>W przypadku klasy Student całkowicie wystarczające jest porównanie
-	 * po identyfikatorze.
-	 * 
-	 * @param innyStudent prównywany student
+	 * po identyfikatorze, rosnąco.
+	 *
+	 * <p>Long.compare zamiast odejmowania: różnica dwóch long rzutowana na int
+	 * może się przepełnić i dać zły znak albo zero.
+	 *
+	 * @param innyStudent porównywany student
+	 * @return wartość ujemna, zero lub dodatnia, gdy ten student ma mniejsze, równe lub większe ID
 	 */
 	@Override
 	public int compareTo(Student innyStudent) {
-		return (int) (innyStudent.getId() - this.getId());
+		return Long.compare(this.id, innyStudent.id);
 	}
 	
 	
