@@ -26,7 +26,7 @@ import jakarta.persistence.OneToMany;
  *
  */
 @Entity
-public class Pokoj implements Serializable, Plikowalny, Comparable<Pokoj> {
+public class Pokoj implements Serializable, Comparable<Pokoj> {
 	private static final long serialVersionUID = 3208928506624425725L;
 
 	@Id

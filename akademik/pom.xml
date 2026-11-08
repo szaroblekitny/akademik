@@ -22,7 +22,6 @@
 		<spring-data-jpa.version>3.4.1</spring-data-jpa.version>
 		<log4j.version>2.25.4</log4j.version>
 		<hsqldb.version>2.7.1</hsqldb.version>
-		<xstream.version>1.4.21</xstream.version>
 		<!-- JAXB (Jakarta XML Binding): API i implementacja z GlassFisha; 4.0 = Jakarta EE 10 i 11 -->
 		<jaxb-api.version>4.0.5</jaxb-api.version>
 		<jaxb-runtime.version>4.0.9</jaxb-runtime.version>
@@ -99,12 +98,6 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-oxm</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 
 		<dependency>
@@ -194,12 +187,6 @@
     		<groupId>org.postgresql</groupId>
     		<artifactId>postgresql</artifactId>
     		<version>${postgresql-jdbc.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>${xstream.version}</version>
 		</dependency>
 
 		<!-- JAXB: odczyt i zapis plików z danymi (krok 2.1a, zastępuje XStream). -->

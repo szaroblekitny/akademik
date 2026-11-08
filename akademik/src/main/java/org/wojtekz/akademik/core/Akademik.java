@@ -1,9 +1,8 @@
 package org.wojtekz.akademik.core;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,11 +13,10 @@ import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.plik.NieprawidlowyPlikException;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.service.DaneService;
-
-import com.thoughtworks.xstream.io.StreamException;
 
 /**
  * Centralna klasa realizująca logikę obsługi Akademika. Pobiera dane z plików konfiguracyjnych,
@@ -54,36 +52,31 @@ public class Akademik {
 
 	/**
 	 * Wykonuje zadania dla aplikacji wywoływanej z wiersza poleceń.
-	 * Kasuje wszystkie dane z bazy, pobiera dane z plików studentów i pokoi,
+	 * Kasuje wszystkie dane z bazy, wczytuje pokoje i studentów z pliku danych,
 	 * wykonuje zakwaterowanie i generuje stan akademika po zakwaterowaniu.
 	 * Dla aplikacji webowej całkowicie nieprzydatna :-).
+	 * <p>
+	 * Strumienie zamyka ten, kto je otworzył (od kroku 2.1a, wcześniej robiła to ta metoda).
 	 * 
-	 * @param pokojeReader odczytywacz pokoi
-	 * @param studenciReader odczytywacz studentów
+	 * @param dane plik z pokojami i studentami w formacie {@code akademik.xsd}
 	 * @param outputWriter zapisywacz wyniku stanu akademika po zakwaterowaniu
 	 * 
 	 */
-	public void akademik(BufferedReader pokojeReader, BufferedReader studenciReader, BufferedWriter outputWriter) {
+	public void akademik(InputStream dane, BufferedWriter outputWriter) {
 		// ot i cała logika naszej tekstowej aplikacji:
 		try {
 			
-			// kasowanie wszystkiego, bo ładujemy wszystkie dane z plików
-			pokojRepo.deleteAll();
+			// kasowanie wszystkiego, bo ładujemy wszystkie dane z pliku
 			studentRepo.deleteAll();
+			pokojRepo.deleteAll();
 			
-			daneService.importuj(pokojeReader);
-			daneService.importuj(studenciReader);
+			daneService.importuj(dane);
 			String meldunek = zakwateruj();
 			podajStanAkademika(outputWriter, meldunek);
+			outputWriter.flush();
 			
-			pokojeReader.close();
-			studenciReader.close();
-			outputWriter.close();
-			
-		} catch (NoSuchFileException nsfe) {
-			logg.error("----- ERROR >> Nie ma takiego pliku: ", nsfe);
-		} catch (StreamException se) {
-			logg.error("----- ERROR >> Błąd parsowania pliku: ", se);
+		} catch (NieprawidlowyPlikException npe) {
+			logg.error("----- ERROR >> Błędny plik z danymi: ", npe);
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> Całkowicie błędny błąd: ", ee);
 		}

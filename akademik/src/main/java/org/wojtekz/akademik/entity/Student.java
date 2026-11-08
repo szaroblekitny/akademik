@@ -24,7 +24,7 @@ import jakarta.persistence.ManyToOne;
  *
  */
 @Entity
-public class Student implements Serializable, Plikowalny, Comparable<Student> {
+public class Student implements Serializable, Comparable<Student> {
 	private static final long serialVersionUID = 6073222260778454843L;
 	
 	@Id

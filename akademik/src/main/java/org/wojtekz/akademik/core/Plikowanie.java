@@ -1,8 +1,5 @@
 package org.wojtekz.akademik.core;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -11,19 +8,12 @@ import javax.xml.XMLConstants;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
-import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Component;
-import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.plik.AkademikXml;
@@ -36,10 +26,13 @@ import org.xml.sax.SAXParseException;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
 
 /**
- * Klasa do obsługi operacji plikowych.
- * 
+ * Zapis i odczyt pliku z danymi akademika (format {@code /xsd/akademik.xsd}) przez JAXB
+ * (Jakarta XML Binding). Do kroku 2.1a robił to XStream.
+ *
  * @author Wojtek Zaręba
  *
  */
@@ -74,59 +67,6 @@ public class Plikowanie {
 		}
 	}
 
-	@Autowired
-	private Marshaller marshaller;
-	
-	@Autowired
-	private Unmarshaller unmarshaller;
-	
-	/**
-	 * Zapisuje listę obiektów do pliku XML.
-	 * 
-	 * @param writer BufferedWriter
-	 * @param list lista obiektów podanego typu
-	 * @throws XmlMappingException javax.naming.NamingException
-	 * @throws IOException błąd wejścia-wyjścia
-	 */
-	public <T> void saveObjectList(BufferedWriter writer, List<T> list) throws IOException {
-		logg.trace("----->>> saveObjectList method fired");
-		
-		if (writer == null) {
-			logg.error("----->>> saveObjectList writer pusty");
-			throw new IOException();
-		}
-		
-		if (list == null || list.isEmpty()) {
-			logg.error("----->>> saveObjectList pusta lista");
-			throw new IOException();
-		}
-		
-		StreamResult result = new StreamResult(writer);
-		marshaller.marshal(list, result);
-		
-		logg.trace("----->>> saveObjectList koniec");
-	}
-
-	
-	/**
-	 * Przekształca dane z pliku XML na listę obiektów.
-	 * 
-	 * @param reader BufferedReader - odczytywane dane
-	 * @return listę obiektów odczytanych z pliku
-	 * @throws XmlMappingException w przypadku niepowodzenia mapowania pliku XML na obiekty
-	 *         podanego typu; również gdy plik nie jest plikiem XML
-	 * @throws IOException błąd odczytu z pliku
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Plikowalny> loadObjectList(BufferedReader reader)
-			throws IOException {
-		List<Plikowalny> obj;
-		obj =  (List<Plikowalny>) unmarshaller.unmarshal(new StreamSource(reader));
-		return obj;
-	}
-
-	// ===== JAXB (krok 2.1a, część 1): nowy format pliku <akademik> =====
-
 	/**
 	 * Zapisuje pokoje i studentów do jednego pliku XML w formacie {@code akademik.xsd}.
 	 * Zapis też jest sprawdzany schematem, więc do pliku nie trafią dane, których
@@ -142,10 +82,9 @@ public class Plikowanie {
 				pokoje.stream().map(PokojXml::zEncji).toList(),
 				studenci.stream().map(StudentXml::zEncji).toList());
 		try {
-			// pełna nazwa, bo w tej klasie Marshaller to jeszcze interfejs Springa dla XStreama
-			jakarta.xml.bind.Marshaller zapisywacz = kontekstJaxb.createMarshaller();
-			zapisywacz.setProperty(jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			zapisywacz.setProperty(jakarta.xml.bind.Marshaller.JAXB_ENCODING, "UTF-8");
+			Marshaller zapisywacz = kontekstJaxb.createMarshaller();
+			zapisywacz.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			zapisywacz.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			zapisywacz.setSchema(schemat);
 			zapisywacz.marshal(dokument, out);
 		} catch (JAXBException ee) {
@@ -174,7 +113,7 @@ public class Plikowanie {
 		XMLStreamReader czytnik = null;
 		try {
 			czytnik = fabryka.createXMLStreamReader(in);
-			jakarta.xml.bind.Unmarshaller odczytywacz = kontekstJaxb.createUnmarshaller();
+			Unmarshaller odczytywacz = kontekstJaxb.createUnmarshaller();
 			odczytywacz.setSchema(schemat);
 			dokument = (AkademikXml) odczytywacz.unmarshal(czytnik);
 		} catch (JAXBException ee) {
