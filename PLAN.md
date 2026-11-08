@@ -154,6 +154,7 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 - *Dlaczego plik lądował w `bin`:* ścieżka względna, np. `fileName="akademik.log"`, liczy się od katalogu roboczego procesu, a Tomcat uruchamiany skryptem z `bin` ma tam swój katalog roboczy. Obecnie w `log4j2.xml` zapis do pliku jest w ogóle wykomentowany i wszystko idzie tylko na konsolę.
 - *Rozwiązanie:* `fileName="${sys:catalina.base}/logs/akademik.log"`. Log4j wstawi tu właściwość systemową `catalina.base`, którą ustawia Tomcat. Do tego `RollingFile` zamiast `File`, czyli nowy plik co dzień, a stare pliki są z czasem usuwane, więc log nie rośnie bez końca.
 - *Do sprawdzenia:* w testach nie ma Tomcata, więc nie ma też `catalina.base`. Trzeba podać wartość domyślną (`${sys:catalina.base:-target}`), żeby testy pisały do `target`.
+- *Wynik (8.11.2026):* w `log4j2.xml` są dwie właściwości. `katalogLogow` = `${sys:catalina.base:-target}/logs` (część po `:-` to wartość domyślna), a `wzorzec` to format linii z pełną datą. Doszedł też appender `RollingFile` o nazwie `Plik`: bieżący plik `akademik.log`, a o północy poprzedni dostaje datę w nazwie i jest pakowany do `akademik-RRRR-MM-DD.log.gz`. Spakowane pliki starsze niż 30 dni usuwa `Delete` z `IfLastModified age="P30D"` (zapis okresu w ISO 8601: P = okres, 30D = 30 dni). Kodowanie pliku jest jawnie ustawione na UTF-8, więc polskie znaki nie zależą od strony kodowej Windowsa. `Root` pisze teraz i na konsolę, i do pliku. W testach plik powstaje w `akademik/target/logs`.
 
 **Gotowe, gdy:** wszystkie testy zielone (40 po kroku 1.3: 36 pierwotnych + 4 nowe testy `compareTo`), aplikacja startuje w Tomcacie, każdy ekran się otwiera, a log aplikacji jest w `logs` Tomcata.
 
@@ -298,8 +299,8 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.3 | Poprawka `compareTo` |  | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | 819a9b2 |
 | 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) |  | zrobione, sprawdzone w Tomcacie w 1.6 | 38cbab1 |
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, sprawdzone w Tomcacie w 1.6 | 4521296 |
-| 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531 (część 1), część 2 w następnym commicie |
-| 1.7 | Plik logu w `logs` Tomcata | #17 | do zrobienia | |
+| 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531, e008b10 |
+| 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | |
 | 2.1 | `DaneService` |  | do zrobienia | |
 | 2.1a | JAXB zamiast XStream | #7 | do zrobienia | |
 | 2.2 | Import do bazy | #3 (refs) | do zrobienia | |

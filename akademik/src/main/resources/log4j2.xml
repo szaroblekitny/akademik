@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration package="log4j.test" 
                status="info">
+    <Properties>
+        <!-- Katalog logów: w Tomcacie jego katalog logs (właściwość systemowa catalina.base -->
+        <!-- ustawia Tomcat). Poza Tomcatem, np. w testach Mavena, tej właściwości nie ma, -->
+        <!-- więc działa wartość domyślna po ":-", czyli katalog target/logs. -->
+        <Property name="katalogLogow">${sys:catalina.base:-target}/logs</Property>
+        <Property name="wzorzec">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
+
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <!-- <File name="File" fileName="akademik.log">
-        	<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </File> -->
+
+        <!-- Plik logu aplikacji (issue #17). Ścieżka bezwzględna, bo względna liczyłaby się -->
+        <!-- od katalogu roboczego procesu Tomcata, np. od jego katalogu bin. -->
+        <!-- Codziennie o północy bieżący plik dostaje datę w nazwie i jest pakowany do .gz, -->
+        <!-- a spakowane pliki starsze niż 30 dni są usuwane. -->
+        <RollingFile name="Plik"
+                     fileName="${katalogLogow}/akademik.log"
+                     filePattern="${katalogLogow}/akademik-%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${wzorzec}" charset="UTF-8"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${katalogLogow}" maxDepth="1">
+                    <IfFileName glob="akademik-*.log.gz"/>
+                    <IfLastModified age="P30D"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
     </Appenders>
     
     <Loggers>
@@ -27,7 +51,7 @@
         
         <Root level="debug">
             <AppenderRef ref="Console"/>
-            <!-- <AppenderRef ref="File"/> -->
+            <AppenderRef ref="Plik"/>
         </Root>
     </Loggers>
 </Configuration>
