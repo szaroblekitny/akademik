@@ -23,6 +23,9 @@
 		<log4j.version>2.25.4</log4j.version>
 		<hsqldb.version>2.7.1</hsqldb.version>
 		<xstream.version>1.4.21</xstream.version>
+		<!-- JAXB (Jakarta XML Binding): API i implementacja z GlassFisha; 4.0 = Jakarta EE 10 i 11 -->
+		<jaxb-api.version>4.0.5</jaxb-api.version>
+		<jaxb-runtime.version>4.0.9</jaxb-runtime.version>
 		<postgresql-jdbc.version>42.7.12</postgresql-jdbc.version>
 		<atomikos.version>6.0.0</atomikos.version>
 		<!-- Weld 6.x = CDI 4.1 (Jakarta EE 11); Weld 7 to już CDI 5 (Jakarta EE 12) -->
@@ -197,6 +200,21 @@
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>${xstream.version}</version>
+		</dependency>
+
+		<!-- JAXB: odczyt i zapis plików z danymi (krok 2.1a, zastępuje XStream). -->
+		<!-- Kod używa tylko API (adnotacje i interfejsy z jakarta.xml.bind), -->
+		<!-- a implementacja jest potrzebna dopiero przy uruchomieniu, stąd zakres runtime. -->
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>${jaxb-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>${jaxb-runtime.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		
 		<!-- JTA Atomikos -->

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Przykład pliku z danymi akademika: te same dane, co w src/main/sql/insert_*.sql.
+  Tak wygląda eksport i taki sam plik przyjmuje import.
+  Bez identyfikatorów i bez przydziału pokoi: kwaterowanie zrobi aplikacja.
+-->
+<akademik xmlns="urn:wojtekz:akademik:dane:1" wersja="1">
+  <pokoje>
+    <pokoj numer="101" miejsca="1"/>
+    <pokoj numer="102" miejsca="2"/>
+    <pokoj numer="103" miejsca="3"/>
+    <pokoj numer="104" miejsca="4"/>
+  </pokoje>
+  <studenci>
+    <student plec="MEZCZYZNA">
+      <imie>Jan</imie>
+      <nazwisko>Kowalski</nazwisko>
+    </student>
+    <student plec="KOBIETA">
+      <imie>Joanna</imie>
+      <nazwisko>Kowalska</nazwisko>
+    </student>
+    <student plec="MEZCZYZNA">
+      <imie>Janusz</imie>
+      <nazwisko>Kowal</nazwisko>
+    </student>
+    <student plec="MEZCZYZNA">
+      <imie>Ireneusz</imie>
+      <nazwisko>Kapucyn</nazwisko>
+    </student>
+    <student plec="MEZCZYZNA">
+      <imie>Jeremi</imie>
+      <nazwisko>Kulka</nazwisko>
+    </student>
+    <student plec="MEZCZYZNA">
+      <imie>Justyn</imie>
+      <nazwisko>Kaleta</nazwisko>
+    </student>
+    <student plec="KOBIETA">
+      <imie>Janina</imie>
+      <nazwisko>Kaptur</nazwisko>
+    </student>
+  </studenci>
+</akademik>

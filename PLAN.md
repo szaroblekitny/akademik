@@ -63,7 +63,7 @@ Projekt (wersja 0.60-SNAPSHOT) kompiluje się, ale 9 z 36 testów pada, a import
 | --- | --- | --- |
 | [#3](https://github.com/szaroblekitny/akademik/issues/3) | Niepotrzebne identyfikatory w plikach wejściowych | 2.2 (częściowo), 3.3 |
 | [#7](https://github.com/szaroblekitny/akademik/issues/7) | Obsługa plików XML nie powinna używać XStream | 2.1a |
-| [#8](https://github.com/szaroblekitny/akademik/issues/8) | Eksport pliku z danymi | 2.3 |
+| [#8](https://github.com/szaroblekitny/akademik/issues/8) | Eksport pliku z danymi | 2.3 (częściowo), 2.4 |
 | [#12](https://github.com/szaroblekitny/akademik/issues/12) | Ręczne wprowadzanie, edycja i kasowanie rekordów | 3.5 |
 | [#14](https://github.com/szaroblekitny/akademik/issues/14) | Techniczna: moduły z Javy 9 | bez kroku, decyzja odłożona |
 | [#16](https://github.com/szaroblekitny/akademik/issues/16) | Sortowanie wyniku działania | 2.7 |
@@ -177,7 +177,16 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 - *Issues:* [#7](https://github.com/szaroblekitny/akademik/issues/7) (closes).
 - *Dlaczego:* XStream z pliku XML potrafi utworzyć obiekt **dowolnej** klasy z classpath, jeśli plik o nią poprosi. W aplikacji, która przyjmuje pliki od użytkowników (nasz import), to klasyczna droga ataku. XStream miał wiele takich podatności i dziś chroni się listą dozwolonych klas, którą trzeba pilnować. JAXB tworzy tylko klasy, które sami wskażemy. Przy okazji zniknie ostrzeżenie o `sun.misc.Unsafe` z kroku 1.2b.
 - *Kolejność:* przed importem (2.2) i eksportem (2.3), bo oba opierają się na `Plikowanie`. Krok zaczyna się od testu, który zapisuje i odczytuje listę pokoi i studentów. Test przechodzi na XStream, potem musi przejść na JAXB.
-- *Decyzja do podjęcia:* czy format plików może się zmienić (inne nazwy elementów XML), czy JAXB ma czytać dokładnie obecne pliki? Pliki przykładowe i tak trzeba będzie poprawić w 2.2 z powodu #3.
+- *Decyzja (8.11.2026):* format może się zmienić. Propozycja formatu: schemat `src/main/resources/xsd/akademik.xsd` i przykład `src/test/resources/dane/przyklad.xml`. Główne założenia:
+  - jeden korzeń `<akademik>` z opcjonalnymi sekcjami `<pokoje>` i `<studenci>`. Importujemy dokładnie taki plik, jaki wyeksportowaliśmy;
+  - brak ID z bazy (#3). Pokój identyfikuje numer, unikalny w pliku (`xs:unique`);
+  - **bez przydziału studentów do pokoi.** Plik zawiera tylko dane podstawowe. Kwaterunek jest wynikiem działania aplikacji, a nie daną wejściową, i pokazuje go raport (2.4, 2.5). Pierwsza propozycja miała element `<pokoj>` u studenta. Odrzucona 8.11.2026, bo eksport i import mają być symetryczne;
+  - przestrzeń nazw `urn:wojtekz:akademik:dane:1` i atrybut `wersja`, żeby przyszłe zmiany formatu dało się rozpoznać;
+  - schemat sprawdzony walidatorem z JDK (`javax.xml.validation`): przykład przechodzi, a duplikat numeru pokoju, nieznana płeć, atrybut `id`, 0 miejsc i `<pokoj>` u studenta są odrzucane.
+- *Podział na dwie części (8.11.2026):*
+  - **część 1:** zależności `jakarta.xml.bind-api` 4.0.5 i `jaxb-runtime` 4.0.9 (zakres `runtime`). Nowy pakiet `plik` z klasami formatu: `AkademikXml`, `PokojXml`, `StudentXml`, rekord `DaneZPliku` i wyjątek `NieprawidlowyPlikException`. W `Plikowanie` dwie nowe metody: `zapiszDane(OutputStream, ...)` i `wczytajDane(InputStream)`. Odczyt jest sprawdzany schematem `akademik.xsd`, a parser StAX (Streaming API for XML) ma wyłączone DTD i encje zewnętrzne, co chroni przed atakiem XXE (XML External Entity). Nowy test `PlikowanieJaxbTest` ma 4 testy. Faza czerwona: dokładnie przewidziane 4 porażki na 46 testów. XStream w tej części jeszcze zostaje;
+  - **część 2:** `DaneService` przechodzi na nowe metody i nadaje ID wczytanym rekordom. Usunięte zostają XStream, `AkademikXStream`, beany `marshaller`/`unmarshaller` i stare testy, a `PlikowanieJaxbTest` zastępuje `PlikowanieTest`.
+- *Klasy formatu osobno od encji:* plik nie ma ID ani przydziału pokoi, więc adnotacje JAXB na encjach mieszałyby dwa modele. Klasy XML nie mogą być rekordami, bo JAXB tworzy obiekt konstruktorem bezargumentowym i dopiero potem wypełnia pola.
 
 **2.2 Import do bazy (P5).** `ImportBean.upload()` przekaże strumień z przesłanego pliku prosto do `DaneService`, bez zapisu na dysk `h:/TEMP/`. Ekran pokaże, ile pokoi lub studentów wczytano.
 
@@ -185,12 +194,14 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 - *Decyzja do podjęcia:* czy import ma najpierw kasować istniejące dane (jak wersja plikowa), czy dopisywać?
 - *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (refs). Import przestanie wymagać pola `id` w plikach. Dopóki nie ma sekwencji (3.3), ID nada tymczasowo dotychczasowy mechanizm. Issue zamknie dopiero krok 3.3.
 
-**2.3 Eksport do XML (P6).** `EksportBean` zamiast żyrafy wygeneruje `pokoje.xml` i `studenci.xml` przez `Plikowanie.saveObjectList()`. Format będzie taki sam jak przy imporcie, więc eksport i import zrobią pełne koło.
+**2.3 Eksport do XML (P6).** `EksportBean` zamiast żyrafy wygeneruje jeden plik `akademik.xml` z pokojami i studentami w formacie z 2.1a. Format jest taki sam jak przy imporcie, więc eksport i import zrobią pełne koło.
 
 - *Objaśnienie:* obecny `EksportBean` liczy plik w konstruktorze, raz na sesję. Przeniesiemy to do metody wywoływanej przy kliknięciu, żeby eksport zawsze pokazywał aktualne dane.
-- *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (closes). Issue mówi o eksporcie danych zakwaterowanych studentów. Plik `studenci.xml` będzie zawierał przydzielony pokój, więc to obejmuje.
+- *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (refs). Eksport danych zamiast żyrafy. Issue mówi jednak o danych **zakwaterowanych** studentów, a plik eksportu nie zawiera przydziału pokoi (decyzja z 2.1a), więc issue zamknie raport kwaterunku w 2.4.
 
 **2.4 Raport XML kwaterunku (P7).** Nowa metoda tworzy dokument XML: lista pokoi, w każdym zakwaterowani studenci, na końcu meldunek o wyniku.
+
+- *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (closes). To jest „eksport danych o zakwaterowanych studentach”, o który prosi issue. Raport ma własny format, inny niż plik danych z 2.1a, i nie służy do importu.
 
 - *Nowość (Java 16):* `record`, czyli niezmienna klasa danych w jednej linii: `record WierszRaportu(String pokoj, List<String> mieszkancy) {}`. Kompilator sam tworzy konstruktor, gettery, `equals`, `hashCode` i `toString`.
 
@@ -306,11 +317,11 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, sprawdzone w Tomcacie w 1.6 | 4521296 |
 | 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531, e008b10 |
 | 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | 72ae1d4 |
-| 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | |
-| 2.1a | JAXB zamiast XStream | #7 | do zrobienia | |
+| 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | eb5a00a |
+| 2.1a | JAXB zamiast XStream | #7 | w toku: część 1 zrobiona (TDD: czerwona 4 porażki, zielona 46/46) | |
 | 2.2 | Import do bazy | #3 (refs) | do zrobienia | |
-| 2.3 | Eksport do XML | #8 | do zrobienia | |
-| 2.4 | Raport XML |  | do zrobienia | |
+| 2.3 | Eksport do XML | #8 (refs) | do zrobienia | |
+| 2.4 | Raport XML | #8 | do zrobienia | |
 | 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
 | 2.6 | Testy importu, eksportu i raportu |  | do zrobienia | |
 | 2.7 | Sortowanie strony głównej | #16 | do zrobienia | |
