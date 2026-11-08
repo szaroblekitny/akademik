@@ -20,7 +20,7 @@
 				<!-- wyskakujące komunikaty -->
 				<p:growl id="msgs" sticky="true" showDetail="true"/>
 			
-				<p:dataTable id="pokojTab" var="pokoj" value="#{pokojBean.pokoje}" editable="true" class="dolnymargines" rowKey="#{pokoj.id}">
+				<p:dataTable id="pokojTab" widgetVar="pokoje" var="pokoj" value="#{pokojBean.pokoje}" editable="true" class="dolnymargines" rowKey="#{pokoj.id}">
 	        		<f:facet name="header">Edycja</f:facet>
 
 					<p:ajax event="rowEdit" listener="#{pokojBean.onRowEdit}" update=":form:msgs" />

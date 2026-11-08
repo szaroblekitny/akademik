@@ -141,7 +141,12 @@ Cel: `mvn test` przechodzi w całości na Javie 25, a drobne błędy znikają. F
 - *Korekta planu (upload w PrimeFaces):* trzecie wdrożenie: Spring już wstał, ale padło `ClassNotFoundException: org.primefaces.webapp.filter.FileUploadFilter`. PrimeFaces od wersji 13 nie ma własnego filtra uploadu ani parametru `primefaces.UPLOADER` i czyta pliki standardowym API Servletu (`HttpServletRequest.getParts()`). Poprawka w `web.xml`: usunięte filtr, jego mapowanie i parametr, a przy `FacesServlet` doszło `<multipart-config>` (limit 10 MB na plik, 20 MB na żądanie).
 - *Przy okazji (logowanie):* przy starcie pojawiało się ostrzeżenie `SLF4J(W): No SLF4J providers were found`. W WAR-ze jest `slf4j-api` 2.0, a most do Log4j był w starej wersji `log4j-slf4j-impl`, przeznaczonej dla SLF4J 1.7, więc SLF4J go ignorował. Logi bibliotek piszących przez SLF4J przepadały. Zamiana na `log4j-slf4j2-impl` (ta sama wersja Log4j).
 - *Przy okazji (szum w logu):* w `log4j2.xml` logger `org.jboss.weld` na poziomie `info`. Główny logger (`Root`) ma `debug`, więc bez tego Weld wypisywał setki linii przy starcie.
-- *Co sprawdzamy przy okazji:* krok 1.4 (Hibernate sam wykrywa PostgreSQL, brak błędu o dialekcie) i krok 1.5 (strony JSF z nowymi przestrzeniami nazw).
+- *Co sprawdzamy przy okazji:* krok 1.4 (Hibernate sam wykrywa PostgreSQL, brak błędu o dialekcie) i krok 1.5 (strony JSF z nowymi przestrzeniami nazw). **Potwierdzone 8.11.2026:** wszystkie sześć stron się renderuje, a listy pokazują 7 studentów i 4 pokoje z PostgreSQL.
+- *Część 2, błędy na ekranach (8.11.2026):*
+  - motyw `nova-light` w `web.xml` nie istnieje w PrimeFaces 15 (komunikat „Unable to find resource primefaces-nova-light, theme.css” i `<link href="RES_NOT_FOUND">` na każdej stronie). Biblioteka ma wbudowany tylko `saga-blue`, więc zmiana na `saga-blue`;
+  - szablon dołączał `akademik.css` i `favicon.ico` adresem względnym. Pod `/akademik/faces/student.xhtml` przeglądarka szukała `/akademik/faces/akademik.css`, a ten adres pasuje do mapowania `/faces/*`. FacesServlet traktował więc plik CSS jak stronę, rzucał `ViewHandlingStrategyNotFoundException` i przekierowywał na `errors.xhtml`. Poprawka: `akademik.css` przeniesiony do `resources/css/` i dołączany przez `<h:outputStylesheet name="css/akademik.css"/>`, bo Faces sam buduje adres zasobu. Ikonka dostała adres `#{request.contextPath}/favicon.ico`;
+  - zapis nowego pokoju: przycisk „Zapisz” kręcił kółkiem bez końca, choć pokój był już w bazie. `oncomplete="PF('pokoje').addRow();"` odwoływał się do widgetu `pokoje`, a tabela pokoi nie miała `widgetVar` (w odróżnieniu od tabeli studentów z `widgetVar="studenci"`). `PF('pokoje')` zwracało `undefined`, wywołanie `.addRow()` rzucało błąd JavaScriptu i PrimeFaces nie kończył obsługi żądania AJAX (Asynchronous JavaScript and XML, czyli żądanie wysyłane w tle bez przeładowania strony). Serwer zrobił swoje, nie zawiodła transakcja. Poprawka: `widgetVar="pokoje"` w `pokoj.xhtml`;
+  - znaczniki `<link href="akademik.css">` w nagłówkach poszczególnych stron są martwe: Facelets bierze tylko to, co jest wewnątrz `ui:composition`, a resztę pliku pomija. Usuniemy je przy okazji porządków w XHTML.
 
 **1.7 Plik logu aplikacji we właściwym miejscu.** Log aplikacji będzie trafiał do `logs/akademik.log` w katalogu Tomcata, obok jego własnych logów.
 
@@ -214,6 +219,8 @@ Cel: algorytm mieści więcej studentów, a ID nadaje baza danych. Ten etap robi
 **3.4 Walidacja danych.** Adnotacje Bean Validation (`@NotBlank`, `@Min(1)`) na polach encji, żeby nie dało się zapisać pokoju z 0 miejsc ani studenta bez nazwiska. JSF pokaże błędy automatycznie przy formularzu. Potrzebna będzie implementacja walidacji, czyli zależność Hibernate Validator.
 
 **3.5 Ręczne dodawanie, edycja i kasowanie rekordów.** Ekrany pokoi i studentów dostaną pełną obsługę: dodaj, popraw, usuń. To, co jest dziś na ekranach, sprawdzimy w kroku 1.6 i tu uzupełnimy braki.
+
+- *Ustalenia z 1.6 (8.11.2026):* ekran studentów nie ma przycisku kasowania (pokoje mają). W tym kroku poprawimy też wygląd i zachowanie ekranów: obecny wygląd jest do przemyślenia, a szczegóły ustalimy przed startem kroku. Przy okazji znikną martwe znaczniki `<link href="akademik.css">` z nagłówków stron.
 
 - *Issues:* [#12](https://github.com/szaroblekitny/akademik/issues/12) (closes).
 - *Objaśnienie:* w PrimeFaces wygodne są `p:dataTable` z edycją w wierszu (`editable="true"`) i `p:dialog` z formularzem dla nowego rekordu. Walidacja z 3.4 zadziała w obu miejscach bez dodatkowego kodu, a ID nada sekwencja z 3.3, dlatego ten krok jest po nich.
@@ -289,9 +296,9 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.2a | Migracja 10 klas testów na JUnit 5, usunięcie JUnit Vintage |  | zrobione | cdb193b, 04225a9 |
 | 1.2b | Ostrzeżenia: statyczny `BeanPostProcessor`, XStream bez `Unsafe` (ostrzeżenie z XStreama zostaje) |  | zrobione | e166b4a |
 | 1.3 | Poprawka `compareTo` |  | zrobione (TDD: czerwona 6 porażek, zielona 40/40) | 819a9b2 |
-| 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) |  | zrobione, do sprawdzenia w Tomcacie w 1.6 | 38cbab1 |
-| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, do sprawdzenia w Tomcacie w 1.6 | 4521296 |
-| 1.6 | Uruchomienie w Tomcacie |  | w toku: aplikacja startuje na Tomcacie 11, na ekranach są błędy do zebrania i poprawienia | 97cd531 (część 1) |
+| 1.4 | Dialekt Hibernate (klasa `PostgreSQL10Dialect` nie istniała) |  | zrobione, sprawdzone w Tomcacie w 1.6 | 38cbab1 |
+| 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, sprawdzone w Tomcacie w 1.6 | 4521296 |
+| 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531 (część 1), część 2 w następnym commicie |
 | 1.7 | Plik logu w `logs` Tomcata | #17 | do zrobienia | |
 | 2.1 | `DaneService` |  | do zrobienia | |
 | 2.1a | JAXB zamiast XStream | #7 | do zrobienia | |

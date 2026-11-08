@@ -8,8 +8,11 @@
 	<!-- szablon -->
 	<h:head>
 		<title>Akademik</title>
-		<link rel="stylesheet" type="text/css" href="akademik.css"/>
-		<link rel="shortcut icon" href="favicon.ico"/>
+		<!-- zasób Faces z katalogu resources/css; Faces sam zbuduje poprawny adres -->
+		<!-- niezależnie od tego, czy strona jest pod /akademik/ czy pod /akademik/faces/ -->
+		<h:outputStylesheet name="css/akademik.css"/>
+		<!-- adres bezwzględny: względne "favicon.ico" pod /faces/ trafiało do FacesServlet -->
+		<link rel="icon" href="#{request.contextPath}/favicon.ico"/>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato" />
 	</h:head>
 	<!-- międzymordzie -->
