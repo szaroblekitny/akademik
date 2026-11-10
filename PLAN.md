@@ -201,7 +201,7 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 **2.3 Import do bazy (P5).** `ImportBean.upload()` przekaże strumień z przesłanego pliku prosto do `DaneService`, bez zapisu na dysk `h:/TEMP/`. Ekran pokaże, ile pokoi lub studentów wczytano.
 
 - *Nowość:* `try-with-resources` (Java 7), czyli `try (InputStream in = ...) { }`. Strumień zamyka się sam, także przy wyjątku. Obecny kod zamyka strumienie ręcznie i przy błędzie zostawia je otwarte.
-- *Decyzja do podjęcia:* czy import ma najpierw kasować istniejące dane (jak wersja plikowa), czy dopisywać?
+- *Decyzja (10.11.2026):* na razie import **kasuje** stare dane (studentów, potem pokoje) i wczytuje plik. Przed importem ekran pokazuje okienko potwierdzenia z przypomnieniem, że obecne dane zostaną skasowane. Kasowanie i zapis idą w jednej transakcji `DaneService.importuj`, więc błędny plik albo błąd zapisu zostawia stare dane nietknięte.
 - *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (refs). Import przestanie wymagać pola `id` w plikach. Dopóki nie ma sekwencji (3.3), ID nada tymczasowo dotychczasowy mechanizm. Issue zamknie dopiero krok 3.3.
 
 **2.4 Raport XML kwaterunku (P7).** Nowa metoda tworzy dokument XML: lista pokoi, w każdym zakwaterowani studenci, na końcu meldunek o wyniku.
@@ -324,7 +324,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | 72ae1d4 |
 | 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | eb5a00a |
 | 2.1a | JAXB zamiast XStream | #7 | zrobione (część 1: czerwona 4 porażki, zielona 46/46; część 2: czerwona 5 porażek i 2 błędy, zielona 45/45) | 1ac0212 (część 1), bd81a60 (część 2) |
-| 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | |
+| 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | d565d42 |
 | 2.3 | Import do bazy | #3 (refs) | do zrobienia | |
 | 2.4 | Raport XML | #8 | do zrobienia | |
 | 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
