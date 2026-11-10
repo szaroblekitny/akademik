@@ -202,7 +202,11 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 
 - *Nowość:* `try-with-resources` (Java 7), czyli `try (InputStream in = ...) { }`. Strumień zamyka się sam, także przy wyjątku. Obecny kod zamyka strumienie ręcznie i przy błędzie zostawia je otwarte.
 - *Decyzja (10.11.2026):* na razie import **kasuje** stare dane (studentów, potem pokoje) i wczytuje plik. Przed importem ekran pokazuje okienko potwierdzenia z przypomnieniem, że obecne dane zostaną skasowane. Kasowanie i zapis idą w jednej transakcji `DaneService.importuj`, więc błędny plik albo błąd zapisu zostawia stare dane nietknięte.
-- *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (refs). Import przestanie wymagać pola `id` w plikach. Dopóki nie ma sekwencji (3.3), ID nada tymczasowo dotychczasowy mechanizm. Issue zamknie dopiero krok 3.3.
+- *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (refs). Import przestanie wymagać pola `id` w plikach. Dopóki nie ma sekwencji (3.3), ID nadaje tymczasowo `DaneService` (od 1, bo tabele są po skasowaniu puste). Issue zamknie dopiero krok 3.3.
+- *Wynik (10.11.2026):* `DaneService.importuj` kasuje stare dane przez `deleteAllInBatch` (najpierw studenci, potem pokoje) w tej samej transakcji co zapis. `deleteAllInBatch`, a nie `deleteAll`, bo nowe rekordy dostają te same ID co skasowane, a `deleteAll` zostawia skasowane encje w pamięci Hibernate'a do końca transakcji. `ImportBean.upload()` przekazuje strumień z `try-with-resources` prosto do usługi (bez `h:/TEMP/` i commons-io). Błąd pliku pokazuje treść z walidacji, a inne błędy krótki opis, ze szczegółami w logu. `Akademik.akademik()` nie kasuje już sam. Ekran importu:
+  - przycisk „Importuj” sprawdza w przeglądarce, czy wybrano plik; bez pliku pokazuje ostrzeżenie, a z plikiem okienko `p:confirmDialog` z nazwą pliku i przypomnieniem o skasowaniu danych. Sprawdzenie na serwerze zostaje;
+  - trzy growle: informacje znikają po 6 s, ostrzeżenia po 10 s, a błędy (`sticky`) zostają do zamknięcia.
+  - Testy: nowy `ImportBeanTest` (3 testy z mockiem `UploadedFile`), `DaneServiceTest` ma 7 testów (zastępowanie danych, plik niezgodny ze schematem nie rusza starych danych, wycofanie przywraca też skasowane dane). Faza czerwona: dokładnie przewidziane 3 porażki na 51, zielona: 51/51. Sprawdzone w Tomcacie.
 
 **2.4 Raport XML kwaterunku (P7).** Nowa metoda tworzy dokument XML: lista pokoi, w każdym zakwaterowani studenci, na końcu meldunek o wyniku.
 
@@ -325,7 +329,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | eb5a00a |
 | 2.1a | JAXB zamiast XStream | #7 | zrobione (część 1: czerwona 4 porażki, zielona 46/46; część 2: czerwona 5 porażek i 2 błędy, zielona 45/45) | 1ac0212 (część 1), bd81a60 (część 2) |
 | 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | d565d42 |
-| 2.3 | Import do bazy | #3 (refs) | do zrobienia | |
+| 2.3 | Import do bazy | #3 (refs) | zrobione (TDD: czerwona 3 porażki, zielona 51/51; sprawdzone w Tomcacie) | |
 | 2.4 | Raport XML | #8 | do zrobienia | |
 | 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
 | 2.6 | Testy importu, eksportu i raportu |  | do zrobienia | |

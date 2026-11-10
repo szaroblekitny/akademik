@@ -57,26 +57,35 @@ public class DaneService {
 	}
 
 	/**
-	 * Wczytuje plik z danymi, nadaje rekordom ID i zapisuje je w bazie.
-	 * Import udaje się w całości albo wcale: jeśli któryś rekord się nie zapisze,
-	 * transakcja wycofa także rekordy zapisane przed nim.
+	 * Wczytuje plik z danymi i zastępuje nim dane w bazie: kasuje wszystkich
+	 * studentów i wszystkie pokoje, a potem zapisuje rekordy z pliku (decyzja z kroku 2.3).
+	 * Import udaje się w całości albo wcale: kasowanie i zapis są w jednej transakcji,
+	 * więc gdy któryś rekord się nie zapisze, w bazie zostają stare dane.
 	 * <p>
-	 * Plik nie zawiera ID, więc nadaje je ta metoda: kolejne liczby po największym
-	 * ID w tabeli. To rozwiązanie tymczasowe: krok 3.3 zastąpi je sekwencją w bazie.
+	 * Plik nie zawiera ID, więc nadaje je ta metoda. Tabele są po skasowaniu puste,
+	 * więc numeracja zaczyna się od 1. To rozwiązanie tymczasowe: krok 3.3 zastąpi je
+	 * sekwencją w bazie.
 	 *
 	 * @param in plik z danymi; metoda go nie zamyka
 	 * @return ile pokoi i ilu studentów zapisano
 	 * @throws org.wojtekz.akademik.plik.NieprawidlowyPlikException gdy plik nie spełnia schematu
 	 */
 	public LiczbaRekordow importuj(InputStream in) {
-		// najpierw cały plik: błąd formatu wychodzi, zanim cokolwiek zapiszemy
+		// najpierw cały plik: błąd formatu wychodzi, zanim cokolwiek skasujemy
 		DaneZPliku dane = plikowanie.wczytajDane(in);
 
-		long idPokoju = nastepneId(pokojRepo.findLastId());
+		// Najpierw studenci, bo wskazują pokoje (klucz obcy). deleteAllInBatch wysyła
+		// jedno polecenie DELETE od razu, bez wczytywania encji. Zwykłe deleteAll
+		// zostawiłoby skasowane encje w pamięci Hibernate'a do końca transakcji,
+		// a nowe rekordy dostają te same ID (od 1) i Hibernate uznałby je za skasowane.
+		studentRepo.deleteAllInBatch();
+		pokojRepo.deleteAllInBatch();
+
+		long idPokoju = 1;
 		for (Pokoj pokoj : dane.pokoje()) {
 			pokoj.setId(idPokoju++);
 		}
-		long idStudenta = nastepneId(studentRepo.findLastId());
+		long idStudenta = 1;
 		for (Student student : dane.studenci()) {
 			student.setId(idStudenta++);
 		}
@@ -106,16 +115,5 @@ public class DaneService {
 		LiczbaRekordow wynik = new LiczbaRekordow(pokoje.size(), studenci.size());
 		logg.info("----->>> Wyeksportowano: {}", wynik);
 		return wynik;
-	}
-
-	/**
-	 * {@code findLastId()} daje {@code null}, gdy tabela jest pusta (SQL-owe {@code MAX}
-	 * z pustego zbioru to {@code NULL}), więc wtedy zaczynamy od 1.
-	 *
-	 * @param najwiekszeId największe ID w tabeli albo {@code null}
-	 * @return pierwsze wolne ID
-	 */
-	private static long nastepneId(Long najwiekszeId) {
-		return najwiekszeId == null ? 1 : najwiekszeId + 1;
 	}
 }

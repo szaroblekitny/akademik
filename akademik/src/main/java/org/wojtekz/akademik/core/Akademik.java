@@ -66,10 +66,7 @@ public class Akademik {
 		// ot i cała logika naszej tekstowej aplikacji:
 		try {
 			
-			// kasowanie wszystkiego, bo ładujemy wszystkie dane z pliku
-			studentRepo.deleteAll();
-			pokojRepo.deleteAll();
-			
+			// import sam kasuje stare dane (krok 2.3)
 			daneService.importuj(dane);
 			String meldunek = zakwateruj();
 			podajStanAkademika(outputWriter, meldunek);

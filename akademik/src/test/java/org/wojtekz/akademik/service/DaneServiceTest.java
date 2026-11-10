@@ -18,12 +18,14 @@ import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.plik.DaneZPliku;
+import org.wojtekz.akademik.plik.NieprawidlowyPlikException;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
 
 /**
- * Testy usługi {@link DaneService}: import pliku do bazy z nadaniem ID, eksport bazy
- * do pliku i wycofanie całego importu, gdy jeden rekord się nie zapisze.
+ * Testy usługi {@link DaneService}: import pliku do bazy w miejsce starych danych,
+ * z nadaniem ID, eksport bazy do pliku i wycofanie całego importu (razem z kasowaniem
+ * starych danych), gdy jeden rekord się nie zapisze.
  * <p>
  * Pliki do importu są zapisane wprost w testach jako bloki tekstu, żeby było widać
  * format {@code akademik.xsd}. Eksport sprawdzamy, czytając jego wynik z powrotem.
@@ -90,14 +92,13 @@ class DaneServiceTest {
 	}
 
 	/**
-	 * Plik nie ma ID, więc nadaje je usługa: kolejne liczby po największym ID w tabeli,
-	 * w kolejności z pliku. Pokoje i studenci mają osobną numerację.
+	 * Import zastępuje dane (decyzja z kroku 2.3): stary pokój i stary student znikają,
+	 * a ID nadawane są od nowa, od 1, w kolejności z pliku. Student mieszka w starym
+	 * pokoju, więc kasowanie musi iść w dobrej kolejności: najpierw studenci, potem pokoje.
 	 */
 	@Test
-	void testNadawaniaId() {
-		pokojRepo.save(pokoj(5, "100", 1));
-		Student istniejacy = student(9, "Ewa", "Nowak", Plec.KOBIETA);
-		studentRepo.save(istniejacy);
+	void testImportZastepujeDane() {
+		zapiszStareDane();
 		String xml = """
 				<akademik xmlns="urn:wojtekz:akademik:dane:1">
 				  <pokoje>
@@ -110,12 +111,34 @@ class DaneServiceTest {
 				</akademik>
 				""";
 
-		daneService.importuj(strumien(xml));
+		LiczbaRekordow wynik = daneService.importuj(strumien(xml));
 
-		Assertions.assertEquals(6, pokojRepo.findByNumerPokoju("201").get(0).getId());
-		Assertions.assertEquals(7, pokojRepo.findByNumerPokoju("202").get(0).getId());
-		Assertions.assertEquals(10, studentRepo.findByName("Lis").get(0).getId());
-		Assertions.assertEquals(3, pokojRepo.count(), "Import dopisuje, nie kasuje istniejących pokoi");
+		Assertions.assertEquals(new LiczbaRekordow(2, 1), wynik);
+		Assertions.assertEquals(2, pokojRepo.count(), "Zostają tylko pokoje z pliku");
+		Assertions.assertTrue(pokojRepo.findByNumerPokoju("100").isEmpty());
+		Assertions.assertTrue(studentRepo.findByName("Nowak").isEmpty());
+		Assertions.assertEquals(1, pokojRepo.findByNumerPokoju("201").get(0).getId());
+		Assertions.assertEquals(2, pokojRepo.findByNumerPokoju("202").get(0).getId());
+		Assertions.assertEquals(1, studentRepo.findByName("Lis").get(0).getId());
+	}
+
+	/** Plik niezgodny ze schematem: wyjątek, a stare dane zostają nietknięte. */
+	@Test
+	void testNieprawidlowyPlikZostawiaDane() {
+		zapiszStareDane();
+		String xml = """
+				<akademik xmlns="urn:wojtekz:akademik:dane:1">
+				  <pokoje>
+				    <pokoj numer="201" miejsca="0"/>
+				  </pokoje>
+				</akademik>
+				""";
+
+		InputStream plik = strumien(xml);
+		Assertions.assertThrows(NieprawidlowyPlikException.class, () -> daneService.importuj(plik));
+
+		Assertions.assertEquals(1, pokojRepo.count());
+		Assertions.assertEquals(1, studentRepo.count());
 	}
 
 	/**
@@ -124,9 +147,13 @@ class DaneServiceTest {
 	 * Hibernate założył kolumnę {@code varchar(255)}, bo encja nie podaje długości.
 	 * Zapis trzeciego studenta się więc nie uda, a dwóch pierwszych też nie może zostać
 	 * w bazie: import ma się udać w całości albo wcale.
+	 * <p>
+	 * Od kroku 2.3 import najpierw kasuje stare dane. Kasowanie jest w tej samej
+	 * transakcji, więc też musi zostać wycofane: stary student ma przetrwać.
 	 */
 	@Test
 	void testImportWycofanyPrzyBledzie() {
+		zapiszStareDane();
 		String xml = """
 				<akademik xmlns="urn:wojtekz:akademik:dane:1">
 				  <studenci>
@@ -140,7 +167,10 @@ class DaneServiceTest {
 		InputStream plik = strumien(xml);
 		Assertions.assertThrows(RuntimeException.class, () -> daneService.importuj(plik));
 
-		Assertions.assertEquals(0, studentRepo.count(), "Import powinien zostać wycofany w całości");
+		Assertions.assertEquals(1, studentRepo.count(), "Import powinien zostać wycofany w całości");
+		Assertions.assertEquals("Ewa", studentRepo.findByName("Nowak").get(0).getImie(),
+				"Kasowanie starych danych też powinno zostać wycofane");
+		Assertions.assertEquals(1, pokojRepo.count());
 	}
 
 	/**
@@ -184,6 +214,15 @@ class DaneServiceTest {
 	}
 
 	// ----- pomocnicze -----
+
+	/** Stary pokój 100 (ID 5) i mieszkająca w nim Ewa Nowak (ID 9). */
+	private void zapiszStareDane() {
+		Pokoj stary = pokoj(5, "100", 1);
+		pokojRepo.save(stary);
+		Student ewa = student(9, "Ewa", "Nowak", Plec.KOBIETA);
+		ewa.setPokoj(stary);
+		studentRepo.save(ewa);
+	}
 
 	private static InputStream strumien(String xml) {
 		return new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
