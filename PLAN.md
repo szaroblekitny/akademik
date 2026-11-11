@@ -273,7 +273,16 @@ Cel: algorytm mieści więcej studentów, a ID nadaje baza danych. Ten etap robi
 - *Nowość (Java 17):* `RandomGenerator` i `RandomGenerator.of("L64X128MixRandom")`, nowy interfejs generatorów liczb losowych, oraz `random.nextInt(1, 5)` z zakresem od-do. Opcjonalnie `java Generator.java` (Java 11) uruchamia plik źródłowy bez osobnej kompilacji.
 - *Kolejność:* krok nie zależy od innych poza formatem XML z 2.1a. Można go zrobić wcześniej, np. przed 3.1, jeśli będzie potrzebny do testów algorytmu.
 
-**Gotowe, gdy:** test z 3.1 przechodzi, nowe rekordy dostają ID z sekwencji, formularze odrzucają błędne dane, a pokoje i studentów da się dodawać, poprawiać i usuwać z ekranu.
+**3.7 Logowanie użytkowników (dopisane 11.11.2026, z przeglądu kodu).** Dziś aplikacja nie ma żadnego logowania: każdy, kto dotrze do adresu w sieci, może jednym importem skasować wszystkie dane albo usuwać pokoje. Krok dodaje uwierzytelnianie (kto to jest) i autoryzację (co mu wolno).
+
+- *Propozycja:* bezpieczeństwo zarządzane przez kontener (container-managed security), czyli to, co daje sam Tomcat, bez nowych bibliotek. W `web.xml` `<security-constraint>` chroni wszystkie strony, `<login-config>` z metodą `FORM` wskazuje własną stronę logowania (`login.xhtml` z polami `j_username` i `j_password`), a `<security-role>` opisuje role. Użytkowników i hasła trzyma realm Tomcata: na początek `tomcat-users.xml`, docelowo `DataSourceRealm` z tabelą użytkowników w PostgreSQL.
+- *Role:* np. `kierownik` (import, edycja, kasowanie, kwaterowanie) i `podglad` (strona główna, raporty, eksport). Bean może sprawdzić rolę przez `FacesContext.getCurrentInstance().getExternalContext().isUserInRole(...)`, a strona przez `rendered="#{request.isUserInRole('kierownik')}"`, żeby nie pokazywać przycisków, których użytkownik i tak nie może użyć. Ochrona musi być też po stronie serwera, nie tylko ukryte przyciski.
+- *Hasła:* nigdy jawnym tekstem. Realm Tomcata ma `CredentialHandler` z funkcją skrótu dla haseł (np. PBKDF2); skrót tworzy narzędzie `digest.bat` z katalogu `bin` Tomcata.
+- *Przy okazji:* przycisk „Wyloguj” (`HttpServletRequest.logout()` i unieważnienie sesji), zmiana identyfikatora sesji po zalogowaniu (Tomcat robi to sam, ochrona przed przejęciem sesji, session fixation), ciasteczko sesji z `HttpOnly` i `Secure` oraz HTTPS w Tomcacie, bo formularz logowania wysyła hasło. Ochronę przed CSRF (Cross-Site Request Forgery, podszywaniem się pod żądania zalogowanego użytkownika) daje już w dużej mierze `ViewState` JSF; do sprawdzenia przy imporcie, który kasuje dane.
+- *Testy:* Spring nie zna ról Tomcata, więc testy beanów sprawdzą logikę ról przez mock `ExternalContext`; całość logowania sprawdzimy ręcznie w Tomcacie.
+- *Kolejność i Etap 4:* krok nie zależy od pozostałych kroków Etapu 3. Przy przejściu na Spring Boot (4.2) logowanie można przenieść do Spring Security (`SecurityFilterChain`), które daje to samo w konfiguracji Javy oraz gotową ochronę przed CSRF.
+
+**Gotowe, gdy:** test z 3.1 przechodzi, nowe rekordy dostają ID z sekwencji, formularze odrzucają błędne dane, pokoje i studentów da się dodawać, poprawiać i usuwać z ekranu, a do aplikacji wchodzi się dopiero po zalogowaniu.
 
 ## Etap 4 (opcjonalny): Spring Boot i nowoczesne narzędzia
 
@@ -347,13 +356,14 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 2.4 | Raport XML | #8 (closes) | zrobione (TDD: czerwona 2 porażki i 3 błędy, zielona 56/56; sprawdzone w Tomcacie) | 2a9ba29, d690854 (poprawka) |
 | 2.5 | Raport HTML przez XSLT |  | zrobione (TDD: czerwona 4 porażki na 60, zielona 60/60; poprawki danych studenta i zabezpieczenie raportów: 69/69; sprawdzone w Tomcacie) | 6d94b75 (poprawka), a97317a |
 | 2.6 | Testy importu, eksportu i raportu |  | zrobione (przegląd JaCoCo, 6 testów charakteryzujących, zasada obsługi błędów; 75/75) | e198a07 |
-| 2.7 | Sortowanie strony głównej | #16 | zrobione (TDD: czerwona 1 porażka, zielona 76/76) | |
+| 2.7 | Sortowanie strony głównej | #16 | zrobione (TDD: czerwona 1 porażka, zielona 76/76) | d61c690 |
 | 3.1 | Test słabości algorytmu |  | do zrobienia | |
 | 3.2 | Nowy algorytm kwaterowania |  | do zrobienia | |
 | 3.3 | ID z sekwencji | #3 | do zrobienia | |
 | 3.4 | Walidacja danych |  | do zrobienia | |
 | 3.5 | Dodawanie, edycja, kasowanie rekordów | #12 | do zrobienia | |
 | 3.6 | Generator danych (opcjonalny) | #21 | do zrobienia | |
+| 3.7 | Logowanie użytkowników |  | do zrobienia | |
 | 4.1 | Spring 7 i Hibernate 7 |  | do zrobienia | |
 | 4.2 | Spring Boot 4 + JoinFaces | #22 | do zrobienia | |
 | 4.3 | Flyway | #23 | do zrobienia | |
