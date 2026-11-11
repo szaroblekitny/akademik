@@ -82,8 +82,7 @@ public class StudentBean implements Serializable {
 	public List<Student> getStudenci() {
 		logg.trace("---------> początek getStudenci");
 		if (studenci == null) {
-			logg.debug("---------> findAll studentów");
-			studenci = studentRepository.findAll();
+			wczytaj();
 		}
 		return studenci;
 	}
@@ -173,5 +172,17 @@ public class StudentBean implements Serializable {
 			return "Podaj nazwisko studenta";
 		}
 		return null;
+	}
+
+	/**
+	 * Wczytuje studentów z bazy na nowo (audyt po Etapie 2, punkt A3). Strona woła tę metodę
+	 * przez {@code <f:viewAction>} przy każdym wejściu na nią, więc po imporcie, kwaterowaniu
+	 * czy zmianach na innym ekranie lista nie jest już nieaktualna. Między kliknięciami
+	 * na tej samej stronie (AJAX) lista zostaje w sesji, bo edycja wierszy w tabeli
+	 * PrimeFaces potrzebuje tej samej listy między żądaniami.
+	 */
+	public void wczytaj() {
+		logg.debug("---------> wczytanie studentów z bazy");
+		studenci = studentRepository.findAll();
 	}
 }

@@ -11,6 +11,13 @@
 </h:head>
 <h:body>
 	<ui:composition template = "template/template.xhtml">
+		<!-- przy każdym wejściu na stronę (GET, nie przy kliknięciach AJAX) lista wczytuje się
+		     z bazy na nowo, więc po imporcie czy kwaterowaniu nie jest nieaktualna (audyt A3) -->
+		<ui:define name="metadata">
+			<f:metadata>
+				<f:viewAction action="#{studentBean.wczytaj}"/>
+			</f:metadata>
+		</ui:define>
     	<ui:define name = "header">
 			<h3>Studenci</h3>
 		</ui:define>

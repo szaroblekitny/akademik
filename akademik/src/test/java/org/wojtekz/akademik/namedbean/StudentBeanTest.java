@@ -204,4 +204,26 @@ public class StudentBeanTest {
 		Assertions.assertEquals(6, stLi.size());
 	}
 
+
+	/**
+	 * Audyt po Etapie 2, punkt A3: to samo dla studentów. Lista w sesji ma się odświeżyć
+	 * po {@code wczytaj()}, a nie pokazywać studentów, których w bazie już nie ma.
+	 */
+	@Test
+	public void testWczytaniaAktualnychDanych() {
+		Assertions.assertEquals(6, studentBean.getStudenci().size());
+		studentRepo.deleteAll();
+		Student nowy = new Student();
+		nowy.setId(1L);
+		nowy.setImie("Ola");
+		nowy.setNazwisko("Nowa");
+		nowy.setPlec(Plec.KOBIETA);
+		studentRepo.save(nowy);
+
+		studentBean.wczytaj();
+
+		Assertions.assertEquals(List.of("Nowa"),
+				studentBean.getStudenci().stream().map(Student::getNazwisko).toList(),
+				"Po wczytaniu lista ma odpowiadać bazie, a nie stanowi sprzed zmiany");
+	}
 }

@@ -198,4 +198,27 @@ public class PokojBeanTest {
 		pokojRepository.deleteAll();
 	}
 
+
+	/**
+	 * Audyt po Etapie 2, punkt A3: lista w sesji była wczytywana tylko raz, więc po imporcie
+	 * (tu udawanym przez zmianę bazy wprost) ekran pokazywał stare pokoje. Po {@code wczytaj()}
+	 * bean ma pokazywać to, co jest w bazie.
+	 */
+	@Test
+	void testWczytaniaAktualnychDanych() {
+		Assertions.assertEquals(3, testowanyBean.getPokoje().size());
+		studentRepo.deleteAll();
+		pokojRepository.deleteAll();
+		Pokoj nowy = new Pokoj();
+		nowy.setId(1L);
+		nowy.setNumerPokoju("999");
+		nowy.setLiczbaMiejsc(2);
+		pokojRepository.save(nowy);
+
+		testowanyBean.wczytaj();
+
+		Assertions.assertEquals(List.of("999"),
+				testowanyBean.getPokoje().stream().map(Pokoj::getNumerPokoju).toList(),
+				"Po wczytaniu lista ma odpowiadać bazie, a nie stanowi sprzed zmiany");
+	}
 }
