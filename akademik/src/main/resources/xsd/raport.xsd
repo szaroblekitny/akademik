@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Schemat raportu kwaterunku (krok 2.4 planu naprawczego, propozycja).
+
+  Raport pokazuje stan akademika w chwili utworzenia: pokoje z mieszkańcami,
+  studentów bez pokoju i podsumowanie. To jest wynik działania aplikacji,
+  a nie dane do importu, więc ma własny format i własną przestrzeń nazw,
+  inną niż plik danych z akademik.xsd. Krok 2.5 zamieni ten XML na HTML
+  arkuszem XSLT.
+
+  Zasady:
+  - pokoje w kolejności numerów, studenci w pokoju w kolejności nazwisk i imion;
+  - pokój podaje też liczbę wolnych miejsc, żeby arkusz XSLT nie musiał jej liczyć;
+  - studenci bez pokoju są w osobnej sekcji <niezakwaterowani>, która pojawia
+    się tylko wtedy, gdy ktoś został bez miejsca;
+  - <podsumowanie> zastępuje dawny tekstowy "meldunek": liczby, z których
+    wynika, czy kwaterunek się udał (zakwaterowani = studenci).
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:wojtekz:akademik:raport:1"
+           targetNamespace="urn:wojtekz:akademik:raport:1"
+           elementFormDefault="qualified"
+           version="1.0">
+
+  <!-- ===== korzeń ===== -->
+  <xs:element name="raport" type="Raport"/>
+
+  <xs:complexType name="Raport">
+    <xs:sequence>
+      <xs:element name="pokoj" type="Pokoj" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="niezakwaterowani" type="Niezakwaterowani" minOccurs="0"/>
+      <xs:element name="podsumowanie" type="Podsumowanie"/>
+    </xs:sequence>
+    <xs:attribute name="wersja" type="xs:string" fixed="1"/>
+    <!-- data i czas utworzenia raportu, np. 2026-11-10T20:15:00 -->
+    <xs:attribute name="utworzono" type="xs:dateTime" use="required"/>
+  </xs:complexType>
+
+  <!-- ===== pokój z mieszkańcami ===== -->
+  <xs:complexType name="Pokoj">
+    <xs:sequence>
+      <xs:element name="student" type="Student" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="numer" type="xs:token" use="required"/>
+    <xs:attribute name="miejsca" type="xs:nonNegativeInteger" use="required"/>
+    <xs:attribute name="wolne" type="xs:nonNegativeInteger" use="required"/>
+  </xs:complexType>
+
+  <!-- ===== studenci bez pokoju ===== -->
+  <xs:complexType name="Niezakwaterowani">
+    <xs:sequence>
+      <xs:element name="student" type="Student" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- student: tak samo jak w pliku danych, ale w przestrzeni nazw raportu -->
+  <xs:complexType name="Student">
+    <xs:sequence>
+      <xs:element name="imie" type="xs:string"/>
+      <xs:element name="nazwisko" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="plec" type="Plec" use="required"/>
+  </xs:complexType>
+
+  <xs:simpleType name="Plec">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="KOBIETA"/>
+      <xs:enumeration value="MEZCZYZNA"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ===== podsumowanie ===== -->
+  <xs:complexType name="Podsumowanie">
+    <xs:attribute name="pokoi" type="xs:nonNegativeInteger" use="required"/>
+    <xs:attribute name="miejsc" type="xs:nonNegativeInteger" use="required"/>
+    <xs:attribute name="studentow" type="xs:nonNegativeInteger" use="required"/>
+    <xs:attribute name="zakwaterowanych" type="xs:nonNegativeInteger" use="required"/>
+  </xs:complexType>
+
+</xs:schema>

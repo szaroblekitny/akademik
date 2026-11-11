@@ -213,6 +213,8 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 - *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (closes). To jest „eksport danych o zakwaterowanych studentach”, o który prosi issue. Raport ma własny format, inny niż plik danych z 2.1a, i nie służy do importu.
 
 - *Nowość (Java 16):* `record`, czyli niezmienna klasa danych w jednej linii: `record WierszRaportu(String pokoj, List<String> mieszkancy) {}`. Kompilator sam tworzy konstruktor, gettery, `equals`, `hashCode` i `toString`.
+- *Format (10.11.2026):* schemat `src/main/resources/xsd/raport.xsd` i przykład `src/test/resources/dane/raport-przyklad.xml`, zaakceptowane. Własna przestrzeń nazw `urn:wojtekz:akademik:raport:1`, atrybut `utworzono`, pokoje w kolejności numerów z atrybutami `miejsca` i `wolne`, w pokoju studenci w polskiej kolejności nazwisk i imion, opcjonalna sekcja `<niezakwaterowani>` i `<podsumowanie>` z liczbami. Podsumowanie zastąpiło tekstowy meldunek, bo meldunek istnieje tylko chwilę po kwaterowaniu i nie jest nigdzie zapisany, a raport można pobrać później.
+- *Wynik (11.11.2026):* nowy pakiet `raport` z rekordami `RaportKwaterunku`, `PokojRaportu` i `StudentRaportu` (konstruktor kompaktowy robi niezmienne kopie list; liczby podsumowania wynikają z list). `RaportService` (`readOnly`) buduje raport z bazy, sortuje przez `Collator` dla języka polskiego i zapisuje XML przez StAX (`XMLStreamWriter`), bo JAXB nie obsługuje rekordów. Data idzie przez formater z sekundami, bo `LocalDateTime.toString()` pomija zerowe sekundy, a `xs:dateTime` ich wymaga. `RaportBean` daje plik `raport-kwaterunku.xml`, a ekran kwaterowania ma przycisk „Raport XML”. Testy: `RaportServiceTest` (4) i `RaportBeanTest` (1). Faza czerwona: 2 porażki i 3 błędy na 56, zielona: 56/56. Sprawdzone w Tomcacie.
 
 **2.5 Raport HTML przez XSLT (P7).** XSLT (Extensible Stylesheet Language Transformations) to język opisujący, jak przekształcić jeden dokument XML w inny, np. w HTML. Arkusz `raport.xsl` w zasobach przekształci XML w tabelę HTML. Użyjemy standardowego `javax.xml.transform` z JDK, bez dodatkowych bibliotek. Na ekranie kwaterowania pojawi się przycisk „Pobierz raport”.
 
@@ -329,8 +331,8 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | eb5a00a |
 | 2.1a | JAXB zamiast XStream | #7 | zrobione (część 1: czerwona 4 porażki, zielona 46/46; część 2: czerwona 5 porażek i 2 błędy, zielona 45/45) | 1ac0212 (część 1), bd81a60 (część 2) |
 | 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | d565d42 |
-| 2.3 | Import do bazy | #3 (refs) | zrobione (TDD: czerwona 3 porażki, zielona 51/51; sprawdzone w Tomcacie) | |
-| 2.4 | Raport XML | #8 | do zrobienia | |
+| 2.3 | Import do bazy | #3 (refs) | zrobione (TDD: czerwona 3 porażki, zielona 51/51; sprawdzone w Tomcacie) | aa26d8c |
+| 2.4 | Raport XML | #8 (closes) | zrobione (TDD: czerwona 2 porażki i 3 błędy, zielona 56/56; sprawdzone w Tomcacie) | |
 | 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
 | 2.6 | Testy importu, eksportu i raportu |  | do zrobienia | |
 | 2.7 | Sortowanie strony głównej | #16 | do zrobienia | |

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Przykładowy raport kwaterunku (krok 2.4, propozycja formatu raport.xsd).
+  Tak wygląda raport po zaimportowaniu przyklad.xml i kwaterowaniu,
+  ale z trzema dodatkowymi studentami; dla ostatniego zabrakło miejsca, więc widać
+  sekcję <niezakwaterowani>.
+
+  Kwaterunek: najpierw kobiety, potem mężczyźni, pokoje po kolei.
+  Pokój 101 (1 miejsce): Joanna. Pokój 102 (2 miejsca): Janina, jedno wolne,
+  bo mężczyźni nie mieszkają z kobietami. Pokoje 103 i 104: mężczyźni.
+-->
+<raport xmlns="urn:wojtekz:akademik:raport:1" wersja="1" utworzono="2026-11-10T20:15:00">
+  <pokoj numer="101" miejsca="1" wolne="0">
+    <student plec="KOBIETA"><imie>Joanna</imie><nazwisko>Kowalska</nazwisko></student>
+  </pokoj>
+  <pokoj numer="102" miejsca="2" wolne="1">
+    <student plec="KOBIETA"><imie>Janina</imie><nazwisko>Kaptur</nazwisko></student>
+  </pokoj>
+  <pokoj numer="103" miejsca="3" wolne="0">
+    <student plec="MEZCZYZNA"><imie>Ireneusz</imie><nazwisko>Kapucyn</nazwisko></student>
+    <student plec="MEZCZYZNA"><imie>Janusz</imie><nazwisko>Kowal</nazwisko></student>
+    <student plec="MEZCZYZNA"><imie>Jan</imie><nazwisko>Kowalski</nazwisko></student>
+  </pokoj>
+  <pokoj numer="104" miejsca="4" wolne="0">
+    <student plec="MEZCZYZNA"><imie>Justyn</imie><nazwisko>Kaleta</nazwisko></student>
+    <student plec="MEZCZYZNA"><imie>Jeremi</imie><nazwisko>Kulka</nazwisko></student>
+    <student plec="MEZCZYZNA"><imie>Kamil</imie><nazwisko>Nowy</nazwisko></student>
+    <student plec="MEZCZYZNA"><imie>Leon</imie><nazwisko>Późny</nazwisko></student>
+  </pokoj>
+  <niezakwaterowani>
+    <student plec="MEZCZYZNA"><imie>Marek</imie><nazwisko>Spóźniony</nazwisko></student>
+  </niezakwaterowani>
+  <podsumowanie pokoi="4" miejsc="10" studentow="10" zakwaterowanych="9"/>
+</raport>
