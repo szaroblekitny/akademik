@@ -234,6 +234,7 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 
 - *Issues:* [#16](https://github.com/szaroblekitny/akademik/issues/16) (closes).
 - *Objaśnienie:* kolejność może ustalić baza (metoda repozytorium `findAllByOrderByNumerPokojuAsc()`, którą Spring Data tworzy z samej nazwy metody) albo Java (`Comparator.comparing(Pokoj::getNumerPokoju)`). Wybierzemy jedno i omówimy różnicę. `compareTo` z kroku 1.3 sortuje po ID, a nie po numerze pokoju, więc tu go nie wystarczy użyć wprost.
+- *Wynik (11.11.2026):* sortuje Java, a nie baza (decyzja użytkownika): `ZakwaterujBean.getStudenci()` sortuje kopię `findAll()` komparatorem z `Collator` dla języka polskiego, czyli według numeru pokoju, nazwiska i imienia, ze studentami bez pokoju na końcu (`Comparator.nullsLast`). Dzięki temu kolejność liter jest ta sama w testach, w Tomcacie i w raporcie, niezależnie od ustawień bazy. Test `ZakwaterujBeanTest.testKolejnosciNaStronieGlownej` ma dane, które wychwytują i kolejność ID, i zwykłe `String.compareTo` („Tarka” przed „Świerk”). Faza czerwona: 1 porażka na 76, zielona: 76/76.
 
 **Gotowe, gdy:** da się wczytać pliki XML z ekranu, zakwaterować, pobrać raport HTML i wyeksportować dane, a strona główna pokazuje dane posortowane według pokoi.
 
@@ -346,7 +347,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 2.4 | Raport XML | #8 (closes) | zrobione (TDD: czerwona 2 porażki i 3 błędy, zielona 56/56; sprawdzone w Tomcacie) | 2a9ba29, d690854 (poprawka) |
 | 2.5 | Raport HTML przez XSLT |  | zrobione (TDD: czerwona 4 porażki na 60, zielona 60/60; poprawki danych studenta i zabezpieczenie raportów: 69/69; sprawdzone w Tomcacie) | 6d94b75 (poprawka), a97317a |
 | 2.6 | Testy importu, eksportu i raportu |  | zrobione (przegląd JaCoCo, 6 testów charakteryzujących, zasada obsługi błędów; 75/75) | e198a07 |
-| 2.7 | Sortowanie strony głównej | #16 | do zrobienia | |
+| 2.7 | Sortowanie strony głównej | #16 | zrobione (TDD: czerwona 1 porażka, zielona 76/76) | |
 | 3.1 | Test słabości algorytmu |  | do zrobienia | |
 | 3.2 | Nowy algorytm kwaterowania |  | do zrobienia | |
 | 3.3 | ID z sekwencji | #3 | do zrobienia | |

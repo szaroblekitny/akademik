@@ -2,6 +2,7 @@ package org.wojtekz.akademik.namedbean;
 
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.entity.Plec;
+import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
@@ -101,4 +104,55 @@ public class ZakwaterujBeanTest {
 		Assertions.assertEquals(2L, testStudent.getPokoj().getId());
 	}
 
+
+	/**
+	 * Krok 2.7 (issue #16): strona główna pokazuje studentów według numerów pokoi,
+	 * w pokoju według nazwisk, a studentów bez pokoju na końcu.
+	 * <p>
+	 * Dane są dobrane tak, żeby wychwycić dwa błędy:
+	 * <ul>
+	 * <li>kolejność ID (jak w {@code findAll()}) jest inna niż oczekiwana;</li>
+	 * <li>zwykłe {@code String.compareTo} porównuje kody znaków, więc postawiłoby
+	 *     „Tarka” przed „Świerk” i „Mak” przed „Łoś”; polska kolejność liter
+	 *     ({@code Collator}) daje odwrotnie.</li>
+	 * </ul>
+	 */
+	@Test
+	public void testKolejnosciNaStronieGlownej() {
+		studentRepo.deleteAll();
+		pokojRepo.deleteAll();
+		Pokoj pokoj102 = pokoj(1, "102");
+		Pokoj pokoj101 = pokoj(2, "101");
+		pokojRepo.saveAll(List.of(pokoj102, pokoj101));
+		studentRepo.saveAll(List.of(
+				student(1, "Jan", "Zając", pokoj102),
+				student(2, "Ewa", "Tarka", pokoj101),
+				student(3, "Adam", "Mak", null),
+				student(4, "Piotr", "Świerk", pokoj101),
+				student(5, "Olek", "Łoś", null)));
+
+		List<String> kolejnosc = zakwaterujBean.getStudenci().stream()
+				.map(Student::getNazwisko)
+				.toList();
+
+		Assertions.assertEquals(List.of("Świerk", "Tarka", "Zając", "Łoś", "Mak"), kolejnosc);
+	}
+
+	private static Pokoj pokoj(long id, String numer) {
+		Pokoj pokoj = new Pokoj();
+		pokoj.setId(id);
+		pokoj.setNumerPokoju(numer);
+		pokoj.setLiczbaMiejsc(3);
+		return pokoj;
+	}
+
+	private static Student student(long id, String imie, String nazwisko, Pokoj pokoj) {
+		Student student = new Student();
+		student.setId(id);
+		student.setImie(imie);
+		student.setNazwisko(nazwisko);
+		student.setPlec(Plec.MEZCZYZNA);
+		student.setPokoj(pokoj);
+		return student;
+	}
 }
