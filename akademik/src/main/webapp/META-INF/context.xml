@@ -2,4 +2,12 @@
 	<ResourceLink name="jdbc/akademik"
              	global="jdbc/akademik"
               	type="javax.sql.DataSource" />
+	<!-- Aplikacja nie ma stron JSP, tylko Facelets, więc szukanie plików TLD
+	     (Tag Library Descriptor, opis znaczników JSP) w jarach z WEB-INF/lib nic nie daje:
+	     żaden z nich ich nie zawiera. tldSkip="*.jar" wyłącza tylko to szukanie.
+	     Skanowanie "pluggability" (web-fragment.xml, ServletContainerInitializer),
+	     z którego korzystają Weld, Mojarra i PrimeFaces, zostaje bez zmian. -->
+	<JarScanner>
+		<JarScanFilter tldSkip="*.jar"/>
+	</JarScanner>
 </Context>
