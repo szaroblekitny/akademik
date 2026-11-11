@@ -17,7 +17,7 @@ import org.wojtekz.akademik.service.RaportService;
 /**
  * Bean JSF do raportu kwaterunku: tworzy plik {@code raport-kwaterunku.xml}
  * z aktualnym stanem akademika i przekazuje go przeglądarce. Przycisk jest
- * na ekranie kwaterowania.
+ * na stronie głównej, obok tabeli kwaterunku.
  *
  * @author Wojciech Zaręba
  */
