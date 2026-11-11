@@ -2,6 +2,7 @@ package org.wojtekz.akademik.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -231,7 +232,40 @@ class DaneServiceTest {
 				"Komunikat powinien wskazać studenta, jest: " + blad.getMessage());
 	}
 
+	/**
+	 * Krok 2.6: pełne koło na prawdziwym przykładzie (4 pokoje, 7 studentów).
+	 * Import, eksport i odczyt eksportu mają dać dokładnie te same dane co plik,
+	 * w tej samej kolejności, pole po polu.
+	 */
+	@Test
+	void testPelnegoKolaPrzykladu() throws IOException {
+		byte[] oryginal;
+		try (InputStream plik = getClass().getResourceAsStream("/dane/przyklad.xml")) {
+			Assertions.assertNotNull(plik, "Brak pliku /dane/przyklad.xml w zasobach testowych");
+			oryginal = plik.readAllBytes();
+		}
+		DaneZPliku wzor = plikowanie.wczytajDane(new ByteArrayInputStream(oryginal));
+
+		daneService.importuj(new ByteArrayInputStream(oryginal));
+		ByteArrayOutputStream eksport = new ByteArrayOutputStream();
+		Assertions.assertEquals(new LiczbaRekordow(4, 7), daneService.eksportuj(eksport));
+		DaneZPliku po = plikowanie.wczytajDane(new ByteArrayInputStream(eksport.toByteArray()));
+
+		Assertions.assertEquals(opisPokoi(wzor), opisPokoi(po));
+		Assertions.assertEquals(opisStudentow(wzor), opisStudentow(po));
+	}
+
 	// ----- pomocnicze -----
+
+	/** Pokoje jako napisy "numer/miejsca", żeby porównać listy jednym assertEquals. */
+	private static List<String> opisPokoi(DaneZPliku dane) {
+		return dane.pokoje().stream().map(p -> p.getNumerPokoju() + "/" + p.getLiczbaMiejsc()).toList();
+	}
+
+	/** Studenci jako napisy "imię nazwisko płeć". */
+	private static List<String> opisStudentow(DaneZPliku dane) {
+		return dane.studenci().stream().map(s -> s.getImie() + " " + s.getNazwisko() + " " + s.getPlec()).toList();
+	}
 
 	/** Student bez płci, jak Gerwazy z błędu zgłoszonego 11.11.2026. */
 	private Student zapiszStudentaBezPlci() {

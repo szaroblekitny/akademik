@@ -5,11 +5,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 
 import jakarta.faces.application.FacesMessage;
@@ -110,6 +112,26 @@ class ImportBeanTest {
 
 		verify(komunikaty).addMessage(ImportBean.IMPORT_PLIKU, "Brak pliku");
 		Assertions.assertEquals(1, pokojRepo.count());
+	}
+
+	/**
+	 * Krok 2.6: przesłanego pliku nie da się odczytać (np. przerwane połączenie).
+	 * To gruby błąd, a nie błąd w danych, więc wychodzi z beana (JSF pokaże stronę
+	 * błędu). {@code IOException} jest kontrolowany, więc bean opakowuje go
+	 * w niekontrolowany {@link UncheckedIOException}. Stare dane zostają.
+	 */
+	@Test
+	void testBleduOdczytuPliku() throws IOException {
+		UploadedFile plik = mock(UploadedFile.class);
+		when(plik.getFileName()).thenReturn("przerwany.xml");
+		when(plik.getSize()).thenReturn(100L);
+		when(plik.getInputStream()).thenThrow(new IOException("połączenie przerwane"));
+		importBean.setFile(plik);
+
+		Assertions.assertThrows(UncheckedIOException.class, () -> importBean.upload());
+
+		verifyNoInteractions(komunikaty);
+		Assertions.assertEquals(1, pokojRepo.count(), "Stary pokój powinien zostać");
 	}
 
 	// ----- pomocnicze -----

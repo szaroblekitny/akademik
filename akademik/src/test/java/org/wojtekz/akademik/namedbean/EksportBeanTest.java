@@ -4,7 +4,10 @@ import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +31,7 @@ import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.plik.DaneZPliku;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
+import org.wojtekz.akademik.service.DaneService;
 
 /**
  * Test beana eksportu (krok 2.2 planu naprawczego). Bean działa na prawdziwej
@@ -103,6 +107,24 @@ class EksportBeanTest {
 
 		verify(komunikaty).addMessage(eq(FacesMessage.SEVERITY_ERROR), eq("Eksport"),
 				contains("Gerwazy Kapuściński"), isNull());
+	}
+
+	/**
+	 * Krok 2.6: gruby błąd (tu udawana mockiem awaria bazy) ma wyjść z beana.
+	 * Wtedy JSF przenosi użytkownika na stronę błędu {@code errors.xhtml}.
+	 * Komunikat na ekranie jest tylko dla błędów w danych, które użytkownik może poprawić.
+	 */
+	@Test
+	void testGrubegoBleduEksportu() {
+		DaneService awaria = mock(DaneService.class);
+		when(awaria.eksportuj(any())).thenThrow(new IllegalStateException("awaria bazy"));
+		eksportBean.setDaneService(awaria);
+		Messagesy komunikaty = mock(Messagesy.class);
+		eksportBean.setMessagesy(komunikaty);
+
+		Assertions.assertThrows(IllegalStateException.class, () -> eksportBean.getContent());
+
+		verifyNoInteractions(komunikaty);
 	}
 
 	// ----- pomocnicze -----

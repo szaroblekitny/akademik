@@ -126,6 +126,45 @@ class PlikowanieTest {
 		Assertions.assertThrows(NieprawidlowyPlikException.class, () -> plikowanie.wczytajDane(strumien(xml)));
 	}
 
+	/**
+	 * Krok 2.6: użytkownik wybrał zamiast pliku danych np. zdjęcie. Tu: początek
+	 * pliku JPEG (bajty FF D8 FF E0, potem "JFIF"). Ma być czytelny wyjątek, a nie
+	 * błąd parsera z głębi biblioteki.
+	 */
+	@Test
+	void testOdrzuceniaPlikuNieXml() {
+		byte[] jpeg = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 0, 16, 'J', 'F', 'I', 'F', 0};
+
+		NieprawidlowyPlikException blad = Assertions.assertThrows(NieprawidlowyPlikException.class,
+				() -> plikowanie.wczytajDane(new ByteArrayInputStream(jpeg)));
+
+		Assertions.assertTrue(blad.getMessage().startsWith("Nieprawidłowy plik z danymi"), blad.getMessage());
+	}
+
+	/**
+	 * Krok 2.6: plik w starym formacie XStream sprzed kroku 2.1a (korzeń {@code <list>},
+	 * pełne nazwy klas, pole {@code id}). Taki plik mógł zostać z dawnych wersji
+	 * aplikacji; import ma go odrzucić z komunikatem, w którym widać zły korzeń.
+	 */
+	@Test
+	void testOdrzuceniaStaregoFormatuXStream() {
+		String xml = """
+				<list>
+				  <org.wojtekz.akademik.entity.Pokoj>
+				    <id>1</id>
+				    <numerPokoju>101</numerPokoju>
+				    <liczbaMiejsc>2</liczbaMiejsc>
+				  </org.wojtekz.akademik.entity.Pokoj>
+				</list>
+				""";
+
+		NieprawidlowyPlikException blad = Assertions.assertThrows(NieprawidlowyPlikException.class,
+				() -> plikowanie.wczytajDane(strumien(xml)));
+
+		Assertions.assertTrue(blad.getMessage().contains("list"),
+				"Komunikat powinien wskazać nieznany korzeń, jest: " + blad.getMessage());
+	}
+
 	// ----- pomocnicze -----
 
 	private static InputStream strumien(String xml) {

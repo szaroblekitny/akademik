@@ -77,12 +77,9 @@ public class EksportBean implements Serializable {
 			logg.warn("Eksport niemożliwy: {}", nde.getMessage());
 			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, EKSPORT, nde.getMessage(), null);
 			return null;
-		} catch (RuntimeException ee) {
-			logg.error("Błąd eksportu", ee);
-			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, EKSPORT,
-					"Eksport się nie udał. Szczegóły w logu aplikacji.", null);
-			return null;
 		}
+		// innych wyjątków celowo nie łapiemy: gruby błąd (np. brak połączenia z bazą)
+		// ma wyjść z beana, a JSF przeniesie wtedy użytkownika na stronę errors.xhtml
 		byte[] plik = bajty.toByteArray();
 		logg.debug("-------> EksportBean: {}, {} bajtów", wynik, plik.length);
 

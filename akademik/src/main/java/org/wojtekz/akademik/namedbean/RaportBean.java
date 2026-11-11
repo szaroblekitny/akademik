@@ -20,8 +20,18 @@ import org.wojtekz.akademik.service.RaportService;
 
 /**
  * Bean JSF do raportu kwaterunku: tworzy plik {@code raport-kwaterunku.xml}
- * z aktualnym stanem akademika i przekazuje go przeglądarce. Przycisk jest
- * na stronie głównej, obok tabeli kwaterunku.
+ * (krok 2.4) albo {@code raport-kwaterunku.html} (krok 2.5) z aktualnym stanem
+ * akademika i przekazuje go przeglądarce. Przyciski są na stronie głównej,
+ * obok tabeli kwaterunku.
+ * <p>
+ * Dwa rodzaje błędów, obsługiwane różnie (zasada z kroku 2.6):
+ * <ul>
+ * <li>błąd w danych ({@link NiekompletneDaneException}, np. student bez płci):
+ *     użytkownik może go poprawić, więc bean dodaje komunikat, a getter zwraca {@code null};
+ *     wtedy {@code <p:fileDownload>} niczego nie wysyła, a strona odświeża się z komunikatem;</li>
+ * <li>każdy inny, gruby błąd (np. brak połączenia z bazą) wychodzi z gettera
+ *     i JSF przenosi użytkownika na stronę błędu {@code errors.xhtml}.</li>
+ * </ul>
  *
  * @author Wojciech Zaręba
  */
@@ -79,10 +89,7 @@ public class RaportBean implements Serializable {
 
 	/**
 	 * Wspólna część obu raportów: zapis do pamięci (w transakcji usługi) i plik do pobrania.
-	 * <p>
-	 * Błąd nie może wyjść z gettera, bo JSF przeniósłby użytkownika na stronę błędu.
-	 * Zamiast tego metoda dodaje komunikat i zwraca {@code null}: wtedy
-	 * {@code <p:fileDownload>} niczego nie wysyła, a strona odświeża się z komunikatem.
+	 * Obsługa błędów jest opisana w opisie klasy.
 	 *
 	 * @param nazwa nazwa pliku dla przeglądarki
 	 * @param typ typ MIME pliku
@@ -98,12 +105,8 @@ public class RaportBean implements Serializable {
 			logg.warn("Raport {} niemożliwy: {}", nazwa, nde.getMessage());
 			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, RAPORT, nde.getMessage(), null);
 			return null;
-		} catch (RuntimeException ee) {
-			logg.error("Błąd tworzenia raportu " + nazwa, ee);
-			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, RAPORT,
-					"Nie udało się utworzyć raportu. Szczegóły w logu aplikacji.", null);
-			return null;
 		}
+		// innych wyjątków celowo nie łapiemy: gruby błąd ma trafić na stronę błędu
 		byte[] zawartosc = bajty.toByteArray();
 		logg.debug("-------> RaportBean: {}, {} bajtów", nazwa, zawartosc.length);
 

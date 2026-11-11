@@ -2,6 +2,7 @@ package org.wojtekz.akademik.namedbean;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.io.Serializable;
 
 import jakarta.faces.application.FacesMessage;
@@ -78,11 +79,11 @@ public class ImportBean implements Serializable {
 			// błąd po stronie pliku: użytkownik może go poprawić, więc pokazujemy szczegóły
 			logg.warn("Nieprawidłowy plik {}: {}", nazwa, npe.getMessage());
 			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, IMPORT_PLIKU, npe.getMessage(), null);
-		} catch (IOException | RuntimeException ee) {
-			// błąd odczytu albo bazy: szczegóły do logu, na ekran krótki opis
-			logg.error("Błąd importu pliku " + nazwa, ee);
-			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, IMPORT_PLIKU,
-					"Import się nie udał, dane w bazie się nie zmieniły. Szczegóły w logu aplikacji.", null);
+		} catch (IOException ee) {
+			// Gruby błąd (np. przerwany odczyt przesłanego pliku) ma trafić na stronę błędu,
+			// tak jak błąd bazy, którego tu w ogóle nie łapiemy. IOException jest kontrolowany,
+			// więc opakowujemy go w niekontrolowany UncheckedIOException (Java 8).
+			throw new UncheckedIOException("Nie da się odczytać przesłanego pliku " + nazwa, ee);
 		}
 	}
 }

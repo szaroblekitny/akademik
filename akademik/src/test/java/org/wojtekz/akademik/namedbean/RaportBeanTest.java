@@ -5,7 +5,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +28,7 @@ import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
+import org.wojtekz.akademik.service.RaportService;
 
 /**
  * Test beana raportu (krok 2.4 planu naprawczego): plik do pobrania ma właściwą
@@ -106,5 +110,22 @@ class RaportBeanTest {
 			String html = new String(in.readAllBytes(), StandardCharsets.UTF_8);
 			Assertions.assertTrue(html.contains("<td>101</td>"), html);
 		}
+	}
+
+	/**
+	 * Krok 2.6: gruby błąd usługi raportu (udawana mockiem awaria bazy) ma wyjść
+	 * z beana, żeby JSF przeniósł użytkownika na stronę błędu {@code errors.xhtml}.
+	 */
+	@Test
+	void testGrubegoBleduRaportu() {
+		RaportService awaria = mock(RaportService.class);
+		when(awaria.zapiszRaport(any())).thenThrow(new IllegalStateException("awaria bazy"));
+		raportBean.setRaportService(awaria);
+		Messagesy komunikaty = mock(Messagesy.class);
+		raportBean.setMessagesy(komunikaty);
+
+		Assertions.assertThrows(IllegalStateException.class, () -> raportBean.getRaportXml());
+
+		verifyNoInteractions(komunikaty);
 	}
 }
