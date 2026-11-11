@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 
+import jakarta.faces.application.FacesMessage;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.service.DaneService;
 import org.wojtekz.akademik.service.LiczbaRekordow;
+import org.wojtekz.akademik.service.NiekompletneDaneException;
 
 /**
  * Bean JSF do eksportu danych: tworzy plik {@code akademik.xml} z pokojami
@@ -34,6 +37,9 @@ public class EksportBean implements Serializable {
 	/** Typ MIME (Multipurpose Internet Mail Extensions): mówi przeglądarce, co dostaje. */
 	static final String TYP_PLIKU = "application/xml";
 
+	/** Tytuł komunikatów tego beana. */
+	private static final String EKSPORT = "Eksport";
+
 	/**
 	 * {@code transient}: bean sesyjny może zostać zserializowany (np. przy restarcie
 	 * Tomcata), a usługa Springa nie jest serializowalna i nie powinna być częścią sesji.
@@ -45,6 +51,14 @@ public class EksportBean implements Serializable {
 		this.daneService = daneService;
 	}
 
+	/** Komunikaty JSF; {@code transient} jak w pozostałych beanach. */
+	private transient Messagesy komunikaty;
+
+	@Autowired
+	public void setMessagesy(Messagesy komunikaty) {
+		this.komunikaty = komunikaty;
+	}
+
 	/**
 	 * Tworzy plik z aktualnymi danymi z bazy. {@code <p:fileDownload>} woła tę metodę
 	 * przy każdym kliknięciu przycisku eksportu i wysyła wynik do przeglądarki.
@@ -54,7 +68,21 @@ public class EksportBean implements Serializable {
 	public StreamedContent getContent() {
 		// eksport kończy się tutaj, w transakcji usługi; potem mamy już tylko bajty
 		ByteArrayOutputStream bajty = new ByteArrayOutputStream();
-		LiczbaRekordow wynik = daneService.eksportuj(bajty);
+		LiczbaRekordow wynik;
+		try {
+			wynik = daneService.eksportuj(bajty);
+		} catch (NiekompletneDaneException nde) {
+			// błąd w danych zamiast strony błędu: komunikat i brak pliku (null),
+			// wtedy <p:fileDownload> niczego nie wysyła
+			logg.warn("Eksport niemożliwy: {}", nde.getMessage());
+			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, EKSPORT, nde.getMessage(), null);
+			return null;
+		} catch (RuntimeException ee) {
+			logg.error("Błąd eksportu", ee);
+			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, EKSPORT,
+					"Eksport się nie udał. Szczegóły w logu aplikacji.", null);
+			return null;
+		}
 		byte[] plik = bajty.toByteArray();
 		logg.debug("-------> EksportBean: {}, {} bajtów", wynik, plik.length);
 

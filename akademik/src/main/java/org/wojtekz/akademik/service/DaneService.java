@@ -108,6 +108,9 @@ public class DaneService {
 	 */
 	@Transactional(readOnly = true)
 	public LiczbaRekordow eksportuj(OutputStream out) {
+		// schemat pliku wymaga płci; bez tego sprawdzenia eksport padał na walidacji
+		// z komunikatem zrozumiałym tylko dla programisty
+		NiekompletneDaneException.sprawdzPlec(studentRepo.findByPlecIsNull());
 		List<Pokoj> pokoje = pokojRepo.findAll();
 		List<Student> studenci = studentRepo.findAll();
 		plikowanie.zapiszDane(out, pokoje, studenci);

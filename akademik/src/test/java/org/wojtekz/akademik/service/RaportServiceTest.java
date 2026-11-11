@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.wojtekz.akademik.conf.TestConfiguration;
 import org.wojtekz.akademik.core.Akademik;
 import org.wojtekz.akademik.entity.Plec;
+import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.raport.PokojRaportu;
 import org.wojtekz.akademik.raport.RaportKwaterunku;
 import org.wojtekz.akademik.raport.StudentRaportu;
@@ -143,7 +144,99 @@ class RaportServiceTest {
 		Assertions.assertFalse(xml.contains("niezakwaterowani"), xml);
 	}
 
+	// ===== raport HTML (krok 2.5) =====
+
+	/** Przykład po kwaterowaniu: tabela pokoi, mieszkańcy, zdanie o udanym kwaterunku. */
+	@Test
+	void testRaportuHtml() throws IOException {
+		importujPrzyklad();
+		akademik.zakwateruj();
+		ByteArrayOutputStream bajty = new ByteArrayOutputStream();
+
+		raportService.zapiszRaportHtml(bajty);
+
+		String html = bajty.toString(StandardCharsets.UTF_8);
+		Assertions.assertTrue(html.contains("<table"), "Brak tabeli pokoi:\n" + html);
+		Assertions.assertTrue(html.contains("Janina Kaptur"), html);
+		Assertions.assertTrue(html.contains("<td>103</td>"), html);
+		Assertions.assertTrue(html.contains("Wszyscy studenci są zakwaterowani"), html);
+		Assertions.assertFalse(html.contains("Bez pokoju"), "Wszyscy mają pokój, więc bez tej sekcji:\n" + html);
+	}
+
+	/** Za mało miejsc: osobna sekcja dla studentów bez pokoju i zdanie z liczbami. */
+	@Test
+	void testRaportuHtmlNiezakwaterowanych() {
+		daneService.importuj(strumien("""
+				<akademik xmlns="urn:wojtekz:akademik:dane:1">
+				  <pokoje>
+				    <pokoj numer="1" miejsca="1"/>
+				  </pokoje>
+				  <studenci>
+				    <student plec="MEZCZYZNA"><imie>Adam</imie><nazwisko>Zając</nazwisko></student>
+				    <student plec="MEZCZYZNA"><imie>Piotr</imie><nazwisko>Świerk</nazwisko></student>
+				  </studenci>
+				</akademik>
+				"""));
+		akademik.zakwateruj();
+		ByteArrayOutputStream bajty = new ByteArrayOutputStream();
+
+		raportService.zapiszRaportHtml(bajty);
+
+		String html = bajty.toString(StandardCharsets.UTF_8);
+		Assertions.assertTrue(html.contains("Bez pokoju"), html);
+		Assertions.assertTrue(html.contains("Piotr Świerk"), html);
+		Assertions.assertTrue(html.contains("Zakwaterowano 1 z 2 studentów"), html);
+	}
+
+	/**
+	 * Dane z bazy nie mogą stać się kodem HTML: nazwisko {@code <b>Zły</b>} ma się
+	 * pojawić jako tekst ({@code &lt;b&gt;}), a nie jako pogrubienie. To ochrona przed
+	 * atakiem XSS (Cross-Site Scripting), gdyby ktoś zamiast {@code <b>} wpisał {@code <script>}.
+	 */
+	@Test
+	void testZnakowSpecjalnychWHtml() {
+		daneService.importuj(strumien("""
+				<akademik xmlns="urn:wojtekz:akademik:dane:1">
+				  <studenci>
+				    <student plec="KOBIETA"><imie>Ola</imie><nazwisko>&lt;b&gt;Zły&lt;/b&gt;</nazwisko></student>
+				  </studenci>
+				</akademik>
+				"""));
+		ByteArrayOutputStream bajty = new ByteArrayOutputStream();
+
+		raportService.zapiszRaportHtml(bajty);
+
+		String html = bajty.toString(StandardCharsets.UTF_8);
+		Assertions.assertTrue(html.contains("Ola &lt;b&gt;Zły&lt;/b&gt;"), html);
+		Assertions.assertFalse(html.contains("<b>Zły"), html);
+	}
+
+	/**
+	 * Student bez płci: raport nie spełniłby schematu (płeć jest wymagana), więc usługa
+	 * zgłasza wyjątek z komunikatem dla użytkownika, a nie {@code NullPointerException}.
+	 */
+	@Test
+	void testRaportuZeStudentemBezPlci() {
+		zapiszStudentaBezPlci();
+
+		NiekompletneDaneException blad = Assertions.assertThrows(NiekompletneDaneException.class,
+				() -> raportService.zapiszRaport(new ByteArrayOutputStream()));
+
+		Assertions.assertTrue(blad.getMessage().contains("Gerwazy Kapuściński"),
+				"Komunikat powinien wskazać studenta, jest: " + blad.getMessage());
+	}
+
 	// ----- pomocnicze -----
+
+	/** Student bez płci, jak Gerwazy z błędu zgłoszonego 11.11.2026. */
+	private Student zapiszStudentaBezPlci() {
+		Student gerwazy = new Student();
+		gerwazy.setId(1);
+		gerwazy.setImie("Gerwazy");
+		gerwazy.setNazwisko("Kapuściński");
+		gerwazy.setPlec(null);
+		return studentRepo.save(gerwazy);
+	}
 
 	private void importujPrzyklad() throws IOException {
 		try (InputStream plik = getClass().getResourceAsStream("/dane/przyklad.xml")) {

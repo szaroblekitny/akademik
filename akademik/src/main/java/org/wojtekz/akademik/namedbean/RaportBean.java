@@ -2,7 +2,11 @@ package org.wojtekz.akademik.namedbean;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.function.Consumer;
+
+import jakarta.faces.application.FacesMessage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +15,7 @@ import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.wojtekz.akademik.raport.RaportKwaterunku;
+import org.wojtekz.akademik.service.NiekompletneDaneException;
 import org.wojtekz.akademik.service.RaportService;
 
 /**
@@ -30,12 +34,26 @@ public class RaportBean implements Serializable {
 	/** Nazwa pliku, którą przeglądarka zaproponuje przy zapisie. */
 	static final String NAZWA_PLIKU = "raport-kwaterunku.xml";
 
+	/** Nazwa pliku raportu HTML (krok 2.5). */
+	static final String NAZWA_PLIKU_HTML = "raport-kwaterunku.html";
+
+	/** Tytuł komunikatów tego beana. */
+	private static final String RAPORT = "Raport";
+
 	/** {@code transient}: usługa Springa nie powinna być częścią serializowanej sesji. */
 	private transient RaportService raportService;
 
 	@Autowired
 	public void setRaportService(RaportService raportService) {
 		this.raportService = raportService;
+	}
+
+	/** Komunikaty JSF; {@code transient} jak w pozostałych beanach. */
+	private transient Messagesy komunikaty;
+
+	@Autowired
+	public void setMessagesy(Messagesy komunikaty) {
+		this.komunikaty = komunikaty;
 	}
 
 	/**
@@ -45,18 +63,56 @@ public class RaportBean implements Serializable {
 	 * @return zawartość pliku, nazwa i typ
 	 */
 	public StreamedContent getRaportXml() {
-		// tak samo jak w EksportBean: najpierw cały raport do pamięci, w transakcji usługi
-		ByteArrayOutputStream bajty = new ByteArrayOutputStream();
-		RaportKwaterunku raport = raportService.zapiszRaport(bajty);
-		byte[] plik = bajty.toByteArray();
-		logg.debug("-------> RaportBean: zakwaterowanych {} z {}, {} bajtów",
-				raport.zakwaterowanych(), raport.studentow(), plik.length);
+		return plik(NAZWA_PLIKU, "application/xml", raportService::zapiszRaport);
+	}
 
+	/**
+	 * Tworzy raport HTML z aktualnych danych (krok 2.5), do obejrzenia w przeglądarce.
+	 *
+	 * @return zawartość pliku, nazwa i typ
+	 */
+	public StreamedContent getRaportHtml() {
+		// kodowanie znaków podaje sama strona (<meta charset="UTF-8"/>); nie mylić
+		// z contentEncoding, które oznacza kompresję (np. gzip), a nie znaki
+		return plik(NAZWA_PLIKU_HTML, "text/html", raportService::zapiszRaportHtml);
+	}
+
+	/**
+	 * Wspólna część obu raportów: zapis do pamięci (w transakcji usługi) i plik do pobrania.
+	 * <p>
+	 * Błąd nie może wyjść z gettera, bo JSF przeniósłby użytkownika na stronę błędu.
+	 * Zamiast tego metoda dodaje komunikat i zwraca {@code null}: wtedy
+	 * {@code <p:fileDownload>} niczego nie wysyła, a strona odświeża się z komunikatem.
+	 *
+	 * @param nazwa nazwa pliku dla przeglądarki
+	 * @param typ typ MIME pliku
+	 * @param zapis metoda usługi zapisująca raport do strumienia
+	 * @return plik albo {@code null} przy błędzie
+	 */
+	private StreamedContent plik(String nazwa, String typ, Consumer<OutputStream> zapis) {
+		ByteArrayOutputStream bajty = new ByteArrayOutputStream();
+		try {
+			zapis.accept(bajty);
+		} catch (NiekompletneDaneException nde) {
+			// błąd w danych: użytkownik może go poprawić, więc pokazujemy treść
+			logg.warn("Raport {} niemożliwy: {}", nazwa, nde.getMessage());
+			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, RAPORT, nde.getMessage(), null);
+			return null;
+		} catch (RuntimeException ee) {
+			logg.error("Błąd tworzenia raportu " + nazwa, ee);
+			komunikaty.addMessage(FacesMessage.SEVERITY_ERROR, RAPORT,
+					"Nie udało się utworzyć raportu. Szczegóły w logu aplikacji.", null);
+			return null;
+		}
+		byte[] zawartosc = bajty.toByteArray();
+		logg.debug("-------> RaportBean: {}, {} bajtów", nazwa, zawartosc.length);
+
+		// lambda dostaje tylko tablicę bajtów, która jest serializowalna
 		return DefaultStreamedContent.builder()
-				.name(NAZWA_PLIKU)
-				.contentType("application/xml")
-				.contentLength((long) plik.length)
-				.stream(() -> new ByteArrayInputStream(plik))
+				.name(nazwa)
+				.contentType(typ)
+				.contentLength((long) zawartosc.length)
+				.stream(() -> new ByteArrayInputStream(zawartosc))
 				.build();
 	}
 }

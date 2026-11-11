@@ -1,5 +1,9 @@
 package org.wojtekz.akademik.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.Collator;
 import java.time.LocalDateTime;
@@ -12,9 +16,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,12 +60,43 @@ public class RaportService {
 	 */
 	private static final DateTimeFormatter FORMAT_DATY = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
+	/** Arkusz XSLT zamieniający XML raportu na HTML (krok 2.5). */
+	private static final String ARKUSZ_XSL = "/xsl/raport.xsl";
+
 	private final PokojRepository pokojRepo;
 	private final StudentRepository studentRepo;
+
+	/**
+	 * Skompilowany arkusz XSLT. {@code Templates} jest bezpieczny wielowątkowo, więc
+	 * powstaje raz; {@code Transformer} z niego już nie, więc ten robimy przy każdym raporcie.
+	 * Ten sam wzorzec co {@code JAXBContext} i {@code Marshaller} w {@code Plikowanie}.
+	 */
+	private final Templates arkusz;
 
 	public RaportService(PokojRepository pokojRepo, StudentRepository studentRepo) {
 		this.pokojRepo = pokojRepo;
 		this.studentRepo = studentRepo;
+		this.arkusz = wczytajArkusz();
+	}
+
+	/**
+	 * Kompiluje arkusz z zasobów. Fabryka ma włączone bezpieczne przetwarzanie
+	 * i zakaz sięgania po zewnętrzne DTD i arkusze, tak jak parser przy imporcie.
+	 * Błąd tutaj to błąd w samej aplikacji (np. brak arkusza w WAR-ze).
+	 */
+	private static Templates wczytajArkusz() {
+		try (InputStream xsl = RaportService.class.getResourceAsStream(ARKUSZ_XSL)) {
+			if (xsl == null) {
+				throw new IllegalStateException("Brak arkusza " + ARKUSZ_XSL);
+			}
+			TransformerFactory fabryka = TransformerFactory.newInstance();
+			fabryka.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			fabryka.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+			fabryka.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+			return fabryka.newTemplates(new StreamSource(xsl));
+		} catch (IOException | TransformerException ee) {
+			throw new IllegalStateException("Nie da się przygotować arkusza " + ARKUSZ_XSL, ee);
+		}
 	}
 
 	/**
@@ -107,6 +148,9 @@ public class RaportService {
 	 * @return zapisany raport (np. żeby pokazać podsumowanie na ekranie)
 	 */
 	public RaportKwaterunku zapiszRaport(OutputStream out) {
+		// schemat raportu wymaga płci; bez tego sprawdzenia student bez płci dawał
+		// NullPointerException i stronę błędu (błąd zgłoszony 11.11.2026)
+		NiekompletneDaneException.sprawdzPlec(studentRepo.findByPlecIsNull());
 		// wywołanie z wnętrza klasy omija proxy, ale tu to nie szkodzi:
 		// zapiszRaport sama jest już w transakcji tylko do odczytu
 		RaportKwaterunku raport = utworzRaport();
@@ -157,6 +201,28 @@ public class RaportService {
 		} catch (XMLStreamException ee) {
 			throw new IllegalStateException("Nie da się zapisać raportu kwaterunku", ee);
 		}
+		return raport;
+	}
+
+	/**
+	 * Tworzy raport i zapisuje go jako stronę HTML (krok 2.5): najpierw XML jak
+	 * w {@link #zapiszRaport(OutputStream)}, potem przekształcenie arkuszem XSLT
+	 * {@code /xsl/raport.xsl}.
+	 *
+	 * @param out cel zapisu; metoda go nie zamyka
+	 * @return zapisany raport
+	 */
+	public RaportKwaterunku zapiszRaportHtml(OutputStream out) {
+		ByteArrayOutputStream xml = new ByteArrayOutputStream();
+		RaportKwaterunku raport = zapiszRaport(xml);
+		try {
+			arkusz.newTransformer().transform(
+					new StreamSource(new ByteArrayInputStream(xml.toByteArray())),
+					new StreamResult(out));
+		} catch (TransformerException ee) {
+			throw new IllegalStateException("Nie da się przekształcić raportu na HTML", ee);
+		}
+		logg.debug("----->>> zapiszRaportHtml: {} bajtów XML", xml.size());
 		return raport;
 	}
 

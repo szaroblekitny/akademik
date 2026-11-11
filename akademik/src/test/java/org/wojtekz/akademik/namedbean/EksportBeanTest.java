@@ -1,8 +1,16 @@
 package org.wojtekz.akademik.namedbean;
 
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import jakarta.faces.application.FacesMessage;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -81,6 +89,20 @@ class EksportBeanTest {
 
 		Assertions.assertEquals(2, przeczytaj(eksportBean.getContent()).pokoje().size(),
 				"Drugi eksport w tej samej sesji powinien zobaczyć nowy pokój");
+	}
+
+	/** Błąd w danych: brak pliku i komunikat zamiast przejścia na stronę błędu. */
+	@Test
+	void testEksportuStudentaBezPlci() {
+		Student gerwazy = student(1, "Gerwazy", "Kapuściński", null);
+		studentRepo.save(gerwazy);
+		Messagesy komunikaty = mock(Messagesy.class);
+		eksportBean.setMessagesy(komunikaty);
+
+		Assertions.assertNull(eksportBean.getContent(), "Bez pliku do pobrania");
+
+		verify(komunikaty).addMessage(eq(FacesMessage.SEVERITY_ERROR), eq("Eksport"),
+				contains("Gerwazy Kapuściński"), isNull());
 	}
 
 	// ----- pomocnicze -----

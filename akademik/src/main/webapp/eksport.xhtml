@@ -34,6 +34,10 @@
     			<h:outputText value="Chwilka..." />
 			</p:dialog>
 
+			<!-- komunikaty, np. o błędzie w danych przy raporcie; błędy wiszą do zamknięcia -->
+			<p:growl id="eksportmsgs" showDetail="true" severity="info,warn" />
+			<p:growl id="eksportmsgsbledy" showDetail="true" severity="error,fatal" sticky="true" />
+
 			<h:form>
 				<div class="otoczkaBut">
 	    			<p:commandButton value="Eksport" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);" icon="pi pi-download">

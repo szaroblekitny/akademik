@@ -218,6 +218,12 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 
 **2.5 Raport HTML przez XSLT (P7).** XSLT (Extensible Stylesheet Language Transformations) to język opisujący, jak przekształcić jeden dokument XML w inny, np. w HTML. Arkusz `raport.xsl` w zasobach przekształci XML w tabelę HTML. Użyjemy standardowego `javax.xml.transform` z JDK, bez dodatkowych bibliotek. Na stronie głównej, obok przycisku „Raport XML”, pojawi się przycisk „Raport HTML”.
 
+- *Wynik (11.11.2026):* arkusz `src/main/resources/xsl/raport.xsl` (XSLT 1.0, bo tę wersję ma procesor wbudowany w JDK) robi stronę z tabelą pokoi, sekcją „Bez pokoju” i zdaniem podsumowania; style są w stronie. `RaportService.zapiszRaportHtml` przekształca XML raportu skompilowanym arkuszem (`Templates` powstaje raz, `Transformer` przy każdym raporcie), z `FEATURE_SECURE_PROCESSING` i bez zewnętrznych DTD i arkuszy. Na stronie głównej przycisk „Raport HTML”. Testy: 3 w `RaportServiceTest` (w tym ochrona przed XSS: nazwisko `<b>Zły</b>` wychodzi jako tekst) i 1 w `RaportBeanTest`. Faza czerwona: 4 porażki na 60, zielona: 60/60. Sprawdzone w Tomcacie.
+- *Pułapki:* (1) w trybie `method="html"` serializer z JDK zamieniał „ó” na `&oacute;`, a „ś” zostawiał, i dopisywał własny `<META>`; arkusz używa więc `method="xml"` z doctype HTML5 wstawionym jako tekst. Pusty element zapisałby się wtedy jako `<td/>`, więc puste komórki dostają napis. (2) `contentEncoding` w `DefaultStreamedContent` to nagłówek kompresji (np. gzip), a nie kodowanie znaków; kodowanie podaje `<meta charset>`.
+- *Poprawki przy okazji (11.11.2026), po błędach zgłoszonych przy sprawdzaniu w Tomcacie:*
+  - student bez płci był po cichu pomijany przy kwaterowaniu (meldunek „Kwaterowanie udane”); teraz meldunek wymienia studentów bez płci, a formularz i `StudentBean` nie pozwalają dodać studenta bez płci, imienia ani nazwiska (także same spacje; przy edycji wiersza tak samo). Pola wymagane mają gwiazdkę i objaśnienie pod formularzem;
+  - raporty i eksport ze studentem bez płci kończyły się stroną błędu; teraz usługi rzucają `NiekompletneDaneException` z komunikatem dla użytkownika, a beany pokazują go w growlu i nie wysyłają pliku (`p:fileDownload` przy `null` niczego nie robi).
+
 **2.6 Testy.** Każdy krok dostaje test: import z przykładowego XML w `src/test/resources`, eksport i ponowny import dają te same dane, raport zawiera wszystkie pokoje.
 
 **2.7 Sortowanie wyniku na stronie głównej.** Lista na stronie głównej będzie posortowana według pokoi, a w pokoju według nazwisk.
@@ -334,7 +340,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | d565d42 |
 | 2.3 | Import do bazy | #3 (refs) | zrobione (TDD: czerwona 3 porażki, zielona 51/51; sprawdzone w Tomcacie) | aa26d8c |
 | 2.4 | Raport XML | #8 (closes) | zrobione (TDD: czerwona 2 porażki i 3 błędy, zielona 56/56; sprawdzone w Tomcacie) | 2a9ba29, d690854 (poprawka) |
-| 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
+| 2.5 | Raport HTML przez XSLT |  | zrobione (TDD: czerwona 4 porażki na 60, zielona 60/60; poprawki danych studenta i zabezpieczenie raportów: 69/69; sprawdzone w Tomcacie) | |
 | 2.6 | Testy importu, eksportu i raportu |  | do zrobienia | |
 | 2.7 | Sortowanie strony głównej | #16 | do zrobienia | |
 | 3.1 | Test słabości algorytmu |  | do zrobienia | |

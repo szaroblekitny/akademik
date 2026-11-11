@@ -219,7 +219,29 @@ class DaneServiceTest {
 		Assertions.assertTrue(dane.studenci().isEmpty());
 	}
 
+	/** Eksport studenta bez płci: ten sam wyjątek co w raporcie, z nazwiskiem studenta. */
+	@Test
+	void testEksportuStudentaBezPlci() {
+		zapiszStudentaBezPlci();
+
+		NiekompletneDaneException blad = Assertions.assertThrows(NiekompletneDaneException.class,
+				() -> daneService.eksportuj(new ByteArrayOutputStream()));
+
+		Assertions.assertTrue(blad.getMessage().contains("Gerwazy Kapuściński"),
+				"Komunikat powinien wskazać studenta, jest: " + blad.getMessage());
+	}
+
 	// ----- pomocnicze -----
+
+	/** Student bez płci, jak Gerwazy z błędu zgłoszonego 11.11.2026. */
+	private Student zapiszStudentaBezPlci() {
+		Student gerwazy = new Student();
+		gerwazy.setId(1);
+		gerwazy.setImie("Gerwazy");
+		gerwazy.setNazwisko("Kapuściński");
+		gerwazy.setPlec(null);
+		return studentRepo.save(gerwazy);
+	}
 
 	/** Stary pokój 100 (ID 5) i mieszkająca w nim Ewa Nowak (ID 9). */
 	private void zapiszStareDane() {
