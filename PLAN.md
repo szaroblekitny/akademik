@@ -243,6 +243,7 @@ Cel: algorytm mieści więcej studentów, a ID nadaje baza danych. Ten etap robi
 - *Dlaczego:* dwóch użytkowników naraz może odczytać ten sam ostatni ID i obaj zapiszą `ID + 1`. Sekwencja w bazie wydaje numery atomowo.
 - *Uwaga:* pliki XML z importu zawierają własne ID. Trzeba będzie zdecydować, czy import je zachowuje, czy nadaje nowe.
 - *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (closes). Po tym kroku ID w plikach wejściowych nie są już potrzebne do niczego. Issue chce, żeby program nadawał je sam, więc to przemawia za nadawaniem nowych.
+- *Ograniczenia w bazie (dopisane 11.11.2026):* krok i tak zmienia tabele, więc przy okazji `NOT NULL` na kolumnie `student.plec`. Student bez płci nie trafia na listę kobiet ani mężczyzn, więc kwaterowanie go pomija, a eksport i raporty nie przechodzą przez schemat (błąd zgłoszony 11.11.2026, poprawiony w formularzu i w meldunku kwaterowania; baza ma to wykluczyć na stałe, także przy edycji wiersza). Do ujednolicenia także długość imienia i nazwiska (500 w XSD, 255 w HSQLDB, bez limitu w PostgreSQL; patrz 2.1a).
 
 **3.4 Walidacja danych.** Adnotacje Bean Validation (`@NotBlank`, `@Min(1)`) na polach encji, żeby nie dało się zapisać pokoju z 0 miejsc ani studenta bez nazwiska. JSF pokaże błędy automatycznie przy formularzu. Potrzebna będzie implementacja walidacji, czyli zależność Hibernate Validator.
 

@@ -197,7 +197,21 @@ public class Akademik {
 		List<Student> mezczyzni = studentRepo.findByPlec(Plec.MEZCZYZNA);
 		logg.debug("----->>> mamy mężczyzn {}", mezczyzni.size());
 		
-		return kwaterowanie(pokoje, kobiety, mezczyzni);
+		String meldunek = kwaterowanie(pokoje, kobiety, mezczyzni);
+
+		// Student bez płci nie trafia na żadną z dwóch list, więc kwaterowanie go pomija.
+		// Bez tego sprawdzenia meldunek mógł brzmieć „Kwaterowanie udane”, choć ktoś
+		// został bez pokoju (błąd zgłoszony 11.11.2026).
+		List<Student> bezPlci = studentRepo.findByPlecIsNull();
+		if (!bezPlci.isEmpty()) {
+			String kto = String.join(", ", bezPlci.stream()
+					.map(student -> student.getImie() + " " + student.getNazwisko())
+					.toList());
+			logg.warn("----->>> studenci bez określonej płci, bez pokoju: {}", kto);
+			String brak = "Bez określonej płci: " + kto;
+			meldunek = "Kwaterowanie udane".equals(meldunek) ? brak : meldunek + ". " + brak;
+		}
+		return meldunek;
 	}
 	
 	/**

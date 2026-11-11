@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.component.UIComponent;
 import jakarta.faces.component.behavior.Behavior;
 
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.wojtekz.akademik.conf.TestConfiguration;
+import org.wojtekz.akademik.entity.Plec;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
 import org.wojtekz.akademik.repo.PokojRepository;
@@ -126,6 +128,69 @@ public class StudentBeanTest {
 		logg.debug("===========> testOnRowCancel");
 		studentBean.onRowCancel(new RowEditEvent<Student>(component, behavior, student));
 		verify(komunikaty).addMessage("Edycja anulowana", "10");
+	}
+
+	/**
+	 * Błąd zgłoszony 11.11.2026: formularz pozwalał dodać studenta bez wybranej płci,
+	 * a taki student psuje kwaterowanie, eksport i raporty. Ma nie trafić do bazy,
+	 * a ekran ma dostać komunikat błędu.
+	 */
+	@Test
+	public void testDodaniaStudentaBezPlci() {
+		studentBean.getStudenci();
+		long przed = studentRepo.count();
+		studentBean.setImie("Gerwazy");
+		studentBean.setNazwisko("Kapuściński");
+		studentBean.setPlec(null);
+
+		studentBean.onAddNew();
+
+		Assertions.assertEquals(przed, studentRepo.count(), "Student bez płci nie może trafić do bazy");
+		verify(komunikaty).addMessage(eq(FacesMessage.SEVERITY_ERROR), eq("Tworzenie"), contains("płeć"), isNull());
+	}
+
+	/**
+	 * Błąd zgłoszony 11.11.2026: dało się zapisać studenta bez imienia albo nazwiska.
+	 * Same spacje też się nie liczą: schemat pliku danych ({@code xs:token}) usuwa je
+	 * i wymaga co najmniej jednego znaku, więc taki student psułby potem eksport.
+	 */
+	@Test
+	public void testDodaniaStudentaBezImienia() {
+		studentBean.getStudenci();
+		long przed = studentRepo.count();
+		studentBean.setImie(null);
+		studentBean.setNazwisko("Kapuściński");
+		studentBean.setPlec(Plec.MEZCZYZNA);
+
+		studentBean.onAddNew();
+
+		Assertions.assertEquals(przed, studentRepo.count(), "Student bez imienia nie może trafić do bazy");
+		verify(komunikaty).addMessage(eq(FacesMessage.SEVERITY_ERROR), eq("Tworzenie"), contains("imię"), isNull());
+	}
+
+	@Test
+	public void testDodaniaStudentaBezNazwiska() {
+		studentBean.getStudenci();
+		long przed = studentRepo.count();
+		studentBean.setImie("Gerwazy");
+		studentBean.setNazwisko("   ");
+		studentBean.setPlec(Plec.MEZCZYZNA);
+
+		studentBean.onAddNew();
+
+		Assertions.assertEquals(przed, studentRepo.count(), "Student z samymi spacjami w nazwisku nie może trafić do bazy");
+		verify(komunikaty).addMessage(eq(FacesMessage.SEVERITY_ERROR), eq("Tworzenie"), contains("nazwisko"), isNull());
+	}
+
+	/** To samo przy edycji wiersza: pusty wpis nie nadpisuje danych w bazie. */
+	@Test
+	public void testEdycjiStudentaBezNazwiska() {
+		student.setNazwisko("");
+
+		studentBean.onRowEdit(new RowEditEvent<Student>(component, behavior, student));
+
+		Assertions.assertTrue(studentRepo.findById(10L).isEmpty(), "Student z pustym nazwiskiem nie może trafić do bazy");
+		verify(komunikaty).addMessage(eq(FacesMessage.SEVERITY_ERROR), eq("Edycja studenta"), contains("nazwisko"), isNull());
 	}
 
 	@Test

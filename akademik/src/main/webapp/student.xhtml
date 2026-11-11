@@ -35,14 +35,14 @@
 	        		<p:column id="colimie" headerText="Imie">
 	            		<p:cellEditor>
 	                		<f:facet name="output"><h:outputText value="#{student.imie}" /></f:facet>
-	                		<f:facet name="input"><p:inputText value="#{student.imie}" class="szerokosc100procent" /></f:facet>
+	                		<f:facet name="input"><p:inputText value="#{student.imie}" class="szerokosc100procent" required="true" requiredMessage="Podaj imię studenta" /></f:facet>
 	            		</p:cellEditor>
 	        		</p:column>
 
 	        		<p:column id="colnazwisko" headerText="Nazwisko">
 	            		<p:cellEditor>
 	                		<f:facet name="output"><h:outputText value="#{student.nazwisko}" /></f:facet>
-							<f:facet name="input"><p:inputText value="#{student.nazwisko}" class="szerokosc100procent"/></f:facet>
+							<f:facet name="input"><p:inputText value="#{student.nazwisko}" class="szerokosc100procent" required="true" requiredMessage="Podaj nazwisko studenta"/></f:facet>
 	            		</p:cellEditor>
 	        		</p:column>
 
@@ -78,23 +78,28 @@
         			<h:panelGrid columns="3">
         				<div>
 	        				<p:outputLabel for="studsurname" value="Imię" />
-	            			<p:inputText id="studsurname" value="#{studentBean.imie}" />
+	            			<p:inputText id="studsurname" value="#{studentBean.imie}" required="true" requiredMessage="Podaj imię studenta" />
             			</div>
             			<div>
 	        				<p:outputLabel for="studentname" value="Nazwisko" />
-	            			<p:inputText id="studentname" value="#{studentBean.nazwisko}"/>
+	            			<p:inputText id="studentname" value="#{studentBean.nazwisko}" required="true" requiredMessage="Podaj nazwisko studenta"/>
             			</div>
             			<div>
             				<p:outputLabel for="studentplec" value="Płeć" />
-            				<p:selectOneRadio id="studentplec" value="#{studentBean.plec}" unselectable="false" disabled="false">
+            				<!-- required: bez płci student nie trafi do bazy (błąd z 11.11.2026) -->
+            				<p:selectOneRadio id="studentplec" value="#{studentBean.plec}" unselectable="false" disabled="false"
+            						required="true" requiredMessage="Wybierz płeć studenta">
 		            			<f:selectItem itemLabel="Kobieta" itemValue="KOBIETA" />
 		            			<f:selectItem itemLabel="Mężczyzna" itemValue="MEZCZYZNA" />
 		        			</p:selectOneRadio>
             			</div>
         			</h:panelGrid>
+        			<!-- p:outputLabel sam dopisuje gwiazdkę przy polu z required="true" -->
+        			<p class="przypis">Pola oznaczone gwiazdką (*) są wymagane.</p>
 
         			<p:commandButton value="Zapisz" styleClass="ui-priority-primary" process="@parent" update=":form:msgs"
-                            action="#{studentBean.onAddNew()}" oncomplete="PF('studenci').addRow();"/>
+                            action="#{studentBean.onAddNew()}"
+                            oncomplete="if (!args.validationFailed) PF('studenci').addRow();"/>
     			</p:panel>
 
 	        	<!-- ooooooooooooooooo -->

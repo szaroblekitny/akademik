@@ -259,6 +259,36 @@ public class AkademikTest {
 	}
 	
 	/**
+	 * Błąd zgłoszony 11.11.2026: student bez płci (w bazie {@code plec = NULL}) nie trafia
+	 * ani do listy kobiet, ani mężczyzn, więc kwaterowanie go pomijało i mimo to meldowało
+	 * „Kwaterowanie udane”. Miejsc jest tu dosyć (5), więc jedynym powodem, dla którego
+	 * ktoś zostaje bez pokoju, jest brak płci, i meldunek ma to powiedzieć wprost.
+	 */
+	@Test
+	public void testKwaterowaniaStudentaBezPlci() {
+		pokojRepo.saveAll(pokoje);
+		Student kowalski = new Student();
+		kowalski.setId(1);
+		kowalski.setImie("Jan");
+		kowalski.setNazwisko("Kowalski");
+		kowalski.setPlec(Plec.MEZCZYZNA);
+		Student gerwazy = new Student();
+		gerwazy.setId(2);
+		gerwazy.setImie("Gerwazy");
+		gerwazy.setNazwisko("Kapuściński");
+		gerwazy.setPlec(null);
+		studentRepo.saveAll(List.of(kowalski, gerwazy));
+
+		String meldunek = akademik.zakwateruj();
+
+		Assertions.assertNotEquals("Kwaterowanie udane", meldunek, "Ktoś został bez pokoju, więc to nie jest sukces");
+		Assertions.assertTrue(meldunek.contains("Bez określonej płci: Gerwazy Kapuściński"),
+				"Meldunek powinien wskazać studenta bez płci, jest: " + meldunek);
+		Assertions.assertNull(studentRepo.findById(2L).get().getPokoj());
+		Assertions.assertNotNull(studentRepo.findById(1L).get().getPokoj(), "Pozostali dostają pokoje jak zwykle");
+	}
+
+	/**
 	 * Test, czy zakwaterowani studenci nie są różnej płci.
 	 */
 	@Test
