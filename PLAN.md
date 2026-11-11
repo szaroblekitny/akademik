@@ -332,7 +332,7 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 2.1a | JAXB zamiast XStream | #7 | zrobione (część 1: czerwona 4 porażki, zielona 46/46; część 2: czerwona 5 porażek i 2 błędy, zielona 45/45) | 1ac0212 (część 1), bd81a60 (część 2) |
 | 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | d565d42 |
 | 2.3 | Import do bazy | #3 (refs) | zrobione (TDD: czerwona 3 porażki, zielona 51/51; sprawdzone w Tomcacie) | aa26d8c |
-| 2.4 | Raport XML | #8 (closes) | zrobione (TDD: czerwona 2 porażki i 3 błędy, zielona 56/56; sprawdzone w Tomcacie) | 2a9ba29 |
+| 2.4 | Raport XML | #8 (closes) | zrobione (TDD: czerwona 2 porażki i 3 błędy, zielona 56/56; sprawdzone w Tomcacie) | 2a9ba29, d690854 (poprawka) |
 | 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
 | 2.6 | Testy importu, eksportu i raportu |  | do zrobienia | |
 | 2.7 | Sortowanie strony głównej | #16 | do zrobienia | |

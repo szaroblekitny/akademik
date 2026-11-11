@@ -327,6 +327,26 @@
           			</archive>
         		</configuration>
 			</plugin>
+
+			<!-- Javadoc: dokumentacja kodu (mvn javadoc:javadoc) i testów (mvn javadoc:test-javadoc), -->
+			<!-- wynik w target/reports/apidocs i target/reports/testapidocs -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.12.0</version>
+				<configuration>
+					<release>${java.version}</release>
+					<encoding>UTF-8</encoding>
+					<docencoding>UTF-8</docencoding>
+					<charset>UTF-8</charset>
+					<!-- package: także klasy i pola bez public, np. klasy testowe JUnit 5 -->
+					<show>package</show>
+					<!-- sprawdza poprawność komentarzy, ale nie zgłasza każdego braku opisu -->
+					<doclint>all,-missing</doclint>
+					<doctitle>Akademik ${project.version}</doctitle>
+					<windowtitle>Akademik ${project.version}</windowtitle>
+				</configuration>
+			</plugin>
 			
 			<!-- Ustawia właściwość ${org.mockito:mockito-core:jar} = ścieżka do jara Mockito
 			     w lokalnym repozytorium Mavena. Potrzebne niżej w surefire. -->

@@ -150,6 +150,12 @@ class DaneServiceTest {
 	 * <p>
 	 * Od kroku 2.3 import najpierw kasuje stare dane. Kasowanie jest w tej samej
 	 * transakcji, więc też musi zostać wycofane: stary student ma przetrwać.
+	 * <p>
+	 * W logu testów pojawia się przy tym <b>oczekiwany</b> wpis Hibernate'a:
+	 * {@code WARN SqlExceptionHelper - SQL Error: 3401, SQLState: 22001}.
+	 * {@code 22001} to standardowy SQLState „string data, right truncation” (napis za długi
+	 * dla kolumny), a {@code 3401} to ten sam błąd w numeracji HSQLDB. PostgreSQL zgłosiłby
+	 * ten sam SQLState: https://www.postgresql.org/docs/current/errcodes-appendix.html
 	 */
 	@Test
 	void testImportWycofanyPrzyBledzie() {
