@@ -210,15 +210,20 @@ Punkty, które proponuję zrobić przed zamknięciem Etapu 2, mają dopisek **(p
 - **Decyzja:** zrobić teraz (13.11.2026).
 - **Status:** zrobione: krok 2.1a opisuje osobne klasy formatu (`AkademikXml`, `PokojXml`,
   `StudentXml`) i odsyła do uzasadnienia; w kroku 3.3 uwaga mówi, że pliki nie mają ID, a import
-  zawsze nadaje nowe.
+  zawsze nadaje nowe. Commit `fac8719`.
 
 ### D2. README bez instrukcji uruchomienia (propozycja: teraz)
 
-- `README.md` ma 5 zdań. Brakuje: wymagania (Java 25, Maven, Tomcat 11, PostgreSQL 18), zasób
-  JNDI `jdbc/akademik` w `server.xml`, sterownik PostgreSQL w `lib` Tomcata, skrypt
-  `setup_postgres.sql`, `mvn test` i `mvn package`, adres aplikacji.
-- **Decyzja:**
-- **Status:** otwarty.
+- `README.md` ma 5 zdań. Brakuje: wymagania (JDK 21+, Maven, Tomcat 11, PostgreSQL 18), zasób
+  JNDI `jdbc/akademik` w `server.xml`, skrypt `setup_postgres.sql`, `mvn test` i `mvn package`,
+  adres aplikacji.
+- **Sprostowanie (13.11.2026):** pierwsza wersja punktu podawała Javę 25 (a `pom.xml` ma
+  `<release>21</release>`) i sterownik PostgreSQL w `lib` Tomcata (a sterownik jest w WAR-ze
+  i tak działa).
+- **Decyzja:** zrobić teraz (13.11.2026), README po angielsku.
+- **Status:** zrobione: README opisuje aplikację, wymagania, przygotowanie bazy, zasób JNDI
+  (z hasłem `CHANGE_ME`), budowę i wdrożenie (`akademik##<wersja>.war`, adres `/akademik/`
+  dzięki równoległemu wdrażaniu w Tomcacie) oraz miejsce logu.
 
 ### D3. Nieaktualne komentarze w kodzie
 
@@ -227,7 +232,7 @@ Punkty, które proponuję zrobić przed zamknięciem Etapu 2, mają dopisek **(p
 - **Decyzja:** zrobić teraz (13.11.2026).
 - **Status:** zrobione: `Akademik` opisuje `zakwateruj()` i to, że `akademik(...)` z wersji
   z wiersza poleceń używają już tylko testy; `Messagesy` wyjaśnia, po co jest (atrapa w testach
-  zamiast `FacesContext`).
+  zamiast `FacesContext`). Commit `fac8719`.
 
 ---
 
