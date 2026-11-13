@@ -17,15 +17,61 @@
 
 		<ui:define name = "content">
 
-			<p:growl id="importmess" showDetail="true" />
+			<!-- trzy growle, każdy dla innej wagi komunikatu: informacje znikają po 6 s, -->
+			<!-- ostrzeżenia po 10 s, a błędy wiszą, aż użytkownik je zamknie, bo zwykle -->
+			<!-- trzeba je przeczytać i poprawić plik -->
+			<p:growl id="importmess" showDetail="true" severity="info" life="6000" />
+			<p:growl id="importostrzezenia" widgetVar="ostrzezeniaImportu" showDetail="true"
+				severity="warn" life="10000" />
+			<p:growl id="importbledy" showDetail="true" severity="error,fatal" sticky="true" />
 
-			<h:form enctype="multipart/form-data">
+			<!-- skrypt wewnątrz ui:define, bo Facelets pomija wszystko poza ui:composition -->
+			<script type="text/javascript">
+			//<![CDATA[
+			// Okienko potwierdzenia pokazujemy tylko wtedy, gdy wybrano plik, i podajemy
+			// w nim nazwę tego pliku. Bez pliku od razu komunikat, bez okienka.
+			function potwierdzImport() {
+				var pole = document.querySelector("#importForm input[type=file]");
+				if (!pole || pole.files.length === 0) {
+					PF('ostrzezeniaImportu').renderMessage({
+						summary: 'Import pliku',
+						detail: 'Najpierw wybierz plik do importu.',
+						severity: 'warn'
+					});
+					return;
+				}
+				document.getElementById('nazwaPlikuImportu').textContent = pole.files[0].name;
+				PF('potwierdzImport').show();
+			}
+			//]]>
+			</script>
+
+			<h:form id="importForm" enctype="multipart/form-data">
 				<div class="otoczkaBut">
     				<p:fileUpload value="#{importBean.file}" mode="simple" skinSimple="true"/>
     			</div>
     			<div class="otoczkaBut">
-    				<p:commandButton value="Submit" ajax="false" action="#{importBean.upload}" />
+    				<!-- type="button": ten przycisk niczego nie wysyła, tylko sprawdza wybór pliku -->
+    				<!-- i otwiera okienko potwierdzenia -->
+    				<p:commandButton value="Importuj" type="button" icon="pi pi-download"
+    					onclick="potwierdzImport()" />
     			</div>
+
+    			<!-- Okienko musi być w tym samym h:form co p:fileUpload: dopiero "Tak" -->
+    			<!-- wysyła formularz, a razem z nim wybrany plik (ajax="false", bo plik). -->
+    			<p:confirmDialog widgetVar="potwierdzImport" header="Import danych" severity="warn">
+    				<f:facet name="message">
+    					<h:panelGroup layout="block">
+    						Zaimportować plik <b id="nazwaPlikuImportu"></b>?<br/>
+    						Import zastąpi dane: wszyscy obecni studenci i pokoje zostaną skasowani,
+    						a kwaterunek przepadnie.
+    					</h:panelGroup>
+    				</f:facet>
+    				<p:commandButton value="Tak, importuj" icon="pi pi-check" ajax="false"
+    					action="#{importBean.upload}" />
+    				<p:commandButton value="Nie" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+    					onclick="PF('potwierdzImport').hide()" />
+    			</p:confirmDialog>
 			</h:form>
 
 		</ui:define> 

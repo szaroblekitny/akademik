@@ -44,6 +44,15 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 	 * @return lista studentek lub studentów
 	 */
 	List<Student> findByPlec(Plec plec);
+
+	/**
+	 * Studenci bez określonej płci ({@code plec IS NULL}). Takich nie da się zakwaterować,
+	 * bo kobiety i mężczyźni mieszkają osobno. Spring Data tworzy zapytanie z nazwy
+	 * metody: przyrostek {@code IsNull} daje warunek {@code IS NULL}.
+	 *
+	 * @return studenci z pustą płcią
+	 */
+	List<Student> findByPlecIsNull();
 	
 	/**
 	 * Szuka rekordu z największym ID.

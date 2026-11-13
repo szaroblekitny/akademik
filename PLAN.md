@@ -61,9 +61,9 @@ Projekt (wersja 0.60-SNAPSHOT) kompiluje się, ale 9 z 36 testów pada, a import
 
 | Issue | Temat | Krok planu |
 | --- | --- | --- |
-| [#3](https://github.com/szaroblekitny/akademik/issues/3) | Niepotrzebne identyfikatory w plikach wejściowych | 2.2 (częściowo), 3.3 |
+| [#3](https://github.com/szaroblekitny/akademik/issues/3) | Niepotrzebne identyfikatory w plikach wejściowych | 2.3 (częściowo), 3.3 |
 | [#7](https://github.com/szaroblekitny/akademik/issues/7) | Obsługa plików XML nie powinna używać XStream | 2.1a |
-| [#8](https://github.com/szaroblekitny/akademik/issues/8) | Eksport pliku z danymi | 2.3 |
+| [#8](https://github.com/szaroblekitny/akademik/issues/8) | Eksport pliku z danymi | 2.2 (częściowo), 2.4 |
 | [#12](https://github.com/szaroblekitny/akademik/issues/12) | Ręczne wprowadzanie, edycja i kasowanie rekordów | 3.5 |
 | [#14](https://github.com/szaroblekitny/akademik/issues/14) | Techniczna: moduły z Javy 9 | bez kroku, decyzja odłożona |
 | [#16](https://github.com/szaroblekitny/akademik/issues/16) | Sortowanie wyniku działania | 2.7 |
@@ -168,37 +168,73 @@ Cel: aplikacja robi wszystko, co zapowiada `opis.html`. Większość klocków ju
 
 - *Objaśnienie:* bean JSF powinien tylko obsługiwać ekran, a serwis wykonywać pracę w jednej transakcji. Jeśli import 50 studentów padnie na 30., `@Transactional` wycofa wszystko i baza nie zostanie w połowie wypełniona.
 - *Nowość:* wstrzykiwanie przez konstruktor zamiast setterów z `@Autowired`. Pola mogą być wtedy `final`, a od Springa 4.3 przy jednym konstruktorze adnotacja `@Autowired` jest zbędna.
+- *Wynik (8.11.2026):* nowy pakiet `service` z klasą `DaneService` (`@Service @Transactional`) i rekordem `WynikImportu(int pokoje, int studenci)`. Metody: `importuj(reader)` (rozpoznaje typ obiektu przez `switch` z wzorcami typów z Javy 21), `eksportujPokoje(writer)` i `eksportujStudentow(writer)` (obie `readOnly = true`). `Akademik.pobierzZPliku()` usunięta, a `Akademik.akademik()` woła teraz usługę. Testy: nowy `DaneServiceTest` (4 testy, w tym wycofanie całego importu, gdy trzeci student wskazuje nieistniejący pokój), a dwa stare testy importu z `AkademikTest` przeszły do niego. Razem 42 testy.
+- *Faza czerwona:* szkielet usługi zwracał zera. Pierwsze uruchomienie dało 3 błędy zamiast porażek, bo XStream nie umie zapisać listy z `List.of()`: jej klasa `java.util.ImmutableCollections$ListN` jest zamknięta w module `java.base` i refleksja nie ma do niej dostępu. W teście lista jest kopiowana do `ArrayList`. To kolejny argument za 2.1a. Drugie uruchomienie dało dokładnie przewidziane 4 porażki na 44 testy.
+- *Pułapki `@Transactional`:* (1) wycofanie następuje domyślnie tylko przy `RuntimeException`, bo kontrolowany `IOException` transakcję zatwierdza; (2) wywołanie metody z wnętrza tej samej klasy omija proxy Springa, a więc i transakcję.
 
 **2.1a JAXB zamiast XStream.** Odczyt i zapis XML w `Plikowanie` przejdzie z XStream na JAXB (Jakarta XML Binding), standard Jakarty. Klasy `Pokoj` i `Student` dostaną adnotacje `@XmlRootElement`, `@XmlElement` itp., a `AkademikXStream` zniknie.
 
 - *Issues:* [#7](https://github.com/szaroblekitny/akademik/issues/7) (closes).
 - *Dlaczego:* XStream z pliku XML potrafi utworzyć obiekt **dowolnej** klasy z classpath, jeśli plik o nią poprosi. W aplikacji, która przyjmuje pliki od użytkowników (nasz import), to klasyczna droga ataku. XStream miał wiele takich podatności i dziś chroni się listą dozwolonych klas, którą trzeba pilnować. JAXB tworzy tylko klasy, które sami wskażemy. Przy okazji zniknie ostrzeżenie o `sun.misc.Unsafe` z kroku 1.2b.
-- *Kolejność:* przed importem (2.2) i eksportem (2.3), bo oba opierają się na `Plikowanie`. Krok zaczyna się od testu, który zapisuje i odczytuje listę pokoi i studentów. Test przechodzi na XStream, potem musi przejść na JAXB.
-- *Decyzja do podjęcia:* czy format plików może się zmienić (inne nazwy elementów XML), czy JAXB ma czytać dokładnie obecne pliki? Pliki przykładowe i tak trzeba będzie poprawić w 2.2 z powodu #3.
+- *Kolejność:* przed eksportem (2.2) i importem (2.3), bo oba opierają się na `Plikowanie`. Krok zaczyna się od testu, który zapisuje i odczytuje listę pokoi i studentów. Test przechodzi na XStream, potem musi przejść na JAXB.
+- *Decyzja (8.11.2026):* format może się zmienić. Propozycja formatu: schemat `src/main/resources/xsd/akademik.xsd` i przykład `src/test/resources/dane/przyklad.xml`. Główne założenia:
+  - jeden korzeń `<akademik>` z opcjonalnymi sekcjami `<pokoje>` i `<studenci>`. Importujemy dokładnie taki plik, jaki wyeksportowaliśmy;
+  - brak ID z bazy (#3). Pokój identyfikuje numer, unikalny w pliku (`xs:unique`);
+  - **bez przydziału studentów do pokoi.** Plik zawiera tylko dane podstawowe. Kwaterunek jest wynikiem działania aplikacji, a nie daną wejściową, i pokazuje go raport (2.4, 2.5). Pierwsza propozycja miała element `<pokoj>` u studenta. Odrzucona 8.11.2026, bo eksport i import mają być symetryczne;
+  - przestrzeń nazw `urn:wojtekz:akademik:dane:1` i atrybut `wersja`, żeby przyszłe zmiany formatu dało się rozpoznać;
+  - schemat sprawdzony walidatorem z JDK (`javax.xml.validation`): przykład przechodzi, a duplikat numeru pokoju, nieznana płeć, atrybut `id`, 0 miejsc i `<pokoj>` u studenta są odrzucane.
+- *Podział na dwie części (8.11.2026):*
+  - **część 1:** zależności `jakarta.xml.bind-api` 4.0.5 i `jaxb-runtime` 4.0.9 (zakres `runtime`). Nowy pakiet `plik` z klasami formatu: `AkademikXml`, `PokojXml`, `StudentXml`, rekord `DaneZPliku` i wyjątek `NieprawidlowyPlikException`. W `Plikowanie` dwie nowe metody: `zapiszDane(OutputStream, ...)` i `wczytajDane(InputStream)`. Odczyt jest sprawdzany schematem `akademik.xsd`, a parser StAX (Streaming API for XML) ma wyłączone DTD i encje zewnętrzne, co chroni przed atakiem XXE (XML External Entity). Nowy test `PlikowanieJaxbTest` ma 4 testy. Faza czerwona: dokładnie przewidziane 4 porażki na 46 testów. XStream w tej części jeszcze zostaje;
+  - **część 2:** `DaneService` przechodzi na nowe metody i nadaje ID wczytanym rekordom. Usunięte zostają XStream, `AkademikXStream`, beany `marshaller`/`unmarshaller` i stare testy, a `PlikowanieJaxbTest` zastępuje `PlikowanieTest`.
+- *Wynik części 2 (8.11.2026):* `DaneService.importuj(InputStream)` wczytuje cały plik przez `wczytajDane`, nadaje ID (kolejne po `findLastId()`, a przy pustej tabeli od 1; rozwiązanie tymczasowe do kroku 3.3) i zapisuje rekordy. `eksportuj(OutputStream)` zapisuje wszystkie pokoje i wszystkich studentów do jednego pliku; pusta baza daje poprawny plik bez rekordów. Rekord `WynikImportu` nazywa się teraz `LiczbaRekordow`, bo zwraca go też eksport. `Akademik.akademik()` czyta jeden plik zamiast dwóch. Usunięte: zależności `xstream` i `spring-oxm`, klasa `AkademikXStream` z testem, interfejs `Plikowalny`, beany `marshaller`/`unmarshaller` oraz `saveObjectList`/`loadObjectList`. `PlikowanieJaxbTest` nazywa się teraz `PlikowanieTest`. `DaneServiceTest` ma 6 testów (nowe: nadawanie ID i eksport pustej bazy). Faza czerwona: dokładnie przewidziane 5 porażek i 2 błędy na 45 testów, zielona: 45/45.
+- *Do ujednolicenia:* limit długości imienia i nazwiska jest różny w trzech miejscach: 500 znaków w schemacie XSD, 255 w testowej bazie HSQLDB (domyślne `varchar(255)` Hibernate'a) i brak limitu w PostgreSQL (`text`). Test wycofania importu celowo wykorzystuje tę różnicę: nazwisko z 300 znaków przechodzi przez schemat, ale nie zapisuje się w bazie.
+- *Klasy formatu osobno od encji:* plik nie ma ID ani przydziału pokoi, więc adnotacje JAXB na encjach mieszałyby dwa modele. Klasy XML nie mogą być rekordami, bo JAXB tworzy obiekt konstruktorem bezargumentowym i dopiero potem wypełnia pola.
 
-**2.2 Import do bazy (P5).** `ImportBean.upload()` przekaże strumień z przesłanego pliku prosto do `DaneService`, bez zapisu na dysk `h:/TEMP/`. Ekran pokaże, ile pokoi lub studentów wczytano.
+**2.2 Eksport do XML (P6).** `EksportBean` zamiast żyrafy wygeneruje jeden plik `akademik.xml` z pokojami i studentami w formacie z 2.1a. Format jest taki sam jak przy imporcie, więc eksport i import zrobią pełne koło.
+
+- *Kolejność (zmiana 8.11.2026):* eksport przed importem. Plik wyeksportowany z prawdziwej bazy będzie gotowym materiałem do sprawdzenia importu w 2.3.
+- *Objaśnienie:* obecny `EksportBean` liczy plik w konstruktorze, raz na sesję. Przeniesiemy to do metody wywoływanej przy kliknięciu, żeby eksport zawsze pokazywał aktualne dane.
+- *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (refs). Eksport danych zamiast żyrafy. Issue mówi jednak o danych **zakwaterowanych** studentów, a plik eksportu nie zawiera przydziału pokoi (decyzja z 2.1a), więc issue zamknie raport kwaterunku w 2.4.
+- *Wynik (8.11.2026):* `EksportBean.getContent()` przy każdym kliknięciu woła `DaneService.eksportuj()` do tablicy bajtów i zwraca `DefaultStreamedContent` z nazwą `akademik.xml` i typem `application/xml`. Bajty zamiast `writer(...)` PrimeFaces, bo eksport kończy się w transakcji usługi, a lambda przechowuje tylko serializowalną tablicę. Konstruktor nie używa już `FacesContext`, a `zyrafa3.jpg` usunięta. Poprawka w `eksport.xhtml`: funkcje `start()`/`stop()` dla `PrimeFaces.monitorDownload` były w `<h:head>` poza `<ui:composition>`, więc Facelets je pomijał; teraz są w `<ui:define>`. Nowy `EksportBeanTest` (2 testy, w tym aktualne dane przy drugim eksporcie w tej samej sesji). Faza czerwona: 1 porażka i 1 błąd na 47, zielona: 47/47. Sprawdzone w Tomcacie: plik z PostgreSQL wygląda dobrze.
+- *Ciekawostka:* JAXB z GlassFisha sam dopisuje `standalone="yes"` w deklaracji XML. Oznacza to, że dokument nie zależy od zewnętrznego DTD; z XSD nie ma to nic wspólnego.
+
+**2.3 Import do bazy (P5).** `ImportBean.upload()` przekaże strumień z przesłanego pliku prosto do `DaneService`, bez zapisu na dysk `h:/TEMP/`. Ekran pokaże, ile pokoi lub studentów wczytano.
 
 - *Nowość:* `try-with-resources` (Java 7), czyli `try (InputStream in = ...) { }`. Strumień zamyka się sam, także przy wyjątku. Obecny kod zamyka strumienie ręcznie i przy błędzie zostawia je otwarte.
-- *Decyzja do podjęcia:* czy import ma najpierw kasować istniejące dane (jak wersja plikowa), czy dopisywać?
-- *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (refs). Import przestanie wymagać pola `id` w plikach. Dopóki nie ma sekwencji (3.3), ID nada tymczasowo dotychczasowy mechanizm. Issue zamknie dopiero krok 3.3.
-
-**2.3 Eksport do XML (P6).** `EksportBean` zamiast żyrafy wygeneruje `pokoje.xml` i `studenci.xml` przez `Plikowanie.saveObjectList()`. Format będzie taki sam jak przy imporcie, więc eksport i import zrobią pełne koło.
-
-- *Objaśnienie:* obecny `EksportBean` liczy plik w konstruktorze, raz na sesję. Przeniesiemy to do metody wywoływanej przy kliknięciu, żeby eksport zawsze pokazywał aktualne dane.
-- *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (closes). Issue mówi o eksporcie danych zakwaterowanych studentów. Plik `studenci.xml` będzie zawierał przydzielony pokój, więc to obejmuje.
+- *Decyzja (10.11.2026):* na razie import **kasuje** stare dane (studentów, potem pokoje) i wczytuje plik. Przed importem ekran pokazuje okienko potwierdzenia z przypomnieniem, że obecne dane zostaną skasowane. Kasowanie i zapis idą w jednej transakcji `DaneService.importuj`, więc błędny plik albo błąd zapisu zostawia stare dane nietknięte.
+- *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (refs). Import przestanie wymagać pola `id` w plikach. Dopóki nie ma sekwencji (3.3), ID nadaje tymczasowo `DaneService` (od 1, bo tabele są po skasowaniu puste). Issue zamknie dopiero krok 3.3.
+- *Wynik (10.11.2026):* `DaneService.importuj` kasuje stare dane przez `deleteAllInBatch` (najpierw studenci, potem pokoje) w tej samej transakcji co zapis. `deleteAllInBatch`, a nie `deleteAll`, bo nowe rekordy dostają te same ID co skasowane, a `deleteAll` zostawia skasowane encje w pamięci Hibernate'a do końca transakcji. `ImportBean.upload()` przekazuje strumień z `try-with-resources` prosto do usługi (bez `h:/TEMP/` i commons-io). Błąd pliku pokazuje treść z walidacji. Inne błędy (np. brak połączenia z bazą, przerwany odczyt pliku) od kroku 2.6 przenoszą na stronę błędu `errors.xhtml`, zgodnie z zasadą opisaną w 2.6. `Akademik.akademik()` nie kasuje już sam. Ekran importu:
+  - przycisk „Importuj” sprawdza w przeglądarce, czy wybrano plik; bez pliku pokazuje ostrzeżenie, a z plikiem okienko `p:confirmDialog` z nazwą pliku i przypomnieniem o skasowaniu danych. Sprawdzenie na serwerze zostaje;
+  - trzy growle: informacje znikają po 6 s, ostrzeżenia po 10 s, a błędy (`sticky`) zostają do zamknięcia.
+  - Testy: nowy `ImportBeanTest` (3 testy z mockiem `UploadedFile`), `DaneServiceTest` ma 7 testów (zastępowanie danych, plik niezgodny ze schematem nie rusza starych danych, wycofanie przywraca też skasowane dane). Faza czerwona: dokładnie przewidziane 3 porażki na 51, zielona: 51/51. Sprawdzone w Tomcacie.
 
 **2.4 Raport XML kwaterunku (P7).** Nowa metoda tworzy dokument XML: lista pokoi, w każdym zakwaterowani studenci, na końcu meldunek o wyniku.
 
-- *Nowość (Java 16):* `record`, czyli niezmienna klasa danych w jednej linii: `record WierszRaportu(String pokoj, List<String> mieszkancy) {}`. Kompilator sam tworzy konstruktor, gettery, `equals`, `hashCode` i `toString`.
+- *Issues:* [#8](https://github.com/szaroblekitny/akademik/issues/8) (closes). To jest „eksport danych o zakwaterowanych studentach”, o który prosi issue. Raport ma własny format, inny niż plik danych z 2.1a, i nie służy do importu.
 
-**2.5 Raport HTML przez XSLT (P7).** XSLT (Extensible Stylesheet Language Transformations) to język opisujący, jak przekształcić jeden dokument XML w inny, np. w HTML. Arkusz `raport.xsl` w zasobach przekształci XML w tabelę HTML. Użyjemy standardowego `javax.xml.transform` z JDK, bez dodatkowych bibliotek. Na ekranie kwaterowania pojawi się przycisk „Pobierz raport”.
+- *Nowość (Java 16):* `record`, czyli niezmienna klasa danych w jednej linii: `record WierszRaportu(String pokoj, List<String> mieszkancy) {}`. Kompilator sam tworzy konstruktor, gettery, `equals`, `hashCode` i `toString`.
+- *Format (10.11.2026):* schemat `src/main/resources/xsd/raport.xsd` i przykład `src/test/resources/dane/raport-przyklad.xml`, zaakceptowane. Własna przestrzeń nazw `urn:wojtekz:akademik:raport:1`, atrybut `utworzono`, pokoje w kolejności numerów z atrybutami `miejsca` i `wolne`, w pokoju studenci w polskiej kolejności nazwisk i imion, opcjonalna sekcja `<niezakwaterowani>` i `<podsumowanie>` z liczbami. Podsumowanie zastąpiło tekstowy meldunek, bo meldunek istnieje tylko chwilę po kwaterowaniu i nie jest nigdzie zapisany, a raport można pobrać później.
+- *Wynik (11.11.2026):* nowy pakiet `raport` z rekordami `RaportKwaterunku`, `PokojRaportu` i `StudentRaportu` (konstruktor kompaktowy robi niezmienne kopie list; liczby podsumowania wynikają z list). `RaportService` (`readOnly`) buduje raport z bazy, sortuje przez `Collator` dla języka polskiego i zapisuje XML przez StAX (`XMLStreamWriter`), bo JAXB nie obsługuje rekordów. Data idzie przez formater z sekundami, bo `LocalDateTime.toString()` pomija zerowe sekundy, a `xs:dateTime` ich wymaga. `RaportBean` daje plik `raport-kwaterunku.xml`. Przycisk „Raport XML” jest na stronie głównej (najpierw był na ekranie kwaterowania; przeniesiony 11.11.2026 na prośbę użytkownika, bo tam jest tabela kwaterunku). Testy: `RaportServiceTest` (4) i `RaportBeanTest` (1). Faza czerwona: 2 porażki i 3 błędy na 56, zielona: 56/56. Sprawdzone w Tomcacie.
+
+**2.5 Raport HTML przez XSLT (P7).** XSLT (Extensible Stylesheet Language Transformations) to język opisujący, jak przekształcić jeden dokument XML w inny, np. w HTML. Arkusz `raport.xsl` w zasobach przekształci XML w tabelę HTML. Użyjemy standardowego `javax.xml.transform` z JDK, bez dodatkowych bibliotek. Na stronie głównej, obok przycisku „Raport XML”, pojawi się przycisk „Raport HTML”.
+
+- *Wynik (11.11.2026):* arkusz `src/main/resources/xsl/raport.xsl` (XSLT 1.0, bo tę wersję ma procesor wbudowany w JDK) robi stronę z tabelą pokoi, sekcją „Bez pokoju” i zdaniem podsumowania; style są w stronie. `RaportService.zapiszRaportHtml` przekształca XML raportu skompilowanym arkuszem (`Templates` powstaje raz, `Transformer` przy każdym raporcie), z `FEATURE_SECURE_PROCESSING` i bez zewnętrznych DTD i arkuszy. Na stronie głównej przycisk „Raport HTML”. Testy: 3 w `RaportServiceTest` (w tym ochrona przed XSS: nazwisko `<b>Zły</b>` wychodzi jako tekst) i 1 w `RaportBeanTest`. Faza czerwona: 4 porażki na 60, zielona: 60/60. Sprawdzone w Tomcacie.
+- *Pułapki:* (1) w trybie `method="html"` serializer z JDK zamieniał „ó” na `&oacute;`, a „ś” zostawiał, i dopisywał własny `<META>`; arkusz używa więc `method="xml"` z doctype HTML5 wstawionym jako tekst. Pusty element zapisałby się wtedy jako `<td/>`, więc puste komórki dostają napis. (2) `contentEncoding` w `DefaultStreamedContent` to nagłówek kompresji (np. gzip), a nie kodowanie znaków; kodowanie podaje `<meta charset>`.
+- *Poprawki przy okazji (11.11.2026), po błędach zgłoszonych przy sprawdzaniu w Tomcacie:*
+  - student bez płci był po cichu pomijany przy kwaterowaniu (meldunek „Kwaterowanie udane”); teraz meldunek wymienia studentów bez płci, a formularz i `StudentBean` nie pozwalają dodać studenta bez płci, imienia ani nazwiska (także same spacje; przy edycji wiersza tak samo). Pola wymagane mają gwiazdkę i objaśnienie pod formularzem;
+  - raporty i eksport ze studentem bez płci kończyły się stroną błędu; teraz usługi rzucają `NiekompletneDaneException` z komunikatem dla użytkownika, a beany pokazują go w growlu i nie wysyłają pliku (`p:fileDownload` przy `null` niczego nie robi).
 
 **2.6 Testy.** Każdy krok dostaje test: import z przykładowego XML w `src/test/resources`, eksport i ponowny import dają te same dane, raport zawiera wszystkie pokoje.
+
+- *Zasada obsługi błędów (decyzja użytkownika, 11.11.2026):* komunikat na ekranie tylko dla błędów w danych, które użytkownik może poprawić: nieprawidłowy plik importu (`NieprawidlowyPlikException`) i niekompletne dane, czyli brak płci, imienia albo nazwiska (`NiekompletneDaneException`, walidacja w `StudentBean`). Grube błędy, np. brak połączenia z bazą, zawsze wychodzą z beana i JSF przenosi na stronę `errors.xhtml`, także przy imporcie, eksporcie i raportach.
+- *Wynik (11.11.2026):* przegląd z raportem JaCoCo (81,1% instrukcji). Trzy wymagania kroku były już spełnione testami z poprzednich kroków. Klasy importu, eksportu i raportu mają 83–100% pokrycia, a luki to głównie ścieżki błędów. Nowe testy charakteryzujące (opisują istniejące zachowanie, więc zielone od razu): pełne koło na `przyklad.xml` pole po polu, odrzucenie pliku, który nie jest XML-em, odrzucenie starego formatu XStream, oraz trzy testy grubych błędów (przerwany odczyt pliku, awaria usługi eksportu i raportu), które muszą wyjść z beana. Przy okazji beany przestały łapać ogólne błędy (wcześniej dawały komunikat zamiast strony błędu, wbrew zasadzie wyżej); `ImportBean` opakowuje `IOException` w `UncheckedIOException`. Razem 75 testów, 75/75.
+- *Do decyzji później:* reguła JaCoCo w pom.xml wymaga zera klas bez pokrycia, a `MainConfiguration` i `FacesCdiActivator` działają tylko w Tomcacie (testy używają `TestConfiguration`); reguła ma `haltOnFailure=false`, więc tylko ostrzega.
 
 **2.7 Sortowanie wyniku na stronie głównej.** Lista na stronie głównej będzie posortowana według pokoi, a w pokoju według nazwisk.
 
 - *Issues:* [#16](https://github.com/szaroblekitny/akademik/issues/16) (closes).
 - *Objaśnienie:* kolejność może ustalić baza (metoda repozytorium `findAllByOrderByNumerPokojuAsc()`, którą Spring Data tworzy z samej nazwy metody) albo Java (`Comparator.comparing(Pokoj::getNumerPokoju)`). Wybierzemy jedno i omówimy różnicę. `compareTo` z kroku 1.3 sortuje po ID, a nie po numerze pokoju, więc tu go nie wystarczy użyć wprost.
+- *Wynik (11.11.2026):* sortuje Java, a nie baza (decyzja użytkownika): `ZakwaterujBean.getStudenci()` sortuje kopię `findAll()` komparatorem z `Collator` dla języka polskiego, czyli według numeru pokoju, nazwiska i imienia, ze studentami bez pokoju na końcu (`Comparator.nullsLast`). Dzięki temu kolejność liter jest ta sama w testach, w Tomcacie i w raporcie, niezależnie od ustawień bazy. Test `ZakwaterujBeanTest.testKolejnosciNaStronieGlownej` ma dane, które wychwytują i kolejność ID, i zwykłe `String.compareTo` („Tarka” przed „Świerk”). Faza czerwona: 1 porażka na 76, zielona: 76/76.
 
 **Gotowe, gdy:** da się wczytać pliki XML z ekranu, zakwaterować, pobrać raport HTML i wyeksportować dane, a strona główna pokazuje dane posortowane według pokoi.
 
@@ -218,6 +254,7 @@ Cel: algorytm mieści więcej studentów, a ID nadaje baza danych. Ten etap robi
 - *Dlaczego:* dwóch użytkowników naraz może odczytać ten sam ostatni ID i obaj zapiszą `ID + 1`. Sekwencja w bazie wydaje numery atomowo.
 - *Uwaga:* pliki XML z importu zawierają własne ID. Trzeba będzie zdecydować, czy import je zachowuje, czy nadaje nowe.
 - *Issues:* [#3](https://github.com/szaroblekitny/akademik/issues/3) (closes). Po tym kroku ID w plikach wejściowych nie są już potrzebne do niczego. Issue chce, żeby program nadawał je sam, więc to przemawia za nadawaniem nowych.
+- *Ograniczenia w bazie (dopisane 11.11.2026):* krok i tak zmienia tabele, więc przy okazji `NOT NULL` na kolumnie `student.plec`. Student bez płci nie trafia na listę kobiet ani mężczyzn, więc kwaterowanie go pomija, a eksport i raporty nie przechodzą przez schemat (błąd zgłoszony 11.11.2026, poprawiony w formularzu i w meldunku kwaterowania; baza ma to wykluczyć na stałe, także przy edycji wiersza). Do ujednolicenia także długość imienia i nazwiska (500 w XSD, 255 w HSQLDB, bez limitu w PostgreSQL; patrz 2.1a).
 
 **3.4 Walidacja danych.** Adnotacje Bean Validation (`@NotBlank`, `@Min(1)`) na polach encji, żeby nie dało się zapisać pokoju z 0 miejsc ani studenta bez nazwiska. JSF pokaże błędy automatycznie przy formularzu. Potrzebna będzie implementacja walidacji, czyli zależność Hibernate Validator.
 
@@ -236,7 +273,16 @@ Cel: algorytm mieści więcej studentów, a ID nadaje baza danych. Ten etap robi
 - *Nowość (Java 17):* `RandomGenerator` i `RandomGenerator.of("L64X128MixRandom")`, nowy interfejs generatorów liczb losowych, oraz `random.nextInt(1, 5)` z zakresem od-do. Opcjonalnie `java Generator.java` (Java 11) uruchamia plik źródłowy bez osobnej kompilacji.
 - *Kolejność:* krok nie zależy od innych poza formatem XML z 2.1a. Można go zrobić wcześniej, np. przed 3.1, jeśli będzie potrzebny do testów algorytmu.
 
-**Gotowe, gdy:** test z 3.1 przechodzi, nowe rekordy dostają ID z sekwencji, formularze odrzucają błędne dane, a pokoje i studentów da się dodawać, poprawiać i usuwać z ekranu.
+**3.7 Logowanie użytkowników (dopisane 11.11.2026, z przeglądu kodu).** Dziś aplikacja nie ma żadnego logowania: każdy, kto dotrze do adresu w sieci, może jednym importem skasować wszystkie dane albo usuwać pokoje. Krok dodaje uwierzytelnianie (kto to jest) i autoryzację (co mu wolno).
+
+- *Propozycja:* bezpieczeństwo zarządzane przez kontener (container-managed security), czyli to, co daje sam Tomcat, bez nowych bibliotek. W `web.xml` `<security-constraint>` chroni wszystkie strony, `<login-config>` z metodą `FORM` wskazuje własną stronę logowania (`login.xhtml` z polami `j_username` i `j_password`), a `<security-role>` opisuje role. Użytkowników i hasła trzyma realm Tomcata: na początek `tomcat-users.xml`, docelowo `DataSourceRealm` z tabelą użytkowników w PostgreSQL.
+- *Role:* np. `kierownik` (import, edycja, kasowanie, kwaterowanie) i `podglad` (strona główna, raporty, eksport). Bean może sprawdzić rolę przez `FacesContext.getCurrentInstance().getExternalContext().isUserInRole(...)`, a strona przez `rendered="#{request.isUserInRole('kierownik')}"`, żeby nie pokazywać przycisków, których użytkownik i tak nie może użyć. Ochrona musi być też po stronie serwera, nie tylko ukryte przyciski.
+- *Hasła:* nigdy jawnym tekstem. Realm Tomcata ma `CredentialHandler` z funkcją skrótu dla haseł (np. PBKDF2); skrót tworzy narzędzie `digest.bat` z katalogu `bin` Tomcata.
+- *Przy okazji:* przycisk „Wyloguj” (`HttpServletRequest.logout()` i unieważnienie sesji), zmiana identyfikatora sesji po zalogowaniu (Tomcat robi to sam, ochrona przed przejęciem sesji, session fixation), ciasteczko sesji z `HttpOnly` i `Secure` oraz HTTPS w Tomcacie, bo formularz logowania wysyła hasło. Ochronę przed CSRF (Cross-Site Request Forgery, podszywaniem się pod żądania zalogowanego użytkownika) daje już w dużej mierze `ViewState` JSF; do sprawdzenia przy imporcie, który kasuje dane.
+- *Testy:* Spring nie zna ról Tomcata, więc testy beanów sprawdzą logikę ról przez mock `ExternalContext`; całość logowania sprawdzimy ręcznie w Tomcacie.
+- *Kolejność i Etap 4:* krok nie zależy od pozostałych kroków Etapu 3. Przy przejściu na Spring Boot (4.2) logowanie można przenieść do Spring Security (`SecurityFilterChain`), które daje to samo w konfiguracji Javy oraz gotową ochronę przed CSRF.
+
+**Gotowe, gdy:** test z 3.1 przechodzi, nowe rekordy dostają ID z sekwencji, formularze odrzucają błędne dane, pokoje i studentów da się dodawać, poprawiać i usuwać z ekranu, a do aplikacji wchodzi się dopiero po zalogowaniu.
 
 ## Etap 4 (opcjonalny): Spring Boot i nowoczesne narzędzia
 
@@ -303,20 +349,21 @@ Po każdym kroku aktualizuję status i dopisuję skrót commita. Statusy: do zro
 | 1.5 | Przestrzenie nazw JSF, `web.xml` 6.0 |  | zrobione, sprawdzone w Tomcacie w 1.6 | 4521296 |
 | 1.6 | Uruchomienie w Tomcacie |  | zrobione: Tomcat 11 + Weld, PostgreSQL 18, wszystkie ekrany przeklikane | 97cd531, e008b10 |
 | 1.7 | Plik logu w `logs` Tomcata | #17 | zrobione, sprawdzone w Tomcacie | 72ae1d4 |
-| 2.1 | `DaneService` |  | do zrobienia | |
-| 2.1a | JAXB zamiast XStream | #7 | do zrobienia | |
-| 2.2 | Import do bazy | #3 (refs) | do zrobienia | |
-| 2.3 | Eksport do XML | #8 | do zrobienia | |
-| 2.4 | Raport XML |  | do zrobienia | |
-| 2.5 | Raport HTML przez XSLT |  | do zrobienia | |
-| 2.6 | Testy importu, eksportu i raportu |  | do zrobienia | |
-| 2.7 | Sortowanie strony głównej | #16 | do zrobienia | |
+| 2.1 | `DaneService` |  | zrobione (TDD: czerwona 4 porażki, zielona 42/42) | eb5a00a |
+| 2.1a | JAXB zamiast XStream | #7 | zrobione (część 1: czerwona 4 porażki, zielona 46/46; część 2: czerwona 5 porażek i 2 błędy, zielona 45/45) | 1ac0212 (część 1), bd81a60 (część 2) |
+| 2.2 | Eksport do XML | #8 (refs) | zrobione (TDD: czerwona 1 porażka i 1 błąd, zielona 47/47; sprawdzone w Tomcacie) | d565d42 |
+| 2.3 | Import do bazy | #3 (refs) | zrobione (TDD: czerwona 3 porażki, zielona 51/51; sprawdzone w Tomcacie) | aa26d8c |
+| 2.4 | Raport XML | #8 (closes) | zrobione (TDD: czerwona 2 porażki i 3 błędy, zielona 56/56; sprawdzone w Tomcacie) | 2a9ba29, d690854 (poprawka) |
+| 2.5 | Raport HTML przez XSLT |  | zrobione (TDD: czerwona 4 porażki na 60, zielona 60/60; poprawki danych studenta i zabezpieczenie raportów: 69/69; sprawdzone w Tomcacie) | 6d94b75 (poprawka), a97317a |
+| 2.6 | Testy importu, eksportu i raportu |  | zrobione (przegląd JaCoCo, 6 testów charakteryzujących, zasada obsługi błędów; 75/75) | e198a07 |
+| 2.7 | Sortowanie strony głównej | #16 | zrobione (TDD: czerwona 1 porażka, zielona 76/76) | d61c690 |
 | 3.1 | Test słabości algorytmu |  | do zrobienia | |
 | 3.2 | Nowy algorytm kwaterowania |  | do zrobienia | |
 | 3.3 | ID z sekwencji | #3 | do zrobienia | |
 | 3.4 | Walidacja danych |  | do zrobienia | |
 | 3.5 | Dodawanie, edycja, kasowanie rekordów | #12 | do zrobienia | |
 | 3.6 | Generator danych (opcjonalny) | #21 | do zrobienia | |
+| 3.7 | Logowanie użytkowników |  | do zrobienia | |
 | 4.1 | Spring 7 i Hibernate 7 |  | do zrobienia | |
 | 4.2 | Spring Boot 4 + JoinFaces | #22 | do zrobienia | |
 | 4.3 | Flyway | #23 | do zrobienia | |

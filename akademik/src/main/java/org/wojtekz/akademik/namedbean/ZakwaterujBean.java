@@ -1,7 +1,11 @@
 package org.wojtekz.akademik.namedbean;
 
 import java.io.Serializable;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.application.FacesMessage.Severity;
@@ -66,13 +70,38 @@ public class ZakwaterujBean implements Serializable {
 	}
 	
 	/**
-	 * Lista studentów dla strony głównej akademika. Bierze studentów z bazy.
-	 * 
-	 * @return po prostu wszyscy studenci jako lista
+	 * Lista studentów dla strony głównej akademika (krok 2.7, issue #16): według numerów
+	 * pokoi, w pokoju według nazwisk i imion, a studenci bez pokoju na końcu.
+	 * <p>
+	 * Sortuje Java, a nie baza ({@code ORDER BY}): {@link Collator} dla języka polskiego
+	 * daje tę samą kolejność liter w testach (HSQLDB), w Tomcacie (PostgreSQL) i w raporcie
+	 * kwaterunku, niezależnie od ustawień bazy. Przy kilkuset studentach sortowanie
+	 * w pamięci nic nie kosztuje.
+	 *
+	 * @return wszyscy studenci w kolejności do wyświetlenia
 	 */
 	public List<Student> getStudenci() {
 		logg.debug("-----------> pobieram studentów do wyświetlenia");
-		return studentRepository.findAll();
+		// Collator nie jest bezpieczny wielowątkowo, a bean jest sesyjny, więc
+		// tworzymy go przy każdym wywołaniu
+		Collator polski = Collator.getInstance(Locale.forLanguageTag("pl"));
+		// nullsLast: student bez pokoju (numer null) idzie na koniec, a nie powoduje
+		// NullPointerException przy porównaniu
+		Comparator<String> napisy = Comparator.nullsLast(polski::compare);
+		Comparator<Student> kolejnosc = Comparator
+				.comparing(ZakwaterujBean::numerPokoju, napisy)
+				.thenComparing(Student::getNazwisko, napisy)
+				.thenComparing(Student::getImie, napisy);
+
+		// findAll może zwrócić listę, której nie wolno zmieniać, więc sortujemy kopię
+		List<Student> studenci = new ArrayList<>(studentRepository.findAll());
+		studenci.sort(kolejnosc);
+		return studenci;
+	}
+
+	/** @return numer pokoju studenta albo {@code null}, gdy student nie ma pokoju */
+	private static String numerPokoju(Student student) {
+		return student.getPokoj() == null ? null : student.getPokoj().getNumerPokoju();
 	}
 	
 	/**

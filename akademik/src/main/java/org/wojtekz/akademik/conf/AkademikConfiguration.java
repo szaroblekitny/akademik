@@ -7,8 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
 import org.wojtekz.akademik.util.DaneTestowe;
 
 /**
@@ -20,7 +18,7 @@ import org.wojtekz.akademik.util.DaneTestowe;
  *
  */
 @Configuration
-@ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.namedbean"})
+@ComponentScan(basePackages={"org.wojtekz.akademik.core", "org.wojtekz.akademik.service", "org.wojtekz.akademik.namedbean"})
 @EnableJpaRepositories("org.wojtekz.akademik.repo")
 public class AkademikConfiguration {
 	private static Logger logg = LogManager.getLogger();
@@ -43,22 +41,6 @@ public class AkademikConfiguration {
 	public DaneTestowe daneTestowe() {
 		logg.debug("----->>> daneTestowe bean configuration");
 		return new DaneTestowe();
-	}
-	
-	@Bean
-	public Marshaller marshaller() {
-		logg.debug("----->>> marshaller bean configuration");
-		
-		AkademikXStream xsmarsh = new AkademikXStream();
-		
-		return xsmarsh;
-	}
-	
-	@Bean
-	public Unmarshaller unmarshaller() {
-		logg.debug("----->>> unmarshaller bean configuration");
-		
-		return (Unmarshaller) marshaller();
 	}
 	
 }

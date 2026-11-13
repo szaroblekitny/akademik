@@ -3,9 +3,10 @@ package org.wojtekz.akademik.core;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -38,13 +39,11 @@ import org.wojtekz.akademik.util.DaneTestowe;
  */
 @SpringJUnitConfig(classes = {TestConfiguration.class})
 public class AkademikTest {
-	private final String PLIK_POKOI = "pokoje_test_appl.xml";
-	private final String PLIK_STUDENTOW = "studenci_test_appl.xml";
+	private final String PLIK_DANYCH = "akademik_test_appl.xml";
 	private final String PLIK_RAPORTU = "raport_test_appl.txt";
 	
 	private static Logger logg = LogManager.getLogger();
-	private static Path pathPokoi;
-	private static Path pathStudentow;
+	private static Path pathDanych;
 	private static Path pathRaportu;
 	private static Charset charset = StandardCharsets.UTF_8;
 	
@@ -142,29 +141,23 @@ public class AkademikTest {
 		malinowski2.setNazwisko("Malinowski");
 		malinowski2.setPlec(Plec.MEZCZYZNA);
 		
-		studenci.add(kowalska);
+		// Plik nie ma ID, więc import nadaje je w kolejności z pliku (krok 2.1a).
+		// Ta kolejność daje te same ID, które studenci mieli wcześniej w pliku XStreama.
 		studenci.add(kowalski);
-		studenci.add(nowak);
+		studenci.add(kowalska);
 		studenci.add(malinowski);
+		studenci.add(nowak);
 		studenci.add(malinowski2);
 		
 		
 		logg.trace("-----> Przygotowanie plików");
-		pathPokoi = FileSystems.getDefault().getPath(PLIK_POKOI);
-		pathStudentow = FileSystems.getDefault().getPath(PLIK_STUDENTOW);
+		pathDanych = FileSystems.getDefault().getPath(PLIK_DANYCH);
 		pathRaportu = FileSystems.getDefault().getPath(PLIK_RAPORTU);
-		BufferedWriter bufWriter = Files.newBufferedWriter(pathPokoi, charset);
 		logg.debug("-----> Pokoje: {}", pokoje);
-		if (bufWriter == null) {
-			throw new IOException("----->>> bufWriter jest nullem");
-		}
-		plikowanie.saveObjectList(bufWriter, pokoje);
-		bufWriter.close();
-			
-		bufWriter = Files.newBufferedWriter(pathStudentow, charset);
 		logg.debug("-----> Studenci: {}", studenci);
-		plikowanie.saveObjectList(bufWriter, studenci);
-		bufWriter.close();
+		try (OutputStream plik = Files.newOutputStream(pathDanych)) {
+			plikowanie.zapiszDane(plik, pokoje, studenci);
+		}
 		
 		// usuwa dane o studentch i pokojach z bazy
 		logg.trace("-----> przed usunDane");
@@ -173,50 +166,9 @@ public class AkademikTest {
 		
 	}
 
-	/**
-	 * Test, czy aplikacja umie pobrać dane z pliku i zapisać je w bazie danych.
-	 */
-	@Test
-	public void testPobierzPokoje() {
-		logg.debug("=============>>> testPobierzPokoje starts");
-		
-		try {
-			BufferedReader reader = Files.newBufferedReader(pathPokoi, charset);
-			akademik.pobierzZPliku(reader);
-			reader.close();
-			
-			List<Pokoj> pokZBazy = pokojRepo.findByNumerPokoju("102");
-			Assertions.assertEquals(3, pokZBazy.get(0).getLiczbaMiejsc());
-			
-		} catch (IOException ee) {
-			logg.error("----->>> testPobierzPokoje: Błąd odczytu pliku z pokojami", ee);
-			Assertions.fail("Exception: " + ee.getMessage());
-		}
-		
-	}
-	
-	@Test
-	public void testPobierzStudentow () {
-		logg.debug("=============>>> testPobierzStudentow starts");
-		
-		try {
-			BufferedReader reader = Files.newBufferedReader(pathStudentow, charset);
-			akademik.pobierzZPliku(reader);
-			reader.close();
-			logg.trace("-----> studenci pobrani");
-			
-			List<Student> malinowscyZBazy = studentRepo.findByName("Malinowski");
-			Assertions.assertEquals(3, malinowscyZBazy.get(0).getId());
-			Assertions.assertEquals("Adam", malinowscyZBazy.get(0).getImie());
-			Assertions.assertEquals("Jerzy", malinowscyZBazy.get(1).getImie());
-			
-		} catch (IOException ee) {
-			logg.error("----- ERROR >> Błąd odczytu pliku ze studentami");
-			Assertions.fail("Exception: " + ee.getMessage());
-		}
-		
-	}
-	
+	// testPobierzPokoje i testPobierzStudentow przeniesione do DaneServiceTest
+	// (krok 2.1 planu naprawczego: import przeszedł z Akademik do DaneService)
+
 	/**
 	 * Test metody kwaterowania akademika. Używa danych z konstruktora,
 	 * a nie z klasy {@link org.wojtekz.akademik.util.DaneTestowe}.
@@ -272,11 +224,10 @@ public class AkademikTest {
 	public void testAkademika() {
 		logg.debug("=============>>> testAkademika starts");
 		try (
-			BufferedReader pokojeReader = Files.newBufferedReader(pathPokoi, charset);
-			BufferedReader studenciReader = Files.newBufferedReader(pathStudentow, charset);
+			InputStream dane = Files.newInputStream(pathDanych);
 			BufferedWriter outputWriter = Files.newBufferedWriter(pathRaportu, charset))
 		{
-			akademik.akademik(pokojeReader, studenciReader, outputWriter);
+			akademik.akademik(dane, outputWriter);
 			
 			List<String> wszyskieLinie = Files.readAllLines(pathRaportu, charset);
 			if (logg.isTraceEnabled()) {
@@ -307,6 +258,36 @@ public class AkademikTest {
 		}
 	}
 	
+	/**
+	 * Błąd zgłoszony 11.11.2026: student bez płci (w bazie {@code plec = NULL}) nie trafia
+	 * ani do listy kobiet, ani mężczyzn, więc kwaterowanie go pomijało i mimo to meldowało
+	 * „Kwaterowanie udane”. Miejsc jest tu dosyć (5), więc jedynym powodem, dla którego
+	 * ktoś zostaje bez pokoju, jest brak płci, i meldunek ma to powiedzieć wprost.
+	 */
+	@Test
+	public void testKwaterowaniaStudentaBezPlci() {
+		pokojRepo.saveAll(pokoje);
+		Student kowalski = new Student();
+		kowalski.setId(1);
+		kowalski.setImie("Jan");
+		kowalski.setNazwisko("Kowalski");
+		kowalski.setPlec(Plec.MEZCZYZNA);
+		Student gerwazy = new Student();
+		gerwazy.setId(2);
+		gerwazy.setImie("Gerwazy");
+		gerwazy.setNazwisko("Kapuściński");
+		gerwazy.setPlec(null);
+		studentRepo.saveAll(List.of(kowalski, gerwazy));
+
+		String meldunek = akademik.zakwateruj();
+
+		Assertions.assertNotEquals("Kwaterowanie udane", meldunek, "Ktoś został bez pokoju, więc to nie jest sukces");
+		Assertions.assertTrue(meldunek.contains("Bez określonej płci: Gerwazy Kapuściński"),
+				"Meldunek powinien wskazać studenta bez płci, jest: " + meldunek);
+		Assertions.assertNull(studentRepo.findById(2L).get().getPokoj());
+		Assertions.assertNotNull(studentRepo.findById(1L).get().getPokoj(), "Pozostali dostają pokoje jak zwykle");
+	}
+
 	/**
 	 * Test, czy zakwaterowani studenci nie są różnej płci.
 	 */
@@ -383,8 +364,7 @@ public class AkademikTest {
 	@AfterEach
 	public void poTescie() throws Exception {
 		logg.debug("== == == == ==>>> poTescie");
-		usunPlik(pathPokoi);
-		usunPlik(pathStudentow);
+		usunPlik(pathDanych);
 		
 		// jeśli jest, usuwa plik raportu testowego
 		if (Files.exists(pathRaportu)) {

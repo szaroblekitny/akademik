@@ -80,3 +80,10 @@ h2, h3 {
 .szczegolybledu {
 	font-size: 0.9em;
 }
+
+/* drobny tekst objaśniający pod formularzem, np. o polach wymaganych */
+.przypis {
+	font-size: 0.8em;
+	color: #555;
+	margin: 0.3em 0 0.8em 0;
+}

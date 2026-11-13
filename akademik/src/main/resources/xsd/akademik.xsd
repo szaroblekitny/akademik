@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Schemat plików z danymi akademika (krok 2.1a planu naprawczego, propozycja).
+
+  Jeden format dla importu i eksportu: importujemy dokładnie taki plik,
+  jaki wyeksportowaliśmy. Plik ma korzeń <akademik> z dwiema sekcjami,
+  obie opcjonalne: <pokoje> i <studenci>. Można więc mieć plik z samymi
+  pokojami, z samymi studentami albo z jednym i drugim.
+
+  Zasady:
+  - brak identyfikatorów z bazy (issue #3): ID nadaje aplikacja;
+  - pokój identyfikuje jego numer, np. "101" albo "103A", i numer musi być
+    unikalny w pliku;
+  - plik zawiera dane podstawowe, bez przydziału studentów do pokoi.
+    Kwaterunek jest wynikiem działania aplikacji, a nie daną wejściową;
+    jego wynik pokazuje raport (kroki 2.4 i 2.5).
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="urn:wojtekz:akademik:dane:1"
+           xmlns:a="urn:wojtekz:akademik:dane:1"
+           targetNamespace="urn:wojtekz:akademik:dane:1"
+           elementFormDefault="qualified"
+           version="1.0">
+
+  <!-- ===== korzeń ===== -->
+  <xs:element name="akademik" type="Akademik">
+    <!-- numer pokoju nie może się powtórzyć w pliku; w XPath trzeba podać
+         przedrostek przestrzeni nazw (a:), bo bez niego nazwa oznacza element
+         spoza przestrzeni nazw i warunek po cichu niczego by nie sprawdzał -->
+    <xs:unique name="unikalnyNumerPokoju">
+      <xs:selector xpath="a:pokoje/a:pokoj"/>
+      <xs:field xpath="@numer"/>
+    </xs:unique>
+  </xs:element>
+
+  <xs:complexType name="Akademik">
+    <xs:sequence>
+      <xs:element name="pokoje" type="Pokoje" minOccurs="0"/>
+      <xs:element name="studenci" type="Studenci" minOccurs="0"/>
+    </xs:sequence>
+    <!-- wersja formatu: gdyby format się kiedyś zmienił, aplikacja rozpozna stare pliki -->
+    <xs:attribute name="wersja" type="xs:string" fixed="1"/>
+  </xs:complexType>
+
+  <!-- ===== pokoje ===== -->
+  <xs:complexType name="Pokoje">
+    <xs:sequence>
+      <xs:element name="pokoj" type="Pokoj" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- pokój: same atrybuty, bez treści, np. <pokoj numer="101" miejsca="2"/> -->
+  <xs:complexType name="Pokoj">
+    <xs:attribute name="numer" type="NumerPokoju" use="required"/>
+    <xs:attribute name="miejsca" type="LiczbaMiejsc" use="required"/>
+  </xs:complexType>
+
+  <!-- 1 do 5 znaków, bo tyle mieści kolumna numer_pokoju varchar(5) -->
+  <xs:simpleType name="NumerPokoju">
+    <xs:restriction base="xs:token">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="5"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LiczbaMiejsc">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="20"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ===== studenci ===== -->
+  <xs:complexType name="Studenci">
+    <xs:sequence>
+      <xs:element name="student" type="Student" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Student">
+    <xs:sequence>
+      <xs:element name="imie" type="Napis"/>
+      <xs:element name="nazwisko" type="Napis"/>
+    </xs:sequence>
+    <xs:attribute name="plec" type="Plec" use="required"/>
+  </xs:complexType>
+
+  <!-- niepusty tekst; xs:token usuwa zbędne spacje na brzegach i w środku -->
+  <xs:simpleType name="Napis">
+    <xs:restriction base="xs:token">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="500"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- wartości jak nazwy stałych w enum org.wojtekz.akademik.entity.Plec -->
+  <xs:simpleType name="Plec">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="KOBIETA"/>
+      <xs:enumeration value="MEZCZYZNA"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

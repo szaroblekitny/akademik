@@ -17,6 +17,10 @@
 		</ui:define>
 
 		<ui:define name="content">
+			<!-- komunikaty, np. o błędzie w danych przy raporcie; błędy wiszą do zamknięcia -->
+			<p:growl id="glownemsgs" showDetail="true" severity="info,warn" />
+			<p:growl id="glownemsgsbledy" showDetail="true" severity="error,fatal" sticky="true" />
+
  			<!-- obsługa przycisków -->
 			<h:form class="gornymargines">
 				<span class="otoczkaBut">
@@ -34,6 +38,19 @@
 				</span>
 				<span class="otoczkaBut">
 					<p:button outcome="kwateruj" value="Kwaterowanie" icon="pi pi-key" />
+				</span>
+				<!-- raport kwaterunku do pobrania (krok 2.4); w odróżnieniu od przycisków -->
+				<!-- nawigacji to commandButton, który wysyła formularz; ajax="false", bo to plik -->
+				<span class="otoczkaBut">
+					<p:commandButton value="Raport XML" icon="pi pi-file" ajax="false">
+						<p:fileDownload value="#{raportBean.raportXml}" />
+					</p:commandButton>
+				</span>
+				<!-- raport HTML (krok 2.5): ten sam raport przekształcony arkuszem XSLT -->
+				<span class="otoczkaBut">
+					<p:commandButton value="Raport HTML" icon="pi pi-table" ajax="false">
+						<p:fileDownload value="#{raportBean.raportHtml}" />
+					</p:commandButton>
 				</span>
 			</h:form>
 			

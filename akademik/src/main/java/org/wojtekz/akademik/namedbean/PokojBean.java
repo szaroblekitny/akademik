@@ -84,14 +84,16 @@ public class PokojBean implements Serializable {
 	 * Pobranie pokoi z bazy.
 	 * <p><b>Bardzo ważna wiedza tajemna:</b>
 	 * nie odtwarzamy pokoi z bazy za każdym razem, gdy zawoła je stronka, a jedynie
-	 * wtedy, gdy lista jest nullem.
+	 * wtedy, gdy lista jest nullem. Edycja wierszy w tabeli PrimeFaces potrzebuje tej samej
+	 * listy między kliknięciami. Na nowo z bazy lista wczytuje się przy każdym wejściu
+	 * na stronę, przez {@link #wczytaj()}.
 	 * 
 	 * @return pokoje z bazy, jeśli to konieczne
 	 */
 	public List<Pokoj> getPokoje() {
 		
 		if (pokoje == null) {
-			pokoje = pokojRepository.findAll();
+			wczytaj();
 		}
 		
 		return pokoje;
@@ -198,4 +200,16 @@ public class PokojBean implements Serializable {
         PrimeFaces.current().ajax().update("form:msgs", "form:pokojTab");
     }
 
+
+	/**
+	 * Wczytuje pokoje z bazy na nowo (audyt po Etapie 2, punkt A3). Strona woła tę metodę
+	 * przez {@code <f:viewAction>} przy każdym wejściu na nią, więc po imporcie, kwaterowaniu
+	 * czy zmianach na innym ekranie lista nie jest już nieaktualna. Między kliknięciami
+	 * na tej samej stronie (AJAX) lista zostaje w sesji, bo edycja wierszy w tabeli
+	 * PrimeFaces potrzebuje tej samej listy między żądaniami.
+	 */
+	public void wczytaj() {
+		logg.debug("-----> wczytanie pokoi z bazy");
+		pokoje = pokojRepository.findAll();
+	}
 }

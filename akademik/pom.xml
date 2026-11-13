@@ -22,7 +22,9 @@
 		<spring-data-jpa.version>3.4.1</spring-data-jpa.version>
 		<log4j.version>2.25.4</log4j.version>
 		<hsqldb.version>2.7.1</hsqldb.version>
-		<xstream.version>1.4.21</xstream.version>
+		<!-- JAXB (Jakarta XML Binding): API i implementacja z GlassFisha; 4.0 = Jakarta EE 10 i 11 -->
+		<jaxb-api.version>4.0.5</jaxb-api.version>
+		<jaxb-runtime.version>4.0.9</jaxb-runtime.version>
 		<postgresql-jdbc.version>42.7.12</postgresql-jdbc.version>
 		<atomikos.version>6.0.0</atomikos.version>
 		<!-- Weld 6.x = CDI 4.1 (Jakarta EE 11); Weld 7 to już CDI 5 (Jakarta EE 12) -->
@@ -83,26 +85,6 @@
 			<version>${weld.version}</version>
 		</dependency>
 
-
-		<!-- OWASP project to create simple strong security controls for every web platform -->
-		<!-- Używane przez PrimeFaces -->
-		<dependency>
-			<groupId>org.owasp.esapi</groupId>
-			<artifactId>esapi</artifactId>
-			<version>2.6.2.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-oxm</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.data</groupId>
@@ -192,11 +174,20 @@
     		<artifactId>postgresql</artifactId>
     		<version>${postgresql-jdbc.version}</version>
 		</dependency>
-		
+
+		<!-- JAXB: odczyt i zapis plików z danymi (krok 2.1a, zastępuje XStream). -->
+		<!-- Kod używa tylko API (adnotacje i interfejsy z jakarta.xml.bind), -->
+		<!-- a implementacja jest potrzebna dopiero przy uruchomieniu, stąd zakres runtime. -->
 		<dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>${xstream.version}</version>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>${jaxb-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>${jaxb-runtime.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 		
 		<!-- JTA Atomikos -->
@@ -335,6 +326,26 @@
 						</manifestEntries>
           			</archive>
         		</configuration>
+			</plugin>
+
+			<!-- Javadoc: dokumentacja kodu (mvn javadoc:javadoc) i testów (mvn javadoc:test-javadoc), -->
+			<!-- wynik w target/reports/apidocs i target/reports/testapidocs -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.12.0</version>
+				<configuration>
+					<release>${java.version}</release>
+					<encoding>UTF-8</encoding>
+					<docencoding>UTF-8</docencoding>
+					<charset>UTF-8</charset>
+					<!-- package: także klasy i pola bez public, np. klasy testowe JUnit 5 -->
+					<show>package</show>
+					<!-- sprawdza poprawność komentarzy, ale nie zgłasza każdego braku opisu -->
+					<doclint>all,-missing</doclint>
+					<doctitle>Akademik ${project.version}</doctitle>
+					<windowtitle>Akademik ${project.version}</windowtitle>
+				</configuration>
 			</plugin>
 			
 			<!-- Ustawia właściwość ${org.mockito:mockito-core:jar} = ścieżka do jara Mockito

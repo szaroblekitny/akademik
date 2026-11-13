@@ -1,9 +1,8 @@
 package org.wojtekz.akademik.core;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,13 +11,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.wojtekz.akademik.entity.Plec;
-import org.wojtekz.akademik.entity.Plikowalny;
 import org.wojtekz.akademik.entity.Pokoj;
 import org.wojtekz.akademik.entity.Student;
+import org.wojtekz.akademik.plik.NieprawidlowyPlikException;
 import org.wojtekz.akademik.repo.PokojRepository;
 import org.wojtekz.akademik.repo.StudentRepository;
-
-import com.thoughtworks.xstream.io.StreamException;
+import org.wojtekz.akademik.service.DaneService;
 
 /**
  * Centralna klasa realizująca logikę obsługi Akademika. Pobiera dane z plików konfiguracyjnych,
@@ -32,13 +30,13 @@ import com.thoughtworks.xstream.io.StreamException;
 public class Akademik {
 	private static Logger logg = LogManager.getLogger();
 	
-	private Plikowanie plikowanie;
+	private DaneService daneService;
 	private StudentRepository studentRepo;
 	private PokojRepository pokojRepo;
 	
 	@Autowired
-	public void setPlikowanie(Plikowanie plikowanie) {
-		this.plikowanie = plikowanie;
+	public void setDaneService(DaneService daneService) {
+		this.daneService = daneService;
 	}
 
 	@Autowired
@@ -54,82 +52,33 @@ public class Akademik {
 
 	/**
 	 * Wykonuje zadania dla aplikacji wywoływanej z wiersza poleceń.
-	 * Kasuje wszystkie dane z bazy, pobiera dane z plików studentów i pokoi,
+	 * Kasuje wszystkie dane z bazy, wczytuje pokoje i studentów z pliku danych,
 	 * wykonuje zakwaterowanie i generuje stan akademika po zakwaterowaniu.
 	 * Dla aplikacji webowej całkowicie nieprzydatna :-).
+	 * <p>
+	 * Strumienie zamyka ten, kto je otworzył (od kroku 2.1a, wcześniej robiła to ta metoda).
 	 * 
-	 * @param pokojeReader odczytywacz pokoi
-	 * @param studenciReader odczytywacz studentów
+	 * @param dane plik z pokojami i studentami w formacie {@code akademik.xsd}
 	 * @param outputWriter zapisywacz wyniku stanu akademika po zakwaterowaniu
 	 * 
 	 */
-	public void akademik(BufferedReader pokojeReader, BufferedReader studenciReader, BufferedWriter outputWriter) {
+	public void akademik(InputStream dane, BufferedWriter outputWriter) {
 		// ot i cała logika naszej tekstowej aplikacji:
 		try {
 			
-			// kasowanie wszystkiego, bo ładujemy wszystkie dane z plików
-			pokojRepo.deleteAll();
-			studentRepo.deleteAll();
-			
-			pobierzZPliku(pokojeReader);
-			pobierzZPliku(studenciReader);
+			// import sam kasuje stare dane (krok 2.3)
+			daneService.importuj(dane);
 			String meldunek = zakwateruj();
 			podajStanAkademika(outputWriter, meldunek);
+			outputWriter.flush();
 			
-			pokojeReader.close();
-			studenciReader.close();
-			outputWriter.close();
-			
-		} catch (NoSuchFileException nsfe) {
-			logg.error("----- ERROR >> Nie ma takiego pliku: ", nsfe);
-		} catch (StreamException se) {
-			logg.error("----- ERROR >> Błąd parsowania pliku: ", se);
+		} catch (NieprawidlowyPlikException npe) {
+			logg.error("----- ERROR >> Błędny plik z danymi: ", npe);
 		} catch (Exception ee) {
 			logg.error("----- ERROR >> Całkowicie błędny błąd: ", ee);
 		}
 	}
  	
-	
-	/**
-	 * Pobiera z bufora (pliku XML) listę obiektów i zapisuje do bazy, rozpoznając
-	 * typ obiektu.
-	 *
-	 * @param reader bufor odczytu danych (z pliku)
-	 * @throws IOException jeśli jest błąd odczytu
-	 */
-	public void pobierzZPliku(BufferedReader reader) throws IOException {
-		logg.trace("----->>> pobierzZPliku");
-		
-		Plikowalny pp;
-		
-		List<Plikowalny> pobrane = plikowanie.loadObjectList(reader);
-		
-		if (!pobrane.isEmpty()) {
-			pp = pobrane.get(0);
-		} else {
-			logg.warn("----->>> pobierzZPliku brak rekordów");
-			return;
-		}
-		
-		if (pp instanceof Pokoj) {
-			for (Plikowalny pok : pobrane) {
-				pokojRepo.save((Pokoj) pok);
-			}
-			logg.debug("----->>> pokoje zapisane do bazy danych");
-			return;
-		}
-		
-		if (pp instanceof Student) {
-			for (Plikowalny stud : pobrane) {
-				studentRepo.save((Student) stud);
-			}
-			logg.debug("----->>> studenci zapisani do bazy danych");
-			return;
-		}
-		
-		logg.warn("----->>> pobierzZPliku - nieznany typ obiektu");
-	}
-	
 	
 	/**
 	 * Kwateruje studentow w podanym pokoju. Dla podanego pokoju lecimy
@@ -248,7 +197,21 @@ public class Akademik {
 		List<Student> mezczyzni = studentRepo.findByPlec(Plec.MEZCZYZNA);
 		logg.debug("----->>> mamy mężczyzn {}", mezczyzni.size());
 		
-		return kwaterowanie(pokoje, kobiety, mezczyzni);
+		String meldunek = kwaterowanie(pokoje, kobiety, mezczyzni);
+
+		// Student bez płci nie trafia na żadną z dwóch list, więc kwaterowanie go pomija.
+		// Bez tego sprawdzenia meldunek mógł brzmieć „Kwaterowanie udane”, choć ktoś
+		// został bez pokoju (błąd zgłoszony 11.11.2026).
+		List<Student> bezPlci = studentRepo.findByPlecIsNull();
+		if (!bezPlci.isEmpty()) {
+			String kto = String.join(", ", bezPlci.stream()
+					.map(student -> student.getImie() + " " + student.getNazwisko())
+					.toList());
+			logg.warn("----->>> studenci bez określonej płci, bez pokoju: {}", kto);
+			String brak = "Bez określonej płci: " + kto;
+			meldunek = "Kwaterowanie udane".equals(meldunek) ? brak : meldunek + ". " + brak;
+		}
+		return meldunek;
 	}
 	
 	/**
