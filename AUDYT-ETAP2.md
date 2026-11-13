@@ -57,7 +57,7 @@ Punkty, które proponuję zrobić przed zamknięciem Etapu 2, mają dopisek **(p
 - **Propozycja:** pobierać aktualne dane przy każdym wejściu na stronę albo czyścić listę po imporcie
   i po każdej zmianie. Test: import w tej samej sesji, potem lista ma pokazać nowe dane.
 - **Decyzja:** zrobić teraz (11.11.2026).
-- **Status:** zrobione: `wczytaj()` w `PokojBean` i `StudentBean`, wołane przez `<f:viewAction>` przy każdym wejściu na stronę (GET), a między kliknięciami AJAX lista zostaje w sesji, bo potrzebuje jej edycja wierszy PrimeFaces. Szablon ma miejsce `<ui:insert name="metadata"/>`. Testy: po jednym w `PokojBeanTest` i `StudentBeanTest` (czerwona 2 porażki na 78, zielona 78/78). Sprawdzone w Tomcacie. Commit poniżej, w historii gita.
+- **Status:** zrobione: `wczytaj()` w `PokojBean` i `StudentBean`, wołane przez `<f:viewAction>` przy każdym wejściu na stronę (GET), a między kliknięciami AJAX lista zostaje w sesji, bo potrzebuje jej edycja wierszy PrimeFaces. Szablon ma miejsce `<ui:insert name="metadata"/>`. Testy: po jednym w `PokojBeanTest` i `StudentBeanTest` (czerwona 2 porażki na 78, zielona 78/78). Sprawdzone w Tomcacie. Commit `d3f0f07`.
 
 ---
 
