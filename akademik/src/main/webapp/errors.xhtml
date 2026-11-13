@@ -17,7 +17,12 @@
 				<div class="marginwokolo">
 					<p><h:outputText value="#{pfExceptionHandler.formattedTimestamp}" /></p>
 					<p><h:outputText class="czerwonyblad" value="Błąd: #{pfExceptionHandler.message}" /></p>
-					<p><h:outputText class="szczegolybledu" value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /></p>
+					<!-- stos wywołań tylko w trybie Development (PROJECT_STAGE w web.xml): w Production -->
+					<!-- nie zdradzamy nazw klas, bibliotek ani SQL. escape="false" jest tu bezpieczne, -->
+					<!-- bo PrimeFaces sam escapuje stos (EscapeUtils.forXml) i dopiero potem wstawia <br/> -->
+					<h:panelGroup rendered="#{facesContext.application.projectStage eq 'Development'}">
+						<p><h:outputText class="szczegolybledu" value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /></p>
+					</h:panelGroup>
 				</div>
 			</ui:define>
 			<!-- pusty footer, zachowuje tylko css -->

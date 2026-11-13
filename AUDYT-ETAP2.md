@@ -15,29 +15,32 @@ Punkty, które proponuję zrobić przed zamknięciem Etapu 2, mają dopisek **(p
 
 ## Wysoki priorytet
 
-### A1. Strona błędu pokazuje pełny stos wywołań, bez escapowania (propozycja: teraz)
+### A1. Strona błędu pokazuje każdemu pełny stos wywołań (propozycja: teraz)
 
 - **Gdzie:** `src/main/webapp/errors.xhtml`, `web.xml` (`jakarta.faces.PROJECT_STAGE`).
-- **Problem:** strona pokazuje `#{pfExceptionHandler.formattedStackTrace}` z `escape="false"`.
+- **Problem:** strona pokazuje `#{pfExceptionHandler.formattedStackTrace}` w każdym trybie.
   - *Ujawnianie informacji:* każdy widzi nazwy klas, wersje bibliotek, fragmenty SQL. To ułatwia atak.
-  - *XSS (Cross-Site Scripting):* treść wyjątku może zawierać dane od użytkownika (np. nazwę
-    przesłanego pliku); przy `escape="false"` trafiłaby do strony jako kod HTML.
-- **Propozycja:** stos tylko w trybie `Development`, jako zwykły tekst w `<pre>`:
+- **Sprostowanie (13.11.2026):** pierwsza wersja audytu zgłaszała też XSS (Cross-Site Scripting)
+  przez `escape="false"`. To był fałszywy alarm: PrimeFaces 15 przed wstawieniem `<br/>` w miejsce
+  końców wierszy sam escapuje stos (`EscapeUtils.forXml`, sprawdzone w kodzie biblioteki).
+  `escape="false"` jest więc potrzebne (inaczej na stronie byłby napis „`<br/>`”) i bezpieczne.
+  Komunikat błędu (`#{pfExceptionHandler.message}`) `h:outputText` escapuje domyślnie.
+- **Propozycja:** stos tylko w trybie `Development`, wypisywany jak dotąd:
   ```xml
-  <h:panelGroup rendered="#{facesContext.application.projectStage == 'Development'}">
-      <pre><h:outputText value="#{pfExceptionHandler.formattedStackTrace}"/></pre>
+  <h:panelGroup rendered="#{facesContext.application.projectStage eq 'Development'}">
+      <p><h:outputText class="szczegolybledu" value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /></p>
   </h:panelGroup>
   ```
-  W `Production` stos zniknie sam, zostanie czas i ogólny komunikat. Bez `escape="false"` dziura XSS
-  znika w każdym trybie.
+  W `Production` stos zniknie sam, zostanie czas i komunikat błędu.
 - **Co robi `PROJECT_STAGE`:** w `Development` JSF odświeża zmienione pliki `.xhtml` bez ponownego
   wdrożenia, dodaje ostrzeżenia o pomyłkach (np. niewyświetlony komunikat, przycisk poza `<h:form>`)
   i jest nieco wolniejszy. `Production` jest szybszy, ale zmiana strony wymaga wdrożenia, a pomyłki
   przechodzą po cichu. Sama zmiana trybu nie naprawia tego punktu, bo stos pokazuje nasza strona.
 - **Decyzja:** `PROJECT_STAGE` zostaje `Development`, bo projekt jest w fazie rozwoju (11.11.2026).
   Przejście na `Production` przy wersji produkcyjnej, np. w kroku 4.2. Poprawka samej strony
-  błędu: *do decyzji*.
-- **Status:** otwarty.
+  błędu: *zrobić teraz* (13.11.2026), według propozycji wyżej.
+- **Status:** zrobione: stos w `errors.xhtml` w `h:panelGroup` z warunkiem `rendered` na tryb
+  `Development`. Sprawdzone w Tomcacie w obu trybach (w `Production` zostają czas i komunikat).
 
 ### A2. Brak logowania użytkowników
 
