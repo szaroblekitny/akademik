@@ -19,11 +19,15 @@ import org.wojtekz.akademik.repo.StudentRepository;
 import org.wojtekz.akademik.service.DaneService;
 
 /**
- * Centralna klasa realizująca logikę obsługi Akademika. Pobiera dane z plików konfiguracyjnych,
- * wykonuje metodę {@link #zakwateruj()} i wyświetla rezultat. W wersji aplikacji webowej
- * jest wykonywana tylko metoda zakwateruj().
+ * Logika kwaterunku: {@link #zakwateruj()} przydziela studentów z bazy do pokoi
+ * (kobiety i mężczyzn osobno) i zwraca meldunek dla użytkownika. Aplikacja webowa
+ * woła tylko tę metodę.
+ * <p>
+ * Metoda {@link #akademik(InputStream, BufferedWriter)} to pozostałość wersji
+ * z wiersza poleceń: importuje plik danych, kwateruje i zapisuje stan akademika.
+ * Używają jej już tylko testy.
  * 
- * @author wojciech Zaręba
+ * @author Wojciech Zaręba
  *
  */
 @Component

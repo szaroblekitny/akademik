@@ -40,7 +40,7 @@ Punkty, które proponuję zrobić przed zamknięciem Etapu 2, mają dopisek **(p
   Przejście na `Production` przy wersji produkcyjnej, np. w kroku 4.2. Poprawka samej strony
   błędu: *zrobić teraz* (13.11.2026), według propozycji wyżej.
 - **Status:** zrobione: stos w `errors.xhtml` w `h:panelGroup` z warunkiem `rendered` na tryb
-  `Development`. Sprawdzone w Tomcacie w obu trybach (w `Production` zostają czas i komunikat).
+  `Development`. Sprawdzone w Tomcacie w obu trybach (w `Production` zostają czas i komunikat). Commit `8528be9`.
 
 ### A2. Brak logowania użytkowników
 
@@ -207,8 +207,10 @@ Punkty, które proponuję zrobić przed zamknięciem Etapu 2, mają dopisek **(p
 - krok 2.1a: pierwszy akapit mówi o adnotacjach JAXB na `Pokoj` i `Student`, a powstały osobne
   klasy `PokojXml` i `StudentXml`;
 - krok 3.3: zdanie „pliki XML z importu zawierają własne ID” jest nieaktualne od kroku 2.1a.
-- **Decyzja:**
-- **Status:** otwarty.
+- **Decyzja:** zrobić teraz (13.11.2026).
+- **Status:** zrobione: krok 2.1a opisuje osobne klasy formatu (`AkademikXml`, `PokojXml`,
+  `StudentXml`) i odsyła do uzasadnienia; w kroku 3.3 uwaga mówi, że pliki nie mają ID, a import
+  zawsze nadaje nowe.
 
 ### D2. README bez instrukcji uruchomienia (propozycja: teraz)
 
@@ -222,8 +224,10 @@ Punkty, które proponuję zrobić przed zamknięciem Etapu 2, mają dopisek **(p
 
 - opis klasy `Akademik` („pobiera dane z plików konfiguracyjnych”);
 - opis klasy `Messagesy` („bardzo sprytne rozwiązanie skądś ściągnięte”).
-- **Decyzja:**
-- **Status:** otwarty.
+- **Decyzja:** zrobić teraz (13.11.2026).
+- **Status:** zrobione: `Akademik` opisuje `zakwateruj()` i to, że `akademik(...)` z wersji
+  z wiersza poleceń używają już tylko testy; `Messagesy` wyjaśnia, po co jest (atrapa w testach
+  zamiast `FacesContext`).
 
 ---
 

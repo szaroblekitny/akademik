@@ -7,8 +7,11 @@ import jakarta.faces.context.FacesContext;
 import org.springframework.stereotype.Component;
 
 /**
- * Dodaje komunikat do kontekstu serwletu JSF.
- * Bardzo sprytne rozwiązanie skądś ściągnięte, które ma umożliwić testowane beanów JSF.
+ * Dodaje komunikaty JSF ({@link FacesMessage}) do bieżącego {@link FacesContext}.
+ * <p>
+ * Beany nie wołają {@code FacesContext.getCurrentInstance()} same, tylko dostają tę klasę
+ * od Springa. W testach jednostkowych, gdzie nie ma działającego JSF, podstawiamy zamiast
+ * niej atrapę (mock) i sprawdzamy, jakie komunikaty bean chciał pokazać.
  *
  * @author Wojciech Zaręba
  *
